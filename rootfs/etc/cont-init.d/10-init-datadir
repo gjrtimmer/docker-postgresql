@@ -1,6 +1,6 @@
 #!/usr/bin/with-contenv bash
 
-source /etc/postgresql/common
+source /etc/postgresql/functions
 
 mkdir -p ${PG_HOME}
 

@@ -1,6 +1,6 @@
 #!/usr/bin/with-contenv bash
 
-source /etc/postgresql/common
+source /etc/postgresql/functions
 
 # Create Run Directory
 mkdir -p ${PG_RUNDIR} ${PG_RUNDIR}/${PG_VERSION}-main.pg_stat_tmp
