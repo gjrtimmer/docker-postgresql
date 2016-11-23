@@ -1,5 +1,0 @@
-#!/usr/bin/with-contenv bash
-
-source /etc/postgresql/functions
-
-setfacl -m user:${PG_UID}:r /etc/resolv.conf || true
