@@ -9,7 +9,7 @@ ENV LANG=en_US.utf8 \
 	PG_RUNDIR=/var/run/postgresql \
 	PG_CERTDIR=/etc/postgresql/certs
 
-ENV PG_DATADIR=${PG_HOME}/${PG_VERSION%.*}/main \
+ENV PG_DATADIR=${PG_HOME}/${PG_VERSION:%.*}/main \
 	MUSL_LOCPATH=${LANG}
 	
 RUN echo '@edge http://nl.alpinelinux.org/alpine/edge/main' >> /etc/apk/repositories && \
