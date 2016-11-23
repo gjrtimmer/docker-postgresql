@@ -1,3 +1,7 @@
 #!/usr/bin/with-contenv bash
 set -e
 
+USERMAP_UID=${USERMAP_UID:-postgres}
+USERMAP_GID=${USERMAP_GID:-postgres}
+
+exec s6-setuidgid ${USERMAP_UID}:${USERMAP_GID postgres -- -D ${PG_DATADIR};
