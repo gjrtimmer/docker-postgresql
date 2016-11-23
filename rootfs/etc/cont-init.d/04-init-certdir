@@ -1,0 +1,11 @@
+#!/usr/bin/with-contenv bash
+
+# Create Certificate directory
+mkdir -p ${PG_CERTDIR}
+
+[[ -f ${PG_CERTDIR}/server.crt ]] && chmod 0644 ${PG_CERTDIR}/server.crt
+[[ -f ${PG_CERTDIR}/server.key ]] && chmod 0640 ${PG_CERTDIR}/server.key
+
+# Set permissions
+chmod 0755 ${PG_CERTDIR}
+chown -R root:${PG_UID} ${PG_GID}

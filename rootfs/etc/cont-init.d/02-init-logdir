@@ -1,0 +1,8 @@
+#!/usr/bin/with-contenv bash
+
+# Create log directory
+mkdir -p ${PG_LOGDIR}
+
+# Set permissions
+chmod -R 1775 ${PG_LOGDIR}
+chown -R root:${PG_GID} ${PG_LOGDIR}

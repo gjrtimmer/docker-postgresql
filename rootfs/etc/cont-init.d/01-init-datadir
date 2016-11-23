@@ -1,0 +1,10 @@
+#!/usr/bin/with-contenv bash
+
+mkdir -p ${PG_HOME}
+
+if [[ -d ${PG_DATADIR} ]]; then
+	find ${PG_DATADIR} -type f -exec chmod 0600 {} \;
+	find ${PG_DATADIR} -type d -exec chmod 0700 {} \;
+fi
+
+chown -R ${PG_UID}:${PG_GID} ${PG_HOME}

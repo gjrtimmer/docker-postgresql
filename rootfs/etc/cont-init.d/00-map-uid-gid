@@ -1,0 +1,8 @@
+#!/usr/bin/with-contenv bash
+
+# MAP UID/GID
+PG_UID=${USERMAP_UID:-postgres}
+PG_GID=${USERMAP_GID:-postgres}
+
+export PG_UID
+export PG_GID
