@@ -4,8 +4,6 @@ MAINTAINER G.J.R. Timmer <gjr.timmer@gmail.com>
 ARG PG_VERSION=9.6.0
 
 ENV LANG=en_US.utf8 \
-	PG_USER=postgres \
-	PG_DATABASE=postgres \
 	PG_HOME=/var/lib/postgresql \
 	PG_LOGDIR=/var/log/postgresql \
 	PG_RUNDIR=/var/run/postgresql \
