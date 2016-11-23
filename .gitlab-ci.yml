@@ -1,0 +1,52 @@
+stages:
+  - build
+  - deploy
+  - clean
+  
+build:
+  stage: build
+  tags: 
+    - shell
+  script:
+    - docker build --pull --force-rm=true --tag=$(cat REPOSITORY)/${CI_PROJECT_PATH} .
+    
+release:
+  stage: build
+  tags: 
+    - shell
+  only:
+    - tags
+  script:
+    - docker build --pull --force-rm=true --tag=$(cat REPOSITORY)/${CI_PROJECT_PATH}:$(cat VERSION) .
+
+deploy:
+  stage: deploy
+  tags:
+    - shell
+  script:
+    - docker push $(cat REPOSITORY)/${CI_PROJECT_PATH}
+
+deploy-release:
+  stage: deploy
+  tags:
+    - shell
+  only:
+    - tags
+  script:
+    - docker push $(cat REPOSITORY)/${CI_PROJECT_PATH}:$(cat VERSION)
+    
+clean:
+  stage: clean
+  tags:
+    - shell
+  script:
+    - docker rmi $(cat REPOSITORY)/${CI_PROJECT_PATH}
+
+clean-release:
+  stage: clean
+  tags:
+    - shell
+  only:
+    - tags
+  script:
+    - docker rmi $(cat REPOSITORY)/${CI_PROJECT_PATH}:$(cat VERSION)
