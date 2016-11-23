@@ -16,9 +16,9 @@ RUN echo '@edge http://nl.alpinelinux.org/alpine/edge/main' >> /etc/apk/reposito
 	apk add --update --no-cache \
 		acl \
 		bash \
-		"postgresql@edge>=${PG_VERSION}" \
-		"postgresql-client@edge>=${PG_VERSION}" \
-		"postgresql-contrib>=${PG_VERSION}"
+		'postgresql@edge>='${PG_VERSION} \
+		'postgresql-client@edge>='${PG_VERSION} \
+		'postgresql-contrib>='${PG_VERSION}
 
 EXPOSE 5432/tcp
 
