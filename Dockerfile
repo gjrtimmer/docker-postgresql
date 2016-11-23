@@ -22,6 +22,8 @@ RUN echo '@edge http://nl.alpinelinux.org/alpine/edge/main' >> /etc/apk/reposito
 		postgresql-client@edge>=${PG_VERSION} \
 		postgresql-contrib>=${PG_VERSION}
 
-VOLUME ["${PG_HOME}", "${PG_LOGDIR}", "${PG_RUNDIR}"]
-		
 EXPOSE 5432/tcp
+
+WORKDIR ${PG_HOME}
+
+VOLUME ["${PG_HOME}", "${PG_LOGDIR}", "${PG_RUNDIR}"]
