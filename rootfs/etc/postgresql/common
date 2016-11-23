@@ -4,5 +4,11 @@
 PG_UID=${USERMAP_UID:-postgres}
 PG_GID=${USERMAP_GID:-postgres}
 
+RUN_UID_GID="${PG_UID}:${PG_GID}"
+if [ ${PG_UID} = "postgres" ] && [ ${PG_GID} = "postgres" ]; then
+	RUN_UID_GID=postgres
+fi
+
 export PG_UID
 export PG_GID
+export RUN_UID_GID
