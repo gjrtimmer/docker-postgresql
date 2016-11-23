@@ -1,5 +1,7 @@
 #!/usr/bin/with-contenv bash
 
+source /etc/postgresql/common
+
 # Create Certificate directory
 mkdir -p ${PG_CERTDIR}
 

@@ -1,5 +1,7 @@
 #!/usr/bin/with-contenv bash
 
+source /etc/postgresql/common
+
 # Create log directory
 mkdir -p ${PG_LOGDIR}
 
