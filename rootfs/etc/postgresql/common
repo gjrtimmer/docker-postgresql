@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source /etc/postgresql/env-defaults
+
 # MAP UID/GID
 PG_UID=${USERMAP_UID:-postgres}
 PG_GID=${USERMAP_GID:-postgres}
