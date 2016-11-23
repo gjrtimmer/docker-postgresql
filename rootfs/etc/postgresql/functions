@@ -2,6 +2,7 @@
 
 source /etc/postgresql/env-defaults
 
+# -----------------------------------------------------------------------------
 # MAP UID/GID
 PG_UID=${USERMAP_UID:-postgres}
 PG_GID=${USERMAP_GID:-postgres}
@@ -14,3 +15,10 @@ fi
 export PG_UID
 export PG_GID
 export RUN_UID_GID
+
+# -----------------------------------------------------------------------------
+
+PG_CONF=${PG_DATADIR}/postgresql.conf
+PG_HBA_CONF=${PG_DATADIR}/pg_hba.conf
+PG_IDENT_CONF=${PG_DATADIR}/pg_ident.conf
+PG_RECOVERY_CONF=${PG_DATADIR}/recovery.conf
