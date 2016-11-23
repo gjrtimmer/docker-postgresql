@@ -4,4 +4,4 @@ source /etc/postgresql/common
 
 
 
-exec s6-setuidgid postgres /usr/bin/postgres -D ${PG_DATADIR};
+exec s6-setuidgid ${PG_UID}:${PG_GID} /usr/bin/postgres -D ${PG_DATADIR};
