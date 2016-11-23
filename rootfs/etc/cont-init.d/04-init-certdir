@@ -8,4 +8,4 @@ mkdir -p ${PG_CERTDIR}
 
 # Set permissions
 chmod 0755 ${PG_CERTDIR}
-chown -R root:${PG_UID} ${PG_GID}
+chown -R root:${PG_GID} ${PG_CERTDIR}
