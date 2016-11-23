@@ -20,6 +20,8 @@ RUN echo '@edge http://nl.alpinelinux.org/alpine/edge/main' >> /etc/apk/reposito
 		"postgresql-client@edge>=${PG_VERSION}" \
 		"postgresql-contrib@edge>=${PG_VERSION}"
 
+COPY rootfs/ /
+		
 EXPOSE 5432/tcp
 
 WORKDIR ${PG_HOME}
