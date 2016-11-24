@@ -1,0 +1,5 @@
+#!/usr/bin/with-contenv bash
+
+source /etc/postgresql/functions
+
+initialize_database
