@@ -116,7 +116,7 @@ configure_recovery() {
 	
 		if [[ ! -f ${PG_RECOVERY_CONF} ]]; then
 			# initialize recovery.conf on the firstrun (slave only)
-			exec_as_postgres touch ${PG_RECOVERY_CONF}
+			s6-setuidgid ${PG_USER} touch ${PG_RECOVERY_CONF}
 			( 
 				echo "standby_mode = 'on'";
 				echo "primary_conninfo = 'host=${REPLICATION_HOST} port=${REPLICATION_PORT} user=${REPLICATION_USER} password=${REPLICATION_PASS} sslmode=${REPLICATION_SSLMODE}'";
