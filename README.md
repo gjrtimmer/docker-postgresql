@@ -316,6 +316,6 @@ For example, if you want to assign the `postgres` user of the container the UID 
 
 ```bash
 docker run --name postgresql -itd --restart always \
-  --env 'USERMAP_UID=999' --env 'USERMAP_GID=999' \
+  --env 'PG_UID=999' --env 'PG_GID=999' \
   registry.timmertech.nl/docker/apline-postgresql:9.6.0
 ```
