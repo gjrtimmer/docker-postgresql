@@ -1,5 +1,8 @@
 #!/bin/bash
 
+PG_USER=postgres
+PG_CERTDIR=/etc/postgresql/certs
+
 PG_SSL=${PG_SSL:-}
 
 PG_TRUST_LOCALNET=${PG_TRUST_LOCALNET:-$PSQL_TRUST_LOCALNET} # backward compatibility
