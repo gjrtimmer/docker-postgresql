@@ -6,7 +6,7 @@ case "$1" in
 	-a|--all-locales)
 		echo ${LANG}
 		echo ${LANG}
-		echo ${LANG}
+		echo "POSIX"
 	;;
 	
 	*)
