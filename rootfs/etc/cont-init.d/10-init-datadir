@@ -9,4 +9,4 @@ if [[ -d ${PG_DATADIR} ]]; then
 	find ${PG_DATADIR} -type d -exec chmod 0700 {} \;
 fi
 
-chown -R ${PG_UID}:${PG_GID} ${PG_HOME}
+chown -R ${PG_USER}:${PG_USER} ${PG_HOME}
