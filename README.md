@@ -3,12 +3,12 @@
 # docker/alpine-postgresql:9.6.0
 
 <br>
-
 # Image details:
 - Alpine Linux: 3.4
 - S6-Overlay: 1.18.1.5
 - Postgresql: 9.6.0-r1
 
+<br>
 # Index
 
 - [Introduction](#introduction)
@@ -31,7 +31,7 @@
   - [Creating a backup](#creating-a-backup)
   - [UID/GID mapping](#uidgid-mapping)
 
- 
+<br>
 # Introduction
 
 `Dockerfile` to create a [Docker](https://www.docker.com/) container image for [PostgreSQL](http://postgresql.org/).
@@ -39,7 +39,6 @@
 PostgreSQL is an object-relational database management system (ORDBMS) with an emphasis on extensibility and standards-compliance [[source](https://en.wikipedia.org/wiki/PostgreSQL)].
 
 <br>
-
 # Getting Started
 
 ```bash
@@ -47,7 +46,6 @@ docker pull registry.timmertech.nl/docker/alpine-postgresql
 ```
 
 <br> 
-
 ## Volume Locations
 
 Default Locations:
@@ -59,11 +57,9 @@ Default Locations:
 | Run Directory | /var/run/postgresql |
 
 <br>
-
 ## Configuration Options
 
 <br>
-
 ### General Options
 
 | Option | Description |
@@ -79,7 +75,6 @@ Default Locations:
 | [DB_EXTENSION](#enabling-extensions) `EXTENSION` | Extension to enable for database(s) within `DB_NAME`, multiple can be provided separated with a comma `,` |
 
 <br>
-
 ### Replication Options
 
 | Option | Description |
@@ -92,7 +87,6 @@ Default Locations:
 | [REPLICATION_SSLMODE](#setting-up-a-replication-cluster) `MODE` | SSL Mode for Replication (default: prefer) |
 
 <br>
-
 ## Persistence
 
 For PostgreSQL to preserve its state across container shutdown and startup you should mount a volume at `/var/lib/postgresql`.
@@ -104,7 +98,9 @@ SELinux users should update the security context of the host mountpoint so that 
 ```bash
 mkdir -p /srv/docker/postgresql
 chcon -Rt svirt_sandbox_file_t /srv/docker/postgresql
+```
 
+<br>
 ## Trusting local connections
 
 By default connections to the PostgreSQL server need to authenticated using a password. If desired you can trust connections from the local network using the `PG_TRUST_LOCALNET` variable.
@@ -129,6 +125,7 @@ docker run --name postgresql -itd --restart always \
   registry.timmertech.nl/docker/apline-postgresql:9.6.0
 ```
 
+<br>
 ## Creating database user
 
 A new PostgreSQL database user can be created by specifying the `DB_USER` and `DB_PASS` variables while starting the container.
@@ -146,6 +143,7 @@ docker run --name postgresql -itd --restart always \
 > - No changes will be made if the user already exists
 > - Only a single user can be created at each launch
 
+<br>
 ## Creating databases
 
 A new PostgreSQL database can be created by specifying the `DB_NAME` variable while starting the container.
@@ -166,6 +164,7 @@ docker run --name postgresql -itd --restart always \
   registry.timmertech.nl/docker/apline-postgresql:9.6.0
 ```
 
+<br>
 ## Granting user access to a database
 
 If the `DB_USER` and `DB_PASS` variables are specified along with the `DB_NAME` variable, then the user specified in `DB_USER` will be granted access to all the databases listed in `DB_NAME`. Note that if the user and/or databases do not exist, they will be created.
@@ -179,6 +178,7 @@ docker run --name postgresql -itd --restart always \
 
 In the above example `dbuser` with be granted access to both the `dbname1` and `dbname2` databases.
 
+<br>
 # Enabling extensions
 
 The image also packages the [postgres contrib module](http://www.postgresql.org/docs/9.4/static/contrib.html). A comma separated list of modules can be specified using the `DB_EXTENSION` parameter.
@@ -195,6 +195,7 @@ The above command enables the `unaccent` and `pg_trgm` modules on the databases 
 >
 > This option deprecates the `DB_UNACCENT` parameter.
 
+<br>
 ## Creating replication user
 
 Similar to the creation of a database user, a new PostgreSQL replication user can be created by specifying the `REPLICATION_USER` and `REPLICATION_PASS` variables while starting the container.
@@ -214,6 +215,7 @@ docker run --name postgresql -itd --restart always \
 
 *It is a good idea to create a replication user even if you are not going to use it as it will allow you to setup slave nodes and/or generate snapshots and backups when the need arises.*
 
+<br>
 ## Setting up a replication cluster
 
 When the container is started, it is by default configured to act as a master node in a replication cluster. This means that you can scale your PostgreSQL database backend when the need arises without incurring any downtime. However do note that a replication user must exist on the master node for this to work.
@@ -231,6 +233,7 @@ Notice that no additional arguments are specified while starting the master node
 
 To create a replication slave the `REPLICATION_MODE` variable should be set to `slave` and additionally the `REPLICATION_HOST`, `REPLICATION_PORT`, `REPLICATION_SSLMODE`, `REPLICATION_USER` and `REPLICATION_PASS` variables should be specified.
 
+<br>
 ## Create a slave node
 
 ```bash
@@ -259,6 +262,7 @@ Here are some important notes about a PostgreSQL replication cluster:
  - Slaves are read-only
  - For best performance, limit the reads to the slave nodes
 
+<br>
 ## Creating a snapshot
 
 Similar to a creating replication slave node, you can create a snapshot of the master by specifying `REPLICATION_MODE=snapshot`.
@@ -278,6 +282,7 @@ The difference between a slave and a snapshot is that a slave is read-only and u
 
 This is useful for developers to quickly snapshot the current state of a live database and use it for development/debugging purposes without altering the database on the live instance.
 
+<br>
 ## Creating a backup
 
 Just as the case of setting up a slave node or generating a snapshot, you can also create a backup of the data on the master by specifying `REPLICATION_MODE=backup`.
@@ -298,6 +303,7 @@ docker run --name postgresql-backup -it --rm \
 
 Once the backup is generated, the container will exit and the backup of the master data will be available at `/srv/docker/backups/postgresql.XXXXXXXXXXXX/`. Restoring the backup involves starting a container with the data in `/srv/docker/backups/postgresql.XXXXXXXXXXXX`.
 
+<br>
 # UID/GID mapping
 
 The files and processes created by the container are owned by the `postgres` user that is internal to the container. In the absense of user namespace in docker the UID and GID of the containers `postgres` user may have different meaning on the host.
