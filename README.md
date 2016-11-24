@@ -3,9 +3,11 @@
 # docker/alpine-postgresql:9.6.0
 
 # Image details:
- - Alpine Linux: 3.4
- - S6-Overlay: 1.18.1.5
- - Postgresql: 9.6.0-r1
+- Alpine Linux: 3.4
+- S6-Overlay: 1.18.1.5
+- Postgresql: 9.6.0-r1
+
+# Index
 
 - [Introduction](#introduction)
 - [Getting Started](#getting-started)
