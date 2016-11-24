@@ -18,7 +18,6 @@ RUN echo '@edge http://nl.alpinelinux.org/alpine/edge/main' >> /etc/apk/reposito
 		acl \
 		bash \
 		shadow@community \
-		dateutils@community \
 		postgresql@edge=${PG_PKG_VERSION} \
 		postgresql-client@edge=${PG_PKG_VERSION} \
 		postgresql-contrib@edge=${PG_PKG_VERSION}
