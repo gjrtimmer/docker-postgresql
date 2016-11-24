@@ -12,12 +12,12 @@ PG_RECOVERY_CONF=${PG_DATADIR}/recovery.conf
 map_uid_gid() {
   USERMAP_ORIG_UID=$(id -u postgres)
   USERMAP_ORIG_GID=$(id -g postgres)
-  USERMAP_GID=${USERMAP_GID:-${USERMAP_UID:-$USERMAP_ORIG_GID}}
-  USERMAP_UID=${USERMAP_UID:-$USERMAP_ORIG_UID}
-  if [[ ${USERMAP_UID} != ${USERMAP_ORIG_UID} ]] || [[ ${USERMAP_GID} != ${USERMAP_ORIG_GID} ]]; then
-    echo "Adapting uid and gid for ${PG_USER}:${PG_USER} to $USERMAP_UID:$USERMAP_GID"
-    groupmod -g ${USERMAP_GID} ${PG_USER}
-    sed -i -e "s|:${USERMAP_ORIG_UID}:${USERMAP_GID}:|:${USERMAP_UID}:${USERMAP_GID}:|" /etc/passwd
+  PG_GID=${PG_GID:-${PG_UID:-$USERMAP_ORIG_GID}}
+  PG_UID=${PG_UID:-$USERMAP_ORIG_UID}
+  if [[ ${PG_UID} != ${USERMAP_ORIG_UID} ]] || [[ ${PG_GID} != ${USERMAP_ORIG_GID} ]]; then
+    echo "Adapting uid and gid for ${PG_USER}:${PG_USER} to $PG_UID:$PG_GID"
+    groupmod -g ${PG_GID} ${PG_USER}
+    sed -i -e "s|:${USERMAP_ORIG_UID}:${PG_GID}:|:${PG_UID}:${PG_GID}:|" /etc/passwd
   fi
 }
 
