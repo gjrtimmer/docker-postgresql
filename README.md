@@ -46,7 +46,7 @@ By default connections to the PostgreSQL server need to authenticated using a pa
 ```bash
 docker run --name postgresql -itd --restart always \
   --env 'PG_TRUST_LOCALNET=true' \
-  registry.timmertech.nl/docker/apline-postgresql:9.5-3
+  registry.timmertech.nl/docker/apline-postgresql:9.6.0
 ```
 
 > **Note**
