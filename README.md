@@ -16,7 +16,7 @@
   - [Volume Locations](#volume-locations)
   - [Configuration Options](#configuration-options)
     - [General Options](#general-options)
-	- [Replication Options]*(#replication-options)
+	- [Replication Options](#replication-options)
   - [Persistence](#persistence)
   - [Trusting local connections](#trusting-local-connections)
   - [Setting `postgres` user password](#setting-postgres-user-password)
@@ -44,6 +44,8 @@ PostgreSQL is an object-relational database management system (ORDBMS) with an e
 docker pull registry.timmertech.nl/docker/alpine-postgresql
 ```
 
+<br> 
+
 ## Volume Locations
 
 Default Locations:
@@ -54,7 +56,11 @@ Default Locations:
 | Log Directory | /var/log/postgresql |
 | Run Directory | /var/run/postgresql |
 
+<br>
+
 ## Configuration Options
+
+<br>
 
 ### General Options
 
@@ -69,6 +75,8 @@ Default Locations:
 | [DB_NAME](#creating-databases) `NAME` | Database(s) to create, multiple can be provided separated with a comma `,` |
 | [DB_TEMPLATE](http://www.postgresql.org/docs/9.4/static/manage-ag-templatedbs.html) `TEMPLATE` | Template to use for newly created database(s) [Template Databases](http://www.postgresql.org/docs/9.4/static/manage-ag-templatedbs.html) |
 | [DB_EXTENSION](#enabling-extensions) `EXTENSION` | Extension to enable for database(s) within `DB_NAME`, multiple can be provided separated with a comma `,` |
+
+<br>
 
 ### Replication Options
 
