@@ -88,3 +88,17 @@ configure_ssl() {
   
   set_postgresql_param "ssl" "${PG_SSL}"
 }
+
+configure_hot_standby() {
+	case ${REPLICATION_MODE} in
+		slave|snapshot|backup) ;;
+		*)
+			echo "Configuring hot standby..."
+			set_postgresql_param "wal_level" "hot_standby"
+			set_postgresql_param "max_wal_senders" "16"
+			set_postgresql_param "checkpoint_segments" "8"
+			set_postgresql_param "wal_keep_segments" "32"
+			set_postgresql_param "hot_standby" "on"
+		;;
+	esac
+}
