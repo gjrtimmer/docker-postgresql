@@ -37,7 +37,9 @@
 `Dockerfile` to create a [Docker](https://www.docker.com/) container image for [PostgreSQL](http://postgresql.org/).
 
 PostgreSQL is an object-relational database management system (ORDBMS) with an emphasis on extensibility and standards-compliance [[source](https://en.wikipedia.org/wiki/PostgreSQL)].
-  
+
+<br>
+
 # Getting Started
 
 ```bash
@@ -88,6 +90,8 @@ Default Locations:
 | [REPLICATION_HOST](#setting-up-a-replication-cluster) `HOST` | Replication host |
 | [REPLICATION_PORT](#setting-up-a-replication-cluster) `POST` | Port number of replication host (default: 5432) |
 | [REPLICATION_SSLMODE](#setting-up-a-replication-cluster) `MODE` | SSL Mode for Replication (default: prefer) |
+
+<br>
 
 ## Persistence
 
