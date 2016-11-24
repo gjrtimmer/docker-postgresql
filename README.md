@@ -86,7 +86,7 @@ Default Locations:
 |--------|-------------|
 | [REPLICATION_USER](#creating-replication-user) `USER` | Username for the replication user |
 | [REPLICATION_PASS](#creating-replication-user) `PASS` | Password for the replication user |
-| REPLICATION_MODE `MODE` | Replication mode: `[slave](#create-a-slave-node)` / `[snapshot](#creating-a-snapshot)` / `[backup](#creating-a-backup)` (default: master) |
+| REPLICATION_MODE `MODE` | Replication mode: [slave](#create-a-slave-node) / [snapshot](#creating-a-snapshot) / [backup](#creating-a-backup) (default: master) |
 | [REPLICATION_HOST](#setting-up-a-replication-cluster) `HOST` | Replication host |
 | [REPLICATION_PORT](#setting-up-a-replication-cluster) `POST` | Port number of replication host (default: 5432) |
 | [REPLICATION_SSLMODE](#setting-up-a-replication-cluster) `MODE` | SSL Mode for Replication (default: prefer) |
