@@ -10,60 +10,81 @@ PG_RECOVERY_CONF=${PG_DATADIR}/recovery.conf
 # -----------------------------------------------------------------------------
 
 map_uid_gid() {
-  USERMAP_ORIG_UID=$(id -u postgres)
-  USERMAP_ORIG_GID=$(id -g postgres)
-  PG_GID=${PG_GID:-${PG_UID:-$USERMAP_ORIG_GID}}
-  PG_UID=${PG_UID:-$USERMAP_ORIG_UID}
-  if [[ ${PG_UID} != ${USERMAP_ORIG_UID} ]] || [[ ${PG_GID} != ${USERMAP_ORIG_GID} ]]; then
-    echo "Adapting uid and gid for ${PG_USER}:${PG_USER} to $PG_UID:$PG_GID"
-    groupmod -o -g ${PG_GID} ${PG_USER}
-    sed -i -e "s|:${USERMAP_ORIG_UID}:${PG_GID}:|:${PG_UID}:${PG_GID}:|" /etc/passwd
-	usermod -s /bin/bash ${PG_USER}
-  fi
+	USERMAP_ORIG_UID=$(id -u postgres)
+	USERMAP_ORIG_GID=$(id -g postgres)
+	PG_GID=${PG_GID:-${PG_UID:-$USERMAP_ORIG_GID}}
+	PG_UID=${PG_UID:-$USERMAP_ORIG_UID}
+	if [[ ${PG_UID} != ${USERMAP_ORIG_UID} ]] || [[ ${PG_GID} != ${USERMAP_ORIG_GID} ]]; then
+		echo "Adapting uid and gid for ${PG_USER}:${PG_USER} to $PG_UID:$PG_GID"
+		groupmod -o -g ${PG_GID} ${PG_USER}
+		sed -i -e "s|:${USERMAP_ORIG_UID}:${PG_GID}:|:${PG_UID}:${PG_GID}:|" /etc/passwd
+		usermod -s /bin/bash ${PG_USER}
+	fi
 }
 
 # -----------------------------------------------------------------------------
 
 set_postgresql_param() {
-  local key=${1}
-  local value=${2}
-  local verbosity=${3:-verbose}
+	local key=${1}
+	local value=${2}
+	local verbosity=${3:-verbose}
 
-  if [[ -n ${value} ]]; then
-    local current=$(s6-setuidgid ${PG_USER} sed -n -e "s/^\(${key} = '\)\([^ ']*\)\(.*\)$/\2/p" ${PG_CONF})
-    if [[ "${current}" != "${value}" ]]; then
-      if [[ ${verbosity} == verbose ]]; then
-        echo "Setting postgresql.conf parameter: ${key} = '${value}'"
-      fi
-      value="$(echo "${value}" | sed 's|[&]|\\&|g')"
-      s6-setuidgid ${PG_USER} sed -i "s|^[#]*[ ]*${key} = .*|${key} = '${value}'|" ${PG_CONF}
-    fi
-  fi
+	if [[ -n ${value} ]]; then
+		local current=$(s6-setuidgid ${PG_USER} sed -n -e "s/^\(${key} = '\)\([^ ']*\)\(.*\)$/\2/p" ${PG_CONF})
+		
+		if [[ "${current}" != "${value}" ]]; then
+			
+			if [[ ${verbosity} == verbose ]]; then
+				echo "Setting postgresql.conf parameter: ${key} = '${value}'"
+			fi
+	
+			value="$(echo "${value}" | sed 's|[&]|\\&|g')"
+			s6-setuidgid ${PG_USER} sed -i "s|^[#]*[ ]*${key} = .*|${key} = '${value}'|" ${PG_CONF}
+		fi
+	fi
 }
 
 # -----------------------------------------------------------------------------
 
 set_recovery_param() {
-  local key=${1}
-  local value=${2}
-  local hide=${3}
-  if [[ -n ${value} ]]; then
-    local current=$(s6-setuidgid ${PG_USER} sed -n -e "s/^\(.*\)\(${key}=\)\([^ ']*\)\(.*\)$/\3/p" ${PG_RECOVERY_CONF})
-    if [[ "${current}" != "${value}" ]]; then
-      case ${hide} in
-        true)  echo "Setting primary_conninfo parameter: ${key}" ;;
-        *) echo "Setting primary_conninfo parameter: ${key} = '${value}'" ;;
-      esac
-      s6-setuidgid ${PG_USER} sed -i "s|${key}=[^ ']*|${key}=${value}|" ${PG_RECOVERY_CONF}
-    fi
-  fi
+	local key=${1}
+	local value=${2}
+	local hide=${3}
+  
+	if [[ -n ${value} ]]; then
+		local current=$(s6-setuidgid ${PG_USER} sed -n -e "s/^\(.*\)\(${key}=\)\([^ ']*\)\(.*\)$/\3/p" ${PG_RECOVERY_CONF})
+
+		if [[ "${current}" != "${value}" ]]; then
+			case ${hide} in
+				true)  	echo "Setting primary_conninfo parameter: ${key}" ;;
+				*) 		echo "Setting primary_conninfo parameter: ${key} = '${value}'" ;;
+			esac
+
+			s6-setuidgid ${PG_USER} sed -i "s|${key}=[^ ']*|${key}=${value}|" ${PG_RECOVERY_CONF}
+		fi
+	fi
 }
 
 # -----------------------------------------------------------------------------
 
 set_hba_param() {
-  local value=${1}
-  if ! grep -q "$(sed "s| | \\\+|g" <<< ${value})" ${PG_HBA_CONF}; then
-    echo "${value}" >> ${PG_HBA_CONF}
+	local value=${1}
+
+	if ! grep -q "$(sed "s| | \\\+|g" <<< ${value})" ${PG_HBA_CONF}; then
+		echo "${value}" >> ${PG_HBA_CONF}
+	fi
+}
+
+# -----------------------------------------------------------------------------
+
+configure_ssl() {
+  if [[ -f ${PG_CERTDIR}/server.crt && -f ${PG_CERTDIR}/server.key ]]; then
+    PG_SSL=${PG_SSL:-on}
+    set_postgresql_param "ssl_cert_file" "${PG_CERTDIR}/server.crt"
+    set_postgresql_param "ssl_key_file" "${PG_CERTDIR}/server.key"
   fi
+  
+  PG_SSL=${PG_SSL:-off}
+  
+  set_postgresql_param "ssl" "${PG_SSL}"
 }
