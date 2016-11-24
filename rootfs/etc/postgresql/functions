@@ -9,6 +9,18 @@ PG_RECOVERY_CONF=${PG_DATADIR}/recovery.conf
 
 # -----------------------------------------------------------------------------
 
+# Fake implementation of locale command
+locale() {
+	case case "$1" in
+		*)
+			echo "${LANG}"
+			return 0
+		;;
+	esac
+}
+
+# -----------------------------------------------------------------------------
+
 map_uid_gid() {
 	USERMAP_ORIG_UID=$(id -u postgres)
 	USERMAP_ORIG_GID=$(id -g postgres)
