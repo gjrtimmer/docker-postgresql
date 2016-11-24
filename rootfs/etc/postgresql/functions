@@ -287,7 +287,7 @@ initialize_database() {
 				mv ${PG_HOME}/${PG_OLD_VERSION} ${PG_HOME}/${PG_OLD_VERSION}.migrating
 
 				echo "  Installing PostgreSQL ${PG_OLD_VERSION}..."
-				if [ ! ( apk add --update --no-cache postgresql@edge=${PG_OLD_VERSION} postgresql-client@edge${PG_OLD_VERSION} ) >/dev/null ]; then
+				if ! ( apk add --update --no-cache postgresql@edge=${PG_OLD_VERSION} postgresql-client@edge${PG_OLD_VERSION} ) >/dev/null; then
 					echo "ERROR! Failed to install PostgreSQL ${PG_OLD_VERSION}. Exiting..."
 		
 					# first move the old data back
