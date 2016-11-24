@@ -68,8 +68,8 @@ Default Locations:
 | [PG_GID](#uidgid-mapping) `GID` | Map ownership to GID |
 | [PG_TRUST_LOCALNET](#trusting-local-connections) `true || false` | Enabling, will trust connections from the local network (default: false) [Details](#trusting-local-connections) |
 | [PG_PASSWORD](#setting-postgres-user-password) `PASS` | Password for `postgres` user |
-| [DB_USER]#creating-database-user) `USER` | Username for database(s) provided with `DB_NAME` |
-| [DB_PASS]#creating-database-user) `PASS` | Password for database(s) provided with `DB_NAME` |
+| [DB_USER](#creating-database-user) `USER` | Username for database(s) provided with `DB_NAME` |
+| [DB_PASS](#creating-database-user) `PASS` | Password for database(s) provided with `DB_NAME` |
 | [DB_NAME](#creating-databases) `NAME` | Database(s) to create, multiple can be provided separated with a comma `,` |
 | [DB_TEMPLATE](http://www.postgresql.org/docs/9.4/static/manage-ag-templatedbs.html) `TEMPLATE` | Template to use for newly created database(s) [Template Databases](http://www.postgresql.org/docs/9.4/static/manage-ag-templatedbs.html) |
 | [DB_EXTENSION](#enabling-extensions) `EXTENSION` | Extension to enable for database(s) within `DB_NAME`, multiple can be provided separated with a comma `,` |
