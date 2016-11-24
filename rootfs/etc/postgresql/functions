@@ -155,3 +155,22 @@ create_user() {
 		esac
 	fi
 }
+
+load_extensions() {
+	local database=${1?missing argument}
+
+	if [[ ${DB_UNACCENT} == true ]]; then
+		echo
+		echo "WARNING: "
+		echo "  The DB_UNACCENT option will be deprecated in favour of DB_EXTENSION soon."
+		echo "  Please migrate to using DB_EXTENSION"
+		echo
+		echo "Loading unaccent extension..."
+		psql -U ${PG_USER} -d ${database} -c "CREATE EXTENSION IF NOT EXISTS unaccent;" >/dev/null 2>&1
+	fi
+
+	for extension in $(awk -F',' '{for (i = 1 ; i <= NF ; i++) print $i}' <<< "${DB_EXTENSION}"); do
+		echo "Loading ${extension} extension..."
+		psql -U ${PG_USER} -d ${database} -c "CREATE EXTENSION IF NOT EXISTS ${extension};" >/dev/null 2>&1
+	done
+}
