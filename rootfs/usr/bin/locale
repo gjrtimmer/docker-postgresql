@@ -1,5 +1,4 @@
-#!/bin/bash
-with-contenv
+#!/usr/bin/with-contenv bash
 
 # Fake implementation of locale command
 case "$1" in
