@@ -1,0 +1,10 @@
+#!/bin/bash
+with-contenv
+
+# Fake implementation of locale command
+case "$1" in
+	*)
+		echo "${LANG}"
+		exit 0
+	;;
+esac
