@@ -102,3 +102,8 @@ configure_hot_standby() {
 		;;
 	esac
 }
+
+set_resolvconf_perms() {
+	echo "Setting resolv.conf ACLs..."
+	setfacl -m user:${PG_USER}:r /etc/resolv.conf || true
+}
