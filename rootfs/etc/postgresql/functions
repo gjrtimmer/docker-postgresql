@@ -18,6 +18,7 @@ map_uid_gid() {
     echo "Adapting uid and gid for ${PG_USER}:${PG_USER} to $PG_UID:$PG_GID"
     groupmod -o -g ${PG_GID} ${PG_USER}
     sed -i -e "s|:${USERMAP_ORIG_UID}:${PG_GID}:|:${PG_UID}:${PG_GID}:|" /etc/passwd
+	usermod -s /bin/bash ${PG_USER}
   fi
 }
 
