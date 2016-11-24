@@ -1,6 +1,9 @@
 #!/bin/bash
 
+# Static variable
+# no need to add them to the Dockerfile
 PG_USER=postgres
+PG_BINDIR=/usr/bin
 PG_CERTDIR=/etc/postgresql/certs
 
 PG_SSL=${PG_SSL:-}
