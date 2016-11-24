@@ -221,3 +221,130 @@ create_replication_user() {
 		esac
 	fi
 }
+
+initialize_database() {
+	if [[ ! -f ${PG_DATADIR}/PG_VERSION ]]; then
+		case ${REPLICATION_MODE} in
+			slave|snapshot|backup)
+			if [[ -z $REPLICATION_HOST ]]; then
+				echo "  ERROR! Cannot continue without the REPLICATION_HOST. Exiting..."
+				exit 1
+			fi
+
+			if [[ -z $REPLICATION_USER ]]; then
+				echo "  ERROR! Cannot continue without the REPLICATION_USER. Exiting..."
+				exit 1
+			fi
+
+			if [[ -z $REPLICATION_PASS ]]; then
+				echo "  ERROR! Cannot continue without the REPLICATION_PASS. Exiting..."
+				exit 1
+			fi
+
+			echo -n "  Waiting for $REPLICATION_HOST to accept connections (60s timeout)"
+			timeout=60
+			while [ ! pg_isready -h $REPLICATION_HOST -p $REPLICATION_PORT -t 1 >/dev/null 2>&1 ]
+			do
+				timeout=$(expr $timeout - 1)
+				if [[ $timeout -eq 0 ]]; then
+					echo " [TIMEOUT]"
+					exit 1
+				fi
+				echo -n "."
+				sleep 1
+			done
+			echo " [CONNECTED]"
+
+			case ${REPLICATION_MODE} in
+				slave)
+					echo "  Replicating initial data from $REPLICATION_HOST..."
+					s6-setuidgid ${PG_USER} PGPASSWORD=$REPLICATION_PASS ${PG_BINDIR}/pg_basebackup -D ${PG_DATADIR} \
+						-h ${REPLICATION_HOST} -p ${REPLICATION_PORT} -U ${REPLICATION_USER} -X stream -w >/dev/null
+				;;
+			
+				snapshot)
+					echo "  Generating a snapshot data on $REPLICATION_HOST..."
+					s6-setuidgid ${PG_USER} PGPASSWORD=$REPLICATION_PASS ${PG_BINDIR}/pg_basebackup -D ${PG_DATADIR} \
+						-h ${REPLICATION_HOST} -p ${REPLICATION_PORT} -U ${REPLICATION_USER} -X fetch -w >/dev/null
+				;;
+			
+				backup)
+					echo "  Backing up data on $REPLICATION_HOST..."
+					s6-setuidgid ${PG_USER} PGPASSWORD=$REPLICATION_PASS ${PG_BINDIR}/pg_basebackup -D ${PG_DATADIR} \
+						-h ${REPLICATION_HOST} -p ${REPLICATION_PORT} -U ${REPLICATION_USER} -X fetch -w >/dev/null
+					exit 0
+				;;
+			esac
+		;;
+		
+		*)
+			echo "  Initializing database..."
+			PG_OLD_VERSION=$(find ${PG_HOME}/[0-9].[0-9]/main -maxdepth 1 -name PG_VERSION 2>/dev/null | grep -v $PG_VERSION | sort -r | head -n1 | cut -d'/' -f5)
+			if [[ -n ${PG_OLD_VERSION} ]]; then
+				echo "  Migrating PostgreSQL ${PG_OLD_VERSION} data to ${PG_VERSION}..."
+
+				# protect the existing data from being altered by apt-get
+				mv ${PG_HOME}/${PG_OLD_VERSION} ${PG_HOME}/${PG_OLD_VERSION}.migrating
+
+				echo "  Installing PostgreSQL ${PG_OLD_VERSION}..."
+				if [ ! ( apk add --update --no-cache postgresql@edge=${PG_OLD_VERSION} postgresql-client@edge${PG_OLD_VERSION} ) >/dev/null ]; then
+					echo "ERROR! Failed to install PostgreSQL ${PG_OLD_VERSION}. Exiting..."
+		
+					# first move the old data back
+					rm -rf ${PG_HOME}/${PG_OLD_VERSION}
+					mv ${PG_HOME}/${PG_OLD_VERSION}.migrating ${PG_HOME}/${PG_OLD_VERSION}
+					exit 1
+				fi
+
+				# we're ready to migrate, move back the old data and remove the trap
+				rm -rf ${PG_HOME}/${PG_OLD_VERSION}
+				mv ${PG_HOME}/${PG_OLD_VERSION}.migrating ${PG_HOME}/${PG_OLD_VERSION}
+			fi
+
+			if [[ -n $PG_PASSWORD ]]; then
+				echo "${PG_PASSWORD}" > /tmp/pwfile
+			fi
+
+			s6-setuidgid ${PG_USER} ${PG_BINDIR}/initdb --pgdata=${PG_DATADIR} \
+				--username=${PG_USER} --encoding=unicode --auth=trust ${PG_PASSWORD:+--pwfile=/tmp/pwfile} >/dev/null
+
+			if [[ -n ${PG_OLD_VERSION} ]]; then
+				PG_OLD_DATADIR=${PG_HOME}/${PG_OLD_VERSION}/main
+				PG_OLD_CONF=${PG_OLD_DATADIR}/postgresql.conf
+				PG_OLD_HBA_CONF=${PG_OLD_DATADIR}/pg_hba.conf
+				PG_OLD_IDENT_CONF=${PG_OLD_DATADIR}/pg_ident.conf
+
+				echo -n "  Migration in progress. Please be patient..."
+				s6-setuidgid ${PG_USER} ${PG_BINDIR}/pg_upgrade \
+					-d ${PG_OLD_DATADIR} -D ${PG_DATADIR} \
+					-o "-c config_file=${PG_OLD_CONF} --hba_file=${PG_OLD_HBA_CONF} --ident_file=${PG_OLD_IDENT_CONF}" \
+					-O "-c config_file=${PG_CONF} --hba_file=${PG_HBA_CONF} --ident_file=${PG_IDENT_CONF}" >/dev/null
+				echo " [DONE]"
+			fi
+		;;
+		esac
+
+		configure_hot_standby
+
+		# Change DSM from `posix' to `sysv' if we are inside an lx-brand container
+		if [[ $(uname -v) == "BrandZ virtual linux" ]]; then
+			set_postgresql_param "dynamic_shared_memory_type" "sysv"
+		fi
+	fi
+
+	# configure path to data_directory
+	set_postgresql_param "data_directory" "${PG_DATADIR}"
+
+	# configure logging
+	set_postgresql_param "log_directory" "${PG_LOGDIR}"
+	set_postgresql_param "log_filename" "postgresql-${PG_VERSION}-main.log"
+
+	# trust connections from local network
+	if [[ ${PG_TRUST_LOCALNET} == true ]]; then
+		echo "  Trusting connections from the local network..."
+		set_hba_param "host all all samenet trust"
+	fi
+
+	# allow remote connections to postgresql database
+	set_hba_param "host all all 0.0.0.0/0 md5"
+}
