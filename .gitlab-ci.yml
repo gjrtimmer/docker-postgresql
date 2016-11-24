@@ -40,7 +40,7 @@ clean:
   tags:
     - shell
   script:
-    - docker rmi $(cat REPOSITORY)/${CI_PROJECT_PATH}
+    - [ ! -z $(docker images -q $(cat REPOSITORY)/${CI_PROJECT_PATH}) ] || docker rmi $(cat REPOSITORY)/${CI_PROJECT_PATH}
 
 clean-release:
   stage: clean
@@ -49,4 +49,4 @@ clean-release:
   only:
     - tags
   script:
-    - docker rmi $(cat REPOSITORY)/${CI_PROJECT_PATH}:$(cat VERSION)
+    - [ ! -z $(docker images -q $(cat REPOSITORY)/${CI_PROJECT_PATH}:$(cat VERSION)) ] || docker rmi $(cat REPOSITORY)/${CI_PROJECT_PATH}:$(cat VERSION)
