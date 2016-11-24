@@ -2,23 +2,25 @@
 
 source /etc/postgresql/env-defaults
 
-# -----------------------------------------------------------------------------
-# MAP UID/GID
-PG_UID=${USERMAP_UID:-postgres}
-PG_GID=${USERMAP_GID:-postgres}
-
-RUN_UID_GID="${PG_UID}:${PG_GID}"
-if [ ${PG_UID} = "postgres" ] && [ ${PG_GID} = "postgres" ]; then
-	RUN_UID_GID=postgres
-fi
-
-export PG_UID
-export PG_GID
-export RUN_UID_GID
-
-# -----------------------------------------------------------------------------
-
 PG_CONF=${PG_DATADIR}/postgresql.conf
 PG_HBA_CONF=${PG_DATADIR}/pg_hba.conf
 PG_IDENT_CONF=${PG_DATADIR}/pg_ident.conf
 PG_RECOVERY_CONF=${PG_DATADIR}/recovery.conf
+
+# -----------------------------------------------------------------------------
+
+map_uid_gid() {
+  USERMAP_ORIG_UID=$(id -u postgres)
+  USERMAP_ORIG_GID=$(id -g postgres)
+  USERMAP_GID=${USERMAP_GID:-${USERMAP_UID:-$USERMAP_ORIG_GID}}
+  USERMAP_UID=${USERMAP_UID:-$USERMAP_ORIG_UID}
+  if [[ ${USERMAP_UID} != ${USERMAP_ORIG_UID} ]] || [[ ${USERMAP_GID} != ${USERMAP_ORIG_GID} ]]; then
+    echo "Adapting uid and gid for ${PG_USER}:${PG_USER} to $USERMAP_UID:$USERMAP_GID"
+    groupmod -g ${USERMAP_GID} ${PG_USER}
+    sed -i -e "s|:${USERMAP_ORIG_UID}:${USERMAP_GID}:|:${USERMAP_UID}:${USERMAP_GID}:|" /etc/passwd
+  fi
+}
+
+# -----------------------------------------------------------------------------
+
+
