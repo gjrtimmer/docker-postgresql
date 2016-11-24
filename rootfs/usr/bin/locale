@@ -3,6 +3,12 @@ with-contenv
 
 # Fake implementation of locale command
 case "$1" in
+	-a|--all-locales)
+		echo ${LANG}
+		echo ${LANG}
+		echo ${LANG}
+	;;
+	
 	*)
 		echo "LANG=\"${LANG}\""
 		echo "LC_CTYPE=\"${LANG}\""
@@ -18,6 +24,5 @@ case "$1" in
 		echo "LC_MEASUREMENT=\"${LANG}\""
 		echo "LC_IDENTIFICATION=\"${LANG}\""
 		echo "LC_ALL="
-		exit 0
 	;;
 esac
