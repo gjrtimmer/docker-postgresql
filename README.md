@@ -91,8 +91,6 @@ Default Locations:
 
 For PostgreSQL to preserve its state across container shutdown and startup you should mount a volume at `/var/lib/postgresql`.
 
-> *The [Quickstart](#quickstart) command already mounts a volume for persistence.*
-
 SELinux users should update the security context of the host mountpoint so that it plays nicely with Docker:
 
 ```bash
@@ -115,6 +113,7 @@ docker run --name postgresql -itd --restart always \
 >
 > The local network here is network to which the container is attached. This has different meanings depending on the `--net` parameter specified while starting the container. In the default configuration, this parameter would trust connections from other containers on the `docker0` bridge.
 
+<br>
 ## Setting `postgres` user password
 
 By default the `postgres` user is not assigned a password and as a result you can only login to the PostgreSQL server locally. If you wish to login remotely to the PostgreSQL server as the `postgres` user, you will need to assign a password for the user using the `PG_PASSWORD` variable.
