@@ -4,7 +4,20 @@ with-contenv
 # Fake implementation of locale command
 case "$1" in
 	*)
-		echo "${LANG}"
+		echo "LANG=\"${LANG}\""
+		echo "LC_CTYPE=\"${LANG}\""
+		echo "LC_NUMERIC=\"${LANG}\""
+		echo "LC_TIME=\"${LANG}\""
+		echo "LC_COLLATE=\"${LANG}\""
+		echo "LC_MONETARY=\"${LANG}\""
+		echo "LC_MESSAGES=\"${LANG}\""
+		echo "LC_PAPER=\"${LANG}\""
+		echo "LC_NAME=\"${LANG}\""
+		echo "LC_ADDRESS=\"${LANG}\""
+		echo "LC_TELEPHONE=\"${LANG}\""
+		echo "LC_MEASUREMENT=\"${LANG}\""
+		echo "LC_IDENTIFICATION=\"${LANG}\""
+		echo "LC_ALL="
 		exit 0
 	;;
 esac
