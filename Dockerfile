@@ -12,18 +12,15 @@ ENV LANG=en_US.utf8 \
 
 ENV PG_DATADIR=${PG_HOME}/${PG_VERSION}/main
 	
-RUN echo 'http://nl.alpinelinux.org/alpine/edge/main' >> /etc/apk/repositories && \
-	echo 'http://nl.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories && \
+RUN echo '@edge http://nl.alpinelinux.org/alpine/edge/main' >> /etc/apk/repositories && \
+	echo '@community http://nl.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories && \
 	apk add --update --no-cache \
 		acl \
 		bash \
-		build-base
-
-RUN apk add --update --no-cache \
-		shadow \
-		postgresql \
-		postgresql-client \
-		postgresql-contrib
+		shadow@community \
+		postgresql@edge=${PG_PKG_VERSION} \
+		postgresql-client@edge=${PG_PKG_VERSION} \
+		postgresql-contrib@edge=${PG_PKG_VERSION}
 
 COPY rootfs/ /
 		
