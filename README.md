@@ -263,6 +263,8 @@ Here are some important notes about a PostgreSQL replication cluster:
 
 <br>
 ## Creating a snapshot
+> **Untested**
+> Reason: S6 Implementation
 
 Similar to a creating replication slave node, you can create a snapshot of the master by specifying `REPLICATION_MODE=snapshot`.
 
@@ -283,6 +285,8 @@ This is useful for developers to quickly snapshot the current state of a live da
 
 <br>
 ## Creating a backup
+> **Untested**
+> Reason: S6 Implementation
 
 Just as the case of setting up a slave node or generating a snapshot, you can also create a backup of the data on the master by specifying `REPLICATION_MODE=backup`.
 
