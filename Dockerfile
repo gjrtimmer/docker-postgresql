@@ -17,6 +17,7 @@ RUN echo '@edge http://nl.alpinelinux.org/alpine/edge/main' >> /etc/apk/reposito
 	apk add --update --no-cache \
 		acl \
 		bash \
+		build-base \
 		shadow@community \
 		postgresql@edge=${PG_PKG_VERSION} \
 		postgresql-client@edge=${PG_PKG_VERSION} \
