@@ -17,7 +17,9 @@ RUN echo 'http://nl.alpinelinux.org/alpine/edge/main' >> /etc/apk/repositories &
 	apk add --update --no-cache \
 		acl \
 		bash \
-		build-base \
+		build-base
+
+RUN apk add --update --no-cache \
 		shadow \
 		postgresql \
 		postgresql-client \
