@@ -8,45 +8,33 @@ build:
   tags: 
     - shell
   script:
+    - 'echo "docker build: $(cat REPOSITORY)/${CI_PROJECT_PATH}"'
     - docker build --pull --force-rm=true --tag=$(cat REPOSITORY)/${CI_PROJECT_PATH} .
-    
-release:
-  stage: build
-  tags: 
-    - shell
-  only:
-    - tags
-  script:
-    - docker build --pull --force-rm=true --tag=$(cat REPOSITORY)/${CI_PROJECT_PATH}:$(cat VERSION) .
 
 deploy:
   stage: deploy
   tags:
     - shell
   script:
+    - 'echo "docker push: $(cat REPOSITORY)/${CI_PROJECT_PATH}"'
     - docker push $(cat REPOSITORY)/${CI_PROJECT_PATH}
-
-deploy-release:
+    
+release:
   stage: deploy
-  tags:
+  tags: 
     - shell
   only:
     - tags
   script:
-    - docker push $(cat REPOSITORY)/${CI_PROJECT_PATH}:$(cat VERSION)
+    - 'echo "Tagging image: $(cat REPOSITORY)/${CI_PROJECT_PATH} > $(cat REPOSITORY)/${CI_PROJECT_PATH}:${CI_BUILD_REF_NAME}"'
+    - docker tag $(cat REPOSITORY)/${CI_PROJECT_PATH} $(cat REPOSITORY)/${CI_PROJECT_PATH}:${CI_BUILD_REF_NAME}
+    - 'echo "docker push: $(cat REPOSITORY)/${CI_PROJECT_PATH}:${CI_BUILD_REF_NAME}"'
+    - docker push $(cat REPOSITORY)/${CI_PROJECT_PATH}:${CI_BUILD_REF_NAME}
     
 clean:
   stage: clean
   tags:
     - shell
   script:
-    - if [ ! -z $(docker images -q $(cat REPOSITORY)/${CI_PROJECT_PATH}) ]; then docker rmi $(cat REPOSITORY)/${CI_PROJECT_PATH}; fi
-
-clean-release:
-  stage: clean
-  tags:
-    - shell
-  only:
-    - tags
-  script:
-    - if [ ! -z $(docker images -q $(cat REPOSITORY)/${CI_PROJECT_PATH}:$(cat VERSION)) ]; then docker rmi $(cat REPOSITORY)/${CI_PROJECT_PATH}:$(cat VERSION); fi
+    - 'if [ ! -z $(docker images -q $(cat REPOSITORY)/${CI_PROJECT_PATH}) ]; then echo "Removing: $(cat REPOSITORY)/${CI_PROJECT_PATH}"; docker rmi $(cat REPOSITORY)/${CI_PROJECT_PATH}; fi'
+    - 'if [ ! -z $(docker images -q $(cat REPOSITORY)/${CI_PROJECT_PATH}:${CI_BUILD_REF_NAME}) ]; then echo "Removing: $(cat REPOSITORY)/${CI_PROJECT_PATH}:${CI_BUILD_REF_NAME}"; docker rmi $(cat REPOSITORY)/${CI_PROJECT_PATH}:${CI_BUILD_REF_NAME}; fi'
