@@ -1,8 +1,6 @@
 FROM registry.timmertech.nl/docker/alpine-base:latest
 MAINTAINER G.J.R. Timmer <gjr.timmer@gmail.com>
 
-ARG PG_PKG_VERSION=9.6.0-r1
-
 ENV LANG=en_US.utf8 \
 	MUSL_LOCPATH=en_US.utf8 \
 	PG_VERSION=9.6 \
@@ -18,9 +16,10 @@ RUN echo 'ttp://nl.alpinelinux.org/alpine/edge/main' >> /etc/apk/repositories &&
 		acl \
 		bash \
 		shadow \
-		postgresql=${PG_PKG_VERSION} \
-		postgresql-client=${PG_PKG_VERSION} \
-		postgresql-contrib=${PG_PKG_VERSION}
+		postgresql \
+		postgresql-client \
+		postgresql-contrib && \
+    apk upgrade
 		
 COPY rootfs/ /
 		
