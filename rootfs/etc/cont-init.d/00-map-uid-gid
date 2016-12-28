@@ -1,5 +1,0 @@
-#!/usr/bin/with-contenv bash
-
-source /etc/postgresql/functions
-
-map_uid_gid

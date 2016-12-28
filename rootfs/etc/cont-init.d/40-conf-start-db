@@ -1,8 +1,0 @@
-#!/usr/bin/with-contenv bash
-
-source /etc/postgresql/functions
-
-# start postgres server internally for the creation of users and databases
-rm -rf ${PG_DATADIR}/postmaster.pid
-set_postgresql_param "listen_addresses" "127.0.0.1" quiet
-s6-setuidgid ${PG_USER} ${PG_BINDIR}/pg_ctl -D ${PG_DATADIR} -w start >/dev/null

@@ -1,5 +1,0 @@
-#!/usr/bin/with-contenv bash
-
-source /etc/postgresql/functions
-
-s6-setuidgid ${PG_USER} ${PG_BINDIR}/pg_ctl -D ${PG_DATADIR} -w stop >/dev/null

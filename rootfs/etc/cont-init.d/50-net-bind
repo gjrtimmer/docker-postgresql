@@ -1,6 +1,0 @@
-#!/usr/bin/with-contenv bash
-
-source /etc/postgresql/functions
-
-# listen on all interfaces
-set_postgresql_param "listen_addresses" "*" quiet
