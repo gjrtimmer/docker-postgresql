@@ -8,7 +8,7 @@ ENV PG_DATADIR=${PG_HOME}/${PG_VERSION}/main
 	
 RUN echo 'http://pkgs.timmertech.nl/main' >> /etc/apk/repositories && \
 	echo 'http://pkgs.timmertech.nl/testing' >> /etc/apk/repositories && \
-	wget -O /etc/apk/keys/gjr.timmer%40gmail.com-5857d36d.rsa.pub http://pkgs.timmertech.nl/keys/gjr.timmer%40gmail.com-5857d36d.rsa.pub && \
+	wget -O /etc/apk/keys/gjr.timmer@gmail.com-5857d36d.rsa.pub http://pkgs.timmertech.nl/keys/gjr.timmer%40gmail.com-5857d36d.rsa.pub && \
 	apk add --update --no-cache \
 		acl \
 		bash \
