@@ -1,6 +1,5 @@
 #!/usr/bin/with-contenv bash
-
-source /etc/postgresql/functions
+set -e
 
 TZ=${TZ:-UTC}
 

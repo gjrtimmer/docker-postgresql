@@ -1,8 +1,6 @@
 #!/usr/bin/with-contenv bash
 set -e
 
-source /etc/postgresql/functions
-
 if [ ! -d ${PG_HOME} ]; then
 	mkdir -p ${PG_HOME}
 fi
@@ -13,3 +11,5 @@ if [ -d ${PG_DATADIR} ]; then
 fi
 
 chown -R ${PG_USER}:${PG_USER} ${PG_HOME}
+
+# EOF

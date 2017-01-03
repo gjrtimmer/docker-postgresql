@@ -1,6 +1,5 @@
 #!/usr/bin/with-contenv bash
-
-source /etc/postgresql/functions
+set -e
 
 # Create Certificate directory
 if [ ! -d ${PG_CERTDIR} ]; then
@@ -22,3 +21,5 @@ fi
 # Set permissions
 chmod 0755 ${PG_CERTDIR}
 chown -R root:${PG_GID} ${PG_CERTDIR}
+
+# EOF

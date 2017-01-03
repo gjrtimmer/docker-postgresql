@@ -2,6 +2,7 @@
 
 PG_USER=postgres
 
+# EOF
 
 # ORIG
 PG_SSL=${PG_SSL:-}
