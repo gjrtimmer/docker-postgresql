@@ -1,0 +1,13 @@
+#!/usr/bin/with-contenv bash
+set -e
+
+source /etc/postgresql/functions
+
+# Create log directory
+if [ ! -d ${PG_LOGDIR} ]; then
+	mkdir -p ${PG_LOGDIR}
+fi
+
+# Set permissions
+chmod -R 1775 ${PG_LOGDIR}
+chown -R root:${PG_GID} ${PG_LOGDIR}

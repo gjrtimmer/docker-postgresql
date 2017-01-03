@@ -3,6 +3,7 @@ MAINTAINER G.J.R. Timmer <gjr.timmer@gmail.com>
 
 ARG BUILD_DATE
 ARG VCS_REF
+ARG PGVERSION
 
 LABEL \
 	nl.timmertech.build-date=${BUILD_DATE} \
@@ -13,7 +14,12 @@ LABEL \
 	nl.timmertech.license=MIT
 
 ENV LANG=en_US.utf8 \
-	MUSL_LOCPATH=en_US.utf8
+	MUSL_LOCPATH=en_US.utf8 \
+	PG_VERSION=${PGVERSION} \
+	PG_HOME=/var/lib/postgresql \
+	PG_LOGDIR=/var/log/postgresql \
+	PG_RUNDIR=/var/run/postgresql \
+	PG_CERTDIR=/etc/postgresql/certs
 
 ENV PG_DATADIR=${PG_HOME}/${PG_VERSION}/main
 	
@@ -41,3 +47,7 @@ RUN echo 'http://pkgs.timmertech.nl/main' >> /etc/apk/repositories && \
 COPY rootfs/ /
 		
 EXPOSE 5432/tcp
+
+WORKDIR ${PG_HOME}
+
+VOLUME ["${PG_HOME}", "${PG_CERTDIR}", "${PG_LOGDIR}", "${PG_RUNDIR}"]

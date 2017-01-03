@@ -1,6 +1,6 @@
 #!/usr/bin/with-contenv bash
 
-
+PG_USER=postgres
 
 
 # ORIG

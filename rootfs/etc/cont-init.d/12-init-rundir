@@ -1,0 +1,14 @@
+#!/usr/bin/with-contenv bash
+set -e
+
+source /etc/postgresql/functions
+
+# Create Run Directory
+if [ ! -d ${PG_RUNDIR} ]; then
+	mkdir -p ${PG_RUNDIR} ${PG_RUNDIR}/${PG_VERSION}-main.pg_stat_tmp
+fi
+
+# Set Permissions
+chmod -R 0755 ${PG_RUNDIR}
+chmod g+s ${PG_RUNDIR}
+chown -R ${PG_UID}:${PG_GID} ${PG_RUNDIR}

@@ -1,0 +1,10 @@
+#!/usr/bin/with-contenv bash
+
+source /etc/postgresql/functions
+
+TZ=${TZ:-UTC}
+
+apk add tzdata --quit --no-progress
+cp /usr/share/zoneinfo/${TZ} /etc/localtime
+
+# EOF

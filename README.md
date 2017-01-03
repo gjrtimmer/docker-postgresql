@@ -2,11 +2,83 @@
 
 # docker/alpine-postgresql:9.6.0
 
-<br>
 # Image details:
 - Alpine Linux: 3.4
 - S6-Overlay: 1.18.1.5
 - Postgresql: 9.6.0-r1
+
+
+# Introduction
+
+`Dockerfile` to create a [Docker](https://www.docker.com/) container image for [PostgreSQL](http://postgresql.org/).
+
+PostgreSQL is an object-relational database management system (ORDBMS) with an emphasis on extensibility and standards-compliance [[source](https://en.wikipedia.org/wiki/PostgreSQL)].
+
+
+# Getting Started
+
+```bash
+docker pull registry.timmertech.nl/docker/alpine-postgresql
+```
+
+
+## Volume Locations
+
+Default Locations:
+
+| Type | Location |
+|------|----------|
+| Data Directory | /var/lib/postgresql |
+| Log Directory | /var/log/postgresql |
+| Run Directory | /var/run/postgresql |
+
+
+## Configuration Options
+ - [General Options](#general-options)
+   - [Timezone](#timezone)
+   - [UID/GID](#uidgid-mapping)
+
+### General Options
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| [TZ](#timezone) | UTC | Set timezone, example ```Europe/Amsterdam``` |
+| [PG_UID](#uidgid-mapping) `UID` | postgres | Map ownership to UID |
+| [PG_GID](#uidgid-mapping) `GID` | postgres | Map ownership to GID |
+
+
+# Timezone
+Set the timezone for the container, defaults to ```UTC```.
+To set the timezone set the desired timezone with the variable ```TZ```.
+
+Example:
+
+````bash
+docker run --name postgresql -itd --restart always \
+  --env 'TZ=Europe/Amsterdam' \
+  registry.timmertech.nl/docker/apline-postgresql:latest
+````
+
+
+# UID/GID mapping
+
+The files and processes created by the container are owned by the `postgres` user that is internal to the container. In the absense of user namespace in docker the UID and GID of the containers `postgres` user may have different meaning on the host.
+
+For example, a user on the host with the same UID and/or GID as the `postgres` user of the container will be able to access the data in the persistent volumes mounted from the host as well as be able to KILL the `postgres` server process started by the container.
+
+To circumvent this issue you can specify the UID and GID for the `postgres` user of the container using the `PG_UID` and `PG_GID` variables respectively.
+
+For example, if you want to assign the `postgres` user of the container the UID and GID `999`:
+
+```bash
+docker run --name postgresql -itd --restart always \
+  --env 'PG_UID=999' --env 'PG_GID=999' \
+  registry.timmertech.nl/docker/apline-postgresql:9.6.0
+```
+
+
+
+
 
 
 # OLD README
