@@ -1,0 +1,38 @@
+#!/usr/bin/with-contenv bash
+
+source /etc/postgresql/functions
+
+# MAP UID/GID
+PG_UID=${PG_UID:-postgres}
+PG_GID=${PG_GID:-postgres}
+
+# Check if provided UID by user is numerical
+if [[ $PG_UID != *[[:digit:]]* ]]; then
+	PG_UID=$(id -u $PG_UID)
+fi
+
+# Check if provided GID by user is numerical
+if [[ $PG_GID != *[[:digit:]]* ]]; then
+	PG_GID=$(id -g $PG_GID)
+fi
+
+# Get original
+PG_UID_ORIG=$(id -u postgres)
+PG_GID_ORIG=$(id -g postgres)
+
+PG_GID=${PG_GID:-${PG_UID:-$PG_GID_ORIG}}
+PG_UID=${PG_UID:-$PG_UID_ORIG}
+
+# Alter UID/GID if requested
+if [[ ${PG_UID} != ${PG_UID_ORIG} ]] || [[ ${PG_GID} != ${PG_GID_ORIG} ]]; then
+	echo "  Adapting uid and gid for postgres:postgres to ${PG_UID}:${PG_GID}"
+	groupmod -o -g ${PG_GID} postgres
+	sed -i -e "s|:${PG_UID_ORIG}:${PG_GID}:|:${PG_UID}:${PG_GID}:|" /etc/passwd
+	usermod -s /bin/bash postgres
+fi
+
+chown -R ${USERMAP_UID}:${USERMAP_GID} /var/lib/postgresql
+chown -R ${USERMAP_UID}:${USERMAP_GID} /var/log/postgresql
+chown -R ${USERMAP_UID}:${USERMAP_GID} /var/run/postgresql
+
+# EOF

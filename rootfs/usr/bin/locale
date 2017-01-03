@@ -1,0 +1,27 @@
+#!/usr/bin/with-contenv bash
+
+# Fake implementation of locale command
+case "$1" in
+	-a|--all-locales)
+		echo ${LANG}
+		echo ${LANG}
+		echo "POSIX"
+	;;
+	
+	*)
+		echo "LANG=\"${LANG}\""
+		echo "LC_CTYPE=\"${LANG}\""
+		echo "LC_NUMERIC=\"POSIX\""
+		echo "LC_TIME=\"POSIX\""
+		echo "LC_COLLATE=\"POSIX\""
+		echo "LC_MONETARY=\"POSIX\""
+		echo "LC_MESSAGES=\"POSIX\""
+		echo "LC_PAPER=\"POSIX\""
+		echo "LC_NAME=\"POSIX\""
+		echo "LC_ADDRESS=\"POSIX\""
+		echo "LC_TELEPHONE=\"POSIX\""
+		echo "LC_MEASUREMENT=\"POSIX\""
+		echo "LC_IDENTIFICATION=\"POSIX\""
+		echo "LC_ALL="
+	;;
+esac

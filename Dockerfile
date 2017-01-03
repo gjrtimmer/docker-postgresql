@@ -1,6 +1,17 @@
 FROM registry.timmertech.nl/docker/alpine-base:latest
 MAINTAINER G.J.R. Timmer <gjr.timmer@gmail.com>
 
+ARG BUILD_DATE
+ARG VCS_REF
+
+LABEL \
+	nl.timmertech.build-date=${BUILD_DATE} \
+	nl.timmertech.name=alpine-redis \
+	nl.timmertech.vendor=timmertech.nl \
+	nl.timmertech.vcs-url="https://gitlab.timmertech.nl/docker/alpine-postgresql.git" \
+	nl.timmertech.vcs-ref=${VCS_REF} \
+	nl.timmertech.license=MIT
+
 ENV LANG=en_US.utf8 \
 	MUSL_LOCPATH=en_US.utf8
 
@@ -17,10 +28,16 @@ RUN echo 'http://pkgs.timmertech.nl/main' >> /etc/apk/repositories && \
 		acl \
 		bash \
 		shadow \
+		sudo \
 		postgresql \
-		postgresql-cron \
 		postgresql-plperl \
 		postgresql-plpython \
-		postgresql-pltcl
+		postgresql-pltcl \
+		pg_cron && \
+	echo "postgres ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/postgres && \
+	chmod 600 /etc/sudoers.d/postgres && \
+	sync
+	
+COPY rootfs/ /
 		
 EXPOSE 5432/tcp

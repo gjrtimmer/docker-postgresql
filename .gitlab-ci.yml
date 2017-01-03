@@ -7,15 +7,37 @@ build:
   stage: build
   tags: 
     - shell
+  only:
+    - master
   script:
-    - docker build --pull --force-rm=true --tag=$(cat REPOSITORY)/${CI_PROJECT_PATH} .
+    - docker build --pull --force-rm=true --build-arg VCS_REF=`git rev-parse --short HEAD` --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` --tag=$(cat REPOSITORY)/${CI_PROJECT_PATH} .
 
+build-branches:
+  stage: build
+  tags: 
+    - shell
+  except:
+    - master
+  script:
+    - docker build --pull --force-rm=true --build-arg VCS_REF=`git rev-parse --short HEAD` --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` --tag=$(cat REPOSITORY)/${CI_PROJECT_PATH}:${CI_BUILD_REF_NAME} .
+    
 deploy:
   stage: deploy
   tags:
     - shell
+  only:
+    - master
   script:
     - docker push $(cat REPOSITORY)/${CI_PROJECT_PATH}
+
+deploy-branches:
+  stage: deploy
+  tags:
+    - shell
+  except:
+    - master
+  script:
+    - docker push $(cat REPOSITORY)/${CI_PROJECT_PATH}:${CI_BUILD_REF_NAME}
     
 release:
   stage: deploy
