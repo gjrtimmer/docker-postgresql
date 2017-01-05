@@ -1,0 +1,9 @@
+#!/usr/bin/with-contenv bash
+set -e
+
+# Load functions
+source /etc/postgresql/functions
+
+exec s6-setuidgid ${PG_USER} /usr/bin/postgres -D ${PG_DATADIR};
+
+# EOF
