@@ -31,11 +31,12 @@ docker pull registry.timmertech.nl/docker/alpine-postgresql
 
 Default Locations:
 
-| Type | Location |
-|------|----------|
-| Data Directory | /var/lib/postgresql |
-| Log Directory | /var/log/postgresql |
-| Run Directory | /var/run/postgresql |
+| ENV | Default Location | Description |
+|-----|------------------|-------------|
+| ```PG_HOME``` | /var/lib/postgresql | Data directory |
+| ```PG_LOGDIR``` | /var/log/postgresql | Log directory |
+| ```PG_RUNDIR``` | /var/run/postgresql | Run directory |
+| ```PG_CERTDIR``` | /etc/postgresql/certs | Certificate directory | 
 
 
 <br />
@@ -43,6 +44,7 @@ Default Locations:
  - [General Options](#general-options)
    - [Timezone](#timezone)
    - [UID/GID](#uidgid-mapping)
+ - [Database Options](#database-options)
 
    
 <br />
@@ -56,7 +58,7 @@ Default Locations:
 
 
 <br />
-# Timezone
+#### Timezone
 Set the timezone for the container, defaults to ```UTC```.
 To set the timezone set the desired timezone with the variable ```TZ```.
 
@@ -70,7 +72,7 @@ docker run --name postgresql -itd --restart always \
 
 
 <br />
-# UID/GID mapping
+#### UID/GID mapping
 
 The files and processes created by the container are owned by the `postgres` user that is internal to the container. In the absense of user namespace in docker the UID and GID of the containers `postgres` user may have different meaning on the host.
 
@@ -86,7 +88,16 @@ docker run --name postgresql -itd --restart always \
   registry.timmertech.nl/docker/apline-postgresql:9.6.0
 ```
 
+### Database Options
 
+| Option | Description |
+|--------|-------------|
+| [PG_PASSWORD](#setting-postgres-user-password) `PASS` | Password for `postgres` user |
+| [DB_USER](#creating-database-user) `USER` | Username for database(s) provided with `DB_NAME` |
+| [DB_PASS](#creating-database-user) `PASS` | Password for database(s) provided with `DB_NAME` |
+| [DB_NAME](#creating-databases) `NAME` | Database(s) to create, multiple can be provided separated with a comma `,` |
+| [DB_TEMPLATE](http://www.postgresql.org/docs/9.4/static/manage-ag-templatedbs.html) `TEMPLATE` | Template to use for newly created database(s) [Template Databases](http://www.postgresql.org/docs/9.4/static/manage-ag-templatedbs.html) |
+| [DB_EXTENSION](#enabling-extensions) `EXTENSION` | Extension to enable for database(s) within `DB_NAME`, multiple can be provided separated with a comma `,` |
 
 
 
