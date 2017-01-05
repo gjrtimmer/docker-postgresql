@@ -9,6 +9,6 @@ fi
 # Set Permissions
 chmod -R 0755 ${PG_RUNDIR}
 chmod g+s ${PG_RUNDIR}
-chown -R ${PG_USER}:${PG_USER} ${PG_RUNDIR}
+chown -R postgres:postgres ${PG_RUNDIR}
 
 # EOF
