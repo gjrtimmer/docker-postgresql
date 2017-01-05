@@ -1,6 +1,9 @@
 #!/usr/bin/with-contenv bash
 set -e
 
+# Load functions
+source /etc/postgresql/functions
+
 # configure path to data_directory
 set_postgresql_param "data_directory" "${PG_DATADIR}"
 

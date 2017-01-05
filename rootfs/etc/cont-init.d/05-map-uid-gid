@@ -1,9 +1,12 @@
 #!/usr/bin/with-contenv bash
 set -e 
 
+# Load functions
+source /etc/postgresql/functions
+
 # MAP UID/GID
-PG_UID=${PG_UID:-postgres}
-PG_GID=${PG_GID:-postgres}
+PG_UID=${PG_UID:-${PG_USER}}
+PG_GID=${PG_GID:-${PG_USER}}
 
 # Check if provided UID by user is numerical
 if [[ $PG_UID != *[[:digit:]]* ]]; then

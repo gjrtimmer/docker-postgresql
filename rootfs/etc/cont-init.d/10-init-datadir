@@ -1,6 +1,9 @@
 #!/usr/bin/with-contenv bash
 set -e
 
+# Load functions
+source /etc/postgresql/functions
+
 if [ ! -d ${PG_HOME} ]; then
 	mkdir -p ${PG_HOME}
 fi
