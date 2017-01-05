@@ -1,0 +1,17 @@
+#!/usr/bin/with-contenv bash
+set -e
+
+# Load functions
+source /etc/postgresql/functions
+
+if [[ -f ${PG_CERTDIR}/server.crt && -f ${PG_CERTDIR}/server.key ]]; then
+	PG_SSL=${PG_SSL:-on}
+	set_postgresql_param "ssl_cert_file" "${PG_CERTDIR}/server.crt"
+	set_postgresql_param "ssl_key_file" "${PG_CERTDIR}/server.key"
+fi
+
+PG_SSL=${PG_SSL:-off}
+
+set_postgresql_param "ssl" "${PG_SSL}"
+  
+# EOF
