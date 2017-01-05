@@ -1,13 +1,16 @@
 [![build status](https://gitlab.timmertech.nl/docker/alpine-postgresql/badges/master/build.svg)](https://gitlab.timmertech.nl/docker/alpine-postgresql/commits/master)
 
-# docker/alpine-postgresql:9.6.0
+# docker/alpine-postgresql:9.6.1
 
+
+<br />
 # Image details:
 - Alpine Linux: 3.4
 - S6-Overlay: 1.18.1.5
-- Postgresql: 9.6.0-r1
+- Postgresql: 9.6.1-r1
 
 
+<br />
 # Introduction
 
 `Dockerfile` to create a [Docker](https://www.docker.com/) container image for [PostgreSQL](http://postgresql.org/).
@@ -15,6 +18,7 @@
 PostgreSQL is an object-relational database management system (ORDBMS) with an emphasis on extensibility and standards-compliance [[source](https://en.wikipedia.org/wiki/PostgreSQL)].
 
 
+<br />
 # Getting Started
 
 ```bash
@@ -22,6 +26,7 @@ docker pull registry.timmertech.nl/docker/alpine-postgresql
 ```
 
 
+<br />
 ## Volume Locations
 
 Default Locations:
@@ -33,11 +38,14 @@ Default Locations:
 | Run Directory | /var/run/postgresql |
 
 
+<br />
 ## Configuration Options
  - [General Options](#general-options)
    - [Timezone](#timezone)
    - [UID/GID](#uidgid-mapping)
 
+   
+<br />
 ### General Options
 
 | Option | Default | Description |
@@ -47,6 +55,7 @@ Default Locations:
 | [PG_GID](#uidgid-mapping) `GID` | postgres | Map ownership to GID |
 
 
+<br />
 # Timezone
 Set the timezone for the container, defaults to ```UTC```.
 To set the timezone set the desired timezone with the variable ```TZ```.
@@ -60,6 +69,7 @@ docker run --name postgresql -itd --restart always \
 ````
 
 
+<br />
 # UID/GID mapping
 
 The files and processes created by the container are owned by the `postgres` user that is internal to the container. In the absense of user namespace in docker the UID and GID of the containers `postgres` user may have different meaning on the host.
