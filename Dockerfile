@@ -3,7 +3,7 @@ MAINTAINER G.J.R. Timmer <gjr.timmer@gmail.com>
 
 ARG BUILD_DATE
 ARG VCS_REF
-ARG PG_VERSION
+ARG PGV
 
 LABEL \
 	nl.timmertech.build-date=${BUILD_DATE} \
@@ -15,6 +15,7 @@ LABEL \
 
 ENV LANG=en_US.utf8 \
 	MUSL_LOCPATH=en_US.utf8 \
+	PG_VERSION=${PGV} \
 	PG_HOME=/var/lib/postgresql \
 	PG_LOGDIR=/var/log/postgresql \
 	PG_RUNDIR=/var/run/postgresql \
