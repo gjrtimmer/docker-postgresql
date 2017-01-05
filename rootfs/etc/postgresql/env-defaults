@@ -2,12 +2,17 @@
 
 PG_USER=postgres
 
+PG_CONF=${PG_DATADIR}/postgresql.conf
+PG_HBA_CONF=${PG_DATADIR}/pg_hba.conf
+PG_IDENT_CONF=${PG_DATADIR}/pg_ident.conf
+PG_RECOVERY_CONF=${PG_DATADIR}/recovery.conf
+
 # EOF
 
 # ORIG
 PG_SSL=${PG_SSL:-}
 
-PG_TRUST_LOCALNET=${PG_TRUST_LOCALNET:-$PSQL_TRUST_LOCALNET} # backward compatibility
+
 PG_TRUST_LOCALNET=${PG_TRUST_LOCALNET:-false}
 
 REPLICATION_MODE=${REPLICATION_MODE:-$PSQL_MODE} # backward compatibility
