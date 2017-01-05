@@ -1,0 +1,13 @@
+#!/usr/bin/with-contenv bash
+set -e
+
+# Load functions
+source /etc/postgresql/functions
+
+# Configure hotstandby
+set_postgresql_param "wal_level" "hot_standby"
+set_postgresql_param "max_wal_senders" "16"
+set_postgresql_param "checkpoint_segments" "8"
+set_postgresql_param "wal_keep_segments" "32"
+
+# EOF
