@@ -1,0 +1,31 @@
+#!/usr/bin/with-contenv bash
+set -e
+
+# Load functions
+source /etc/postgresql/functions
+
+if [[ -n ${DB_NAME} ]]; then
+	case $REPLICATION_MODE in
+		slave|snapshot|backup) ;;
+
+		*)
+			for database in $(awk -F',' '{for (i = 1 ; i <= NF ; i++) print $i}' <<< "${DB_NAME}"); do
+				echo "  Creating database: ${database}..."
+				if [[ -z $(psql -U ${PG_USER} -Atc "SELECT 1 FROM pg_catalog.pg_database WHERE datname = '${database}'";) ]]; then
+					psql -U ${PG_USER} -c "CREATE DATABASE \"${database}\" WITH TEMPLATE = \"${DB_TEMPLATE}\";" >/dev/null
+				fi
+				echo " [DONE]"
+
+				#load_extensions ${database}
+
+				if [[ -n ${DB_USER} ]]; then
+					echo "  Granting access to ${DB_USER} user..."
+					psql -U ${PG_USER} -c "GRANT ALL PRIVILEGES ON DATABASE \"${database}\" to \"${DB_USER}\";" >/dev/null
+					echo " [DONE]"
+				fi
+			done
+		;;
+	esac
+fi
+
+# EOF

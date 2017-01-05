@@ -1,0 +1,26 @@
+#!/usr/bin/with-contenv bash
+set -e
+
+# Load functions
+source /etc/postgresql/functions
+
+if [[ -n ${REPLICATION_USER} ]]; then
+	case $REPLICATION_MODE in
+		slave|snapshot|backup) ;; # replication user can only be created on the master
+		*)
+			if [[ -z ${REPLICATION_PASS} ]]; then
+				echo "  ERROR! Please specify a password for REPLICATION_USER in REPLICATION_PASS. Exiting..."
+				exit 1
+			fi
+
+			echo "  Creating replication user: ${REPLICATION_USER}"
+			if [[ -z $(psql -U ${PG_USER} -Atc "SELECT 1 FROM pg_catalog.pg_user WHERE usename = '${REPLICATION_USER}'";) ]]; then
+				psql -U ${PG_USER} -c "CREATE ROLE \"${REPLICATION_USER}\" WITH REPLICATION LOGIN ENCRYPTED PASSWORD '${REPLICATION_PASS}';" >/dev/null
+			fi
+
+			set_hba_param "host replication ${REPLICATION_USER} 0.0.0.0/0 md5"
+		;;
+	esac
+fi
+
+# EOF

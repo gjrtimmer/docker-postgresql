@@ -1,0 +1,27 @@
+#!/usr/bin/with-contenv bash
+set -e
+
+# Load functions
+source /etc/postgresql/functions
+
+if [[ -n ${DB_USER} ]]; then
+	case $REPLICATION_MODE in
+		slave|snapshot|backup)
+			echo "  Database user cannot be created on a $REPLICATION_MODE node. Skipping..."
+		;;
+
+		*)
+			if [[ -z ${DB_PASS} ]]; then
+				echo "  ERROR! Please specify a password for DB_USER in DB_PASS. Exiting..."
+				exit 1
+			fi
+
+			echo "  Creating database user: ${DB_USER}"
+			if [[ -z $(psql -U ${PG_USER} -Atc "SELECT 1 FROM pg_catalog.pg_user WHERE usename = '${DB_USER}'";) ]]; then
+				psql -U ${PG_USER} -c "CREATE ROLE \"${DB_USER}\" with LOGIN CREATEDB PASSWORD '${DB_PASS}';" >/dev/null
+			fi
+		;;
+	esac
+fi
+	
+# EOF

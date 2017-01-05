@@ -39,19 +39,19 @@ if [[ ! -f ${PG_DATADIR}/PG_VERSION ]]; then
 		case ${REPLICATION_MODE} in
 			slave)
 				echo "  Replicating initial data from $REPLICATION_HOST..."
-				s6-setuidgid ${PG_USER} PGPASSWORD=$REPLICATION_PASS ${PG_BINDIR}/pg_basebackup -D ${PG_DATADIR} \
+				s6-setuidgid ${PG_USER} PGPASSWORD=$REPLICATION_PASS pg_basebackup -D ${PG_DATADIR} \
 					-h ${REPLICATION_HOST} -p ${REPLICATION_PORT} -U ${REPLICATION_USER} -X stream -w >/dev/null
 			;;
 		
 			snapshot)
 				echo "  Generating a snapshot data on $REPLICATION_HOST..."
-				s6-setuidgid ${PG_USER} PGPASSWORD=$REPLICATION_PASS ${PG_BINDIR}/pg_basebackup -D ${PG_DATADIR} \
+				s6-setuidgid ${PG_USER} PGPASSWORD=$REPLICATION_PASS pg_basebackup -D ${PG_DATADIR} \
 					-h ${REPLICATION_HOST} -p ${REPLICATION_PORT} -U ${REPLICATION_USER} -X fetch -w >/dev/null
 			;;
 		
 			backup)
 				echo "  Backing up data on $REPLICATION_HOST..."
-				s6-setuidgid ${PG_USER} PGPASSWORD=$REPLICATION_PASS ${PG_BINDIR}/pg_basebackup -D ${PG_DATADIR} \
+				s6-setuidgid ${PG_USER} PGPASSWORD=$REPLICATION_PASS pg_basebackup -D ${PG_DATADIR} \
 					-h ${REPLICATION_HOST} -p ${REPLICATION_PORT} -U ${REPLICATION_USER} -X fetch -w >/dev/null
 				exit 0
 			;;
@@ -86,7 +86,7 @@ if [[ ! -f ${PG_DATADIR}/PG_VERSION ]]; then
 			echo "${PG_PASSWORD}" > /tmp/pwfile
 		fi
 
-		s6-setuidgid ${PG_USER} ${PG_BINDIR}/initdb --pgdata=${PG_DATADIR} \
+		s6-setuidgid ${PG_USER} initdb --pgdata=${PG_DATADIR} \
 			--username=${PG_USER} --locale=${LANG} --encoding=unicode --auth=trust ${PG_PASSWORD:+--pwfile=/tmp/pwfile} >/dev/null
 
 		if [[ -n ${PG_OLD_VERSION} ]]; then
@@ -96,7 +96,7 @@ if [[ ! -f ${PG_DATADIR}/PG_VERSION ]]; then
 			PG_OLD_IDENT_CONF=${PG_OLD_DATADIR}/pg_ident.conf
 
 			echo -n "  Migration in progress. Please be patient..."
-			s6-setuidgid ${PG_USER} ${PG_BINDIR}/pg_upgrade \
+			s6-setuidgid ${PG_USER} pg_upgrade \
 				-d ${PG_OLD_DATADIR} -D ${PG_DATADIR} \
 				-o "-c config_file=${PG_OLD_CONF} --hba_file=${PG_OLD_HBA_CONF} --ident_file=${PG_OLD_IDENT_CONF}" \
 				-O "-c config_file=${PG_CONF} --hba_file=${PG_HBA_CONF} --ident_file=${PG_IDENT_CONF}" >/dev/null

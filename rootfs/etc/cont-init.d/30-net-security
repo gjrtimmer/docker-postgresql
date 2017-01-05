@@ -10,7 +10,4 @@ set_hba_param "host all all samenet trust"
 # allow remote connections to postgresql database
 set_hba_param "host all all 0.0.0.0/0 md5"
 
-# listen on all interfaces
-set_postgresql_param "listen_addresses" "*" quiet
-
 # EOF

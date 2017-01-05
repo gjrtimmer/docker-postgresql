@@ -1,0 +1,19 @@
+#!/usr/bin/with-contenv bash
+set -e
+
+# Load functions
+source /etc/postgresql/functions
+
+if [[ -n ${DB_NAME} ]]; then
+	case $REPLICATION_MODE in
+		slave|snapshot|backup) ;;
+		*)
+			for database in $(awk -F',' '{for (i = 1 ; i <= NF ; i++) print $i}' <<< "${DB_NAME}"); do
+				#load_extensions ${database}
+				# TODO
+			done
+		;;
+	esac
+fi
+
+# EOF
