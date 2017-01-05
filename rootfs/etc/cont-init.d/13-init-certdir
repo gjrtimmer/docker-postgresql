@@ -20,6 +20,6 @@ fi
 
 # Set permissions
 chmod 0755 ${PG_CERTDIR}
-chown -R root:${PG_GID} ${PG_CERTDIR}
+chown -R root:${PG_USER} ${PG_CERTDIR}
 
 # EOF

@@ -8,6 +8,6 @@ fi
 
 # Set permissions
 chmod -R 1775 ${PG_LOGDIR}
-chown -R root:${PG_GID} ${PG_LOGDIR}
+chown -R root:${PG_USER} ${PG_LOGDIR}
 
 # EOF
