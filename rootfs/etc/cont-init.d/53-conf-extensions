@@ -4,16 +4,18 @@ set -e
 # Load functions
 source /etc/postgresql/functions
 
-# if [[ -n ${DB_NAME} ]]; then
-	# case $REPLICATION_MODE in
-		# slave|snapshot|backup) ;;
-		# *)
-			# for database in $(awk -F',' '{for (i = 1 ; i <= NF ; i++) print $i}' <<< "${DB_NAME}"); do
-				# #load_extensions ${database}
-				# # TODO
-			# done
-		# ;;
-	# esac
-# fi
+if [[ -n ${DB_NAME} ]]; then
+	case $REPLICATION_MODE in
+		slave|snapshot|backup) ;;
+		*)
+			for database in $(awk -F',' '{for (i = 1 ; i <= NF ; i++) print $i}' <<< "${DB_NAME}"); do
+				for extension in $(awk -F',' '{for (i = 1 ; i <= NF ; i++) print $i}' <<< "${DB_EXTENSION}"); do
+					echo "  Loading ${extension} extension..."
+					psql -U ${PG_USER} -d ${database} -c "CREATE EXTENSION IF NOT EXISTS ${extension};" >/dev/null 2>&1
+				done
+			done
+		;;
+	esac
+fi
 
 # EOF
