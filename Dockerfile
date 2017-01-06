@@ -39,6 +39,7 @@ RUN echo 'http://pkgs.timmertech.nl/main' >> /etc/apk/repositories && \
 		postgresql-plperl \
 		postgresql-plpython \
 		postgresql-pltcl \
+		postgresql-contrib \
 		pg_cron && \
 	echo "postgres ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/postgres && \
 	chmod 600 /etc/sudoers.d/postgres && \
