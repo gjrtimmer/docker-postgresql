@@ -1,0 +1,19 @@
+#!/usr/bin/with-contenv bash
+set -e
+
+# Load functions
+source /etc/postgresql/functions
+
+if [[ -n ${DB_NAME} ]]; then
+	case $REPLICATION_MODE in
+		slave|snapshot|backup) ;;
+		*)
+			if [ "${PG_CRON}" = true ]; then
+				# Preload pg_cron shared libraries
+				set_postgresql_param "shared_preload_libraries" "pg_cron"
+			fi
+		;;
+	esac
+fi
+  
+# EOF

@@ -12,16 +12,9 @@ if [[ -n ${DB_NAME} ]]; then
 			
 				# Preload pg_cron shared libraries
 				set_postgresql_param "shared_preload_libraries" "pg_cron"
-				
-				# Start postgres to enable extension
-				rm -rf ${PG_DATADIR}/postmaster.pid
-				set_postgresql_param "listen_addresses" "127.0.0.1" quiet
-				s6-setuidgid ${PG_USER} pg_ctl -D ${PG_DATADIR} -w start >/dev/null
-				
+			
 				echo "  Loading cron scheduler extension"
 				psql -U ${PG_USER} -d ${database} -c "CREATE EXTENSION IF NOT EXISTS ${extension};" >/dev/null 2>&1
-				
-				s6-setuidgid ${PG_USER} pg_ctl -D ${PG_DATADIR} -w stop >/dev/null
 			fi
 		;;
 	esac
