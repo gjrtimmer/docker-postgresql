@@ -1,6 +1,9 @@
 #!/usr/bin/with-contenv bash
 set -e
 
+# Load functions
+source /etc/postgresql/functions
+
 # Create log directory
 if [ ! -d ${PG_LOGDIR} ]; then
 	mkdir -p ${PG_LOGDIR}

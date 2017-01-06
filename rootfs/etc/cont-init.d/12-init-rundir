@@ -1,6 +1,9 @@
 #!/usr/bin/with-contenv bash
 set -e
 
+# Load functions
+source /etc/postgresql/functions
+
 # Create Run Directory
 if [ ! -d ${PG_RUNDIR} ]; then
 	mkdir -p ${PG_RUNDIR} ${PG_RUNDIR}/${PG_VERSION}-main.pg_stat_tmp

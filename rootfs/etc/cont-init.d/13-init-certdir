@@ -1,6 +1,9 @@
 #!/usr/bin/with-contenv bash
 set -e
 
+# Load functions
+source /etc/postgresql/functions
+
 # Create Certificate directory
 if [ ! -d ${PG_CERTDIR} ]; then
 	mkdir -p ${PG_CERTDIR}
