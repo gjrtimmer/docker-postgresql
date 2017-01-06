@@ -9,12 +9,8 @@ if [[ -n ${DB_NAME} ]]; then
 		slave|snapshot|backup) ;;
 		*)
 			if [ "${PG_CRON}" = true ]; then
-			
-				# Preload pg_cron shared libraries
-				set_postgresql_param "shared_preload_libraries" "pg_cron"
-			
 				echo "  Loading cron scheduler extension"
-				psql -U ${PG_USER} -d ${database} -c "CREATE EXTENSION IF NOT EXISTS ${extension};" >/dev/null 2>&1
+				psql -U ${PG_USER} -c "CREATE EXTENSION IF NOT EXISTS ${extension};" >/dev/null 2>&1
 			fi
 		;;
 	esac
