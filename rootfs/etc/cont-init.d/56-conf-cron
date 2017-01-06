@@ -9,7 +9,7 @@ case $REPLICATION_MODE in
 	*)
 		if [ "${PG_CRON}" = true ]; then
 			echo "  Loading cron scheduler extension"
-			psql -U ${PG_USER} -c "CREATE EXTENSION IF NOT EXISTS ${extension};" >/dev/null 2>&1
+			psql -U ${PG_USER} -c "CREATE EXTENSION IF NOT EXISTS pg_cron;" >/dev/null 2>&1
 			
 			if [[ -n ${DB_USER} ]]; then
 				echo "  Granting cron access to ${DB_USER} user..."
