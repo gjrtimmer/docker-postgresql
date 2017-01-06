@@ -1,0 +1,36 @@
+#!/usr/bin/with-contenv bash
+set -e
+
+# Load functions
+source /etc/postgresql/functions
+
+if [[ -n ${DB_NAME} ]]; then
+	case $REPLICATION_MODE in
+		slave|snapshot|backup) ;;
+		*)
+			for database in $(awk -F',' '{for (i = 1 ; i <= NF ; i++) print $i}' <<< "${DB_NAME}"); do
+				
+				# PL/Perl
+				if [ "${PL_PERL}" = true ]; then
+					echo "  Loading language extension PL/Perl"
+					psql -U ${PG_USER} -d ${database} -c "CREATE EXTENSION IF NOT EXISTS plperl;" >/dev/null 2>&1
+				fi
+				
+				# PL/Python
+				if [ "${PL_PYTHON}" = true ]; then
+					echo "  Loading language extension PL/Python"
+					psql -U ${PG_USER} -d ${database} -c "CREATE EXTENSION IF NOT EXISTS plpython2u;" >/dev/null 2>&1
+				fi
+				
+				# PL/Tcl
+				if [ "${PL_TCL}" = true ]; then
+					echo "  Loading language extension PL/Tcl"
+					psql -U ${PG_USER} -d ${database} -c "CREATE EXTENSION IF NOT EXISTS pltcl;" >/dev/null 2>&1
+				fi
+				
+			done
+		;;
+	esac
+fi
+
+# EOF
