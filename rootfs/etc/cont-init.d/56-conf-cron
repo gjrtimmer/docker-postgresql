@@ -4,21 +4,19 @@ set -e
 # Load functions
 source /etc/postgresql/functions
 
-if [[ -n ${DB_NAME} ]]; then
-	case $REPLICATION_MODE in
-		slave|snapshot|backup) ;;
-		*)
-			if [ "${PG_CRON}" = true ]; then
-				echo "  Loading cron scheduler extension"
-				psql -U ${PG_USER} -c "CREATE EXTENSION IF NOT EXISTS ${extension};" >/dev/null 2>&1
-				
-				if [[ -n ${DB_USER} ]]; then
-					echo "  Granting cron access to ${DB_USER} user..."
-					psql -U ${PG_USER} -c "GRANT USAGE ON SCHEMA cron TO \"${DB_USER}\";" >/dev/null
-				fi
+case $REPLICATION_MODE in
+	slave|snapshot|backup) ;;
+	*)
+		if [ "${PG_CRON}" = true ]; then
+			echo "  Loading cron scheduler extension"
+			psql -U ${PG_USER} -c "CREATE EXTENSION IF NOT EXISTS ${extension};" >/dev/null 2>&1
+			
+			if [[ -n ${DB_USER} ]]; then
+				echo "  Granting cron access to ${DB_USER} user..."
+				psql -U ${PG_USER} -c "GRANT USAGE ON SCHEMA cron TO \"${DB_USER}\";" >/dev/null
 			fi
-		;;
-	esac
-fi
+		fi
+	;;
+esac
 
 # EOF
