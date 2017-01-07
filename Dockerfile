@@ -24,7 +24,6 @@ ENV LANG=en_US.utf8 \
 ENV PG_DATADIR=${PG_HOME}/${PG_VERSION}/main
 	
 RUN echo 'http://pkgs.timmertech.nl/main' >> /etc/apk/repositories && \
-	echo 'http://pkgs.timmertech.nl/testing' >> /etc/apk/repositories && \
 	echo 'http://nl.alpinelinux.org/alpine/edge/main'  >> /etc/apk/repositories && \
 	echo 'http://nl.alpinelinux.org/alpine/edge/community'  >> /etc/apk/repositories && \
 	echo 'http://nl.alpinelinux.org/alpine/edge/testing'  >> /etc/apk/repositories && \
