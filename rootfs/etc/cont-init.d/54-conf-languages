@@ -19,7 +19,7 @@ if [[ -n ${DB_NAME} ]]; then
 				# PL/Python
 				if [ "${PL_PYTHON}" = true ]; then
 					echo "  Loading language extension PL/Python"
-					psql -U ${PG_USER} -d ${database} -c "CREATE EXTENSION IF NOT EXISTS plpython2u;" >/dev/null 2>&1
+					psql -U ${PG_USER} -d ${database} -c "CREATE EXTENSION IF NOT EXISTS plpython3u;" >/dev/null 2>&1
 				fi
 				
 				# PL/Tcl

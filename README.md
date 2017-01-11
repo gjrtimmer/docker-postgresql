@@ -101,7 +101,7 @@ docker run --name postgresql -itd --restart always \
 | [DB_TEMPLATE](http://www.postgresql.org/docs/9.4/static/manage-ag-templatedbs.html) `TEMPLATE` | Template to use for newly created database(s) [Template Databases](http://www.postgresql.org/docs/9.4/static/manage-ag-templatedbs.html) |
 | [DB_EXTENSION](#enabling-extensions) `EXTENSION` | Extension to enable for database(s) within `DB_NAME`, multiple can be provided separated with a comma `,` |
 | PL_PERL | PL/Perl language extension, ```true``` to enable, default: ```false``` |
-| PL_PYTHON | PL/Python language extension, ```true``` to enable, default: ```false``` |
+| PL_PYTHON | PL/Python3 language extension, ```true``` to enable, default: ```false``` |
 | PL_TCL | PL/Tcl language extension, ```true``` to enable, default: ```false``` | 
 | PG_CRON | Cron scheduler for postgresql, ```true``` to enable, default: ```false``` |
 
