@@ -1,4 +1,7 @@
 [![build status](https://gitlab.timmertech.nl/docker/alpine-postgresql/badges/master/build.svg)](https://gitlab.timmertech.nl/docker/alpine-postgresql/commits/master)
+[![](https://images.microbadger.com/badges/image/datacore/alpine-postgresql.svg)](https://microbadger.com/images/datacore/alpine-postgresql)
+[![](https://images.microbadger.com/badges/version/datacore/alpine-postgresql.svg)](https://microbadger.com/images/datacore/alpine-postgresql)
+[![](https://images.microbadger.com/badges/license/datacore/alpine-postgresql.svg)](https://microbadger.com/images/datacore/alpine-postgresql)
 
 # docker/alpine-postgresql:9.6.1
 
