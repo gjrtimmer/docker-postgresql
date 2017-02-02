@@ -33,6 +33,7 @@ RUN echo 'http://pkgs.timmertech.nl/main' >> /etc/apk/repositories && \
 	apk add --update --no-cache \
 		acl \
 		bash \
+		ca-certificates \
 		shadow \
 		sudo \
 		postgresql \
