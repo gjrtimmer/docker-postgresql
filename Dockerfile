@@ -24,6 +24,7 @@ ENV LANG=en_US.utf8 \
 ENV PG_DATADIR=${PG_HOME}/${PG_VERSION}/main
 	
 RUN echo 'http://pkgs.timmertech.nl/main' >> /etc/apk/repositories && \
+	echo '@testing http://pkgs.timmertech.nl/testing' >> /etc/apk/repositories && \
 	echo 'http://nl.alpinelinux.org/alpine/edge/main'  >> /etc/apk/repositories && \
 	echo 'http://nl.alpinelinux.org/alpine/edge/community'  >> /etc/apk/repositories && \
 	echo 'http://nl.alpinelinux.org/alpine/edge/testing'  >> /etc/apk/repositories && \
@@ -42,7 +43,8 @@ RUN echo 'http://pkgs.timmertech.nl/main' >> /etc/apk/repositories && \
 		postgresql-pltcl \
 		postgresql-contrib \
 		pgtcl \
-		pg_cron && \
+		pg_cron \
+		check_postgres@testing && \
 	echo "postgres ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/postgres && \
 	chmod 600 /etc/sudoers.d/postgres && \
 	sync
