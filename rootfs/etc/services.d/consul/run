@@ -8,6 +8,6 @@ if (( ${CONSUL} == 1 )) || [ "${CONSUL}" = "true" ]; then
 	CONSUL_UID=$(id -u consul)
 	CONSUL_GID=$(id -g consul)
 	
-	exec s6-applyuidgid -u ${USERMAP_UID} -g ${USERMAP_GID} consul agent -config-dir=/consul/config -data-dir=/consul/data
+	exec s6-applyuidgid -u ${CONSUL_UID} -g ${CONSUL_GID} consul agent -config-dir=/consul/config -data-dir=/consul/data
 fi
 # EOF
