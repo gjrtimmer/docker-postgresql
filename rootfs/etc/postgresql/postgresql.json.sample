@@ -1,0 +1,19 @@
+{
+	"leave_on_terminate": true,
+	"log_level": "INFO",
+	"start_join": "<IP>",
+	"retry_join": "<IP>",
+	"service": {
+		"name": "postgresql",
+		"tags": [
+			"primary"
+		],
+		"port": 5432,
+		"checks": [{
+			"id": "pg_alive",
+			"notes": "Check connection",
+			"script": "/usr/bin/check_postgres --dbname <DBNAME> --action connection",
+			"interval": "10s"
+		}]
+	}
+}
