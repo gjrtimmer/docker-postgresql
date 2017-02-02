@@ -12,4 +12,7 @@ if [ ! -d /consul/config ]; then
 	mkdir -p /consul/config
 fi
 
+chmod -R 0755 /consul
+chown -R consul:consul /consul
+
 # EOF
