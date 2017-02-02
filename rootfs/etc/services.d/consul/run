@@ -1,0 +1,13 @@
+#!/usr/bin/with-contenv bash
+
+CONSUL=${CONSUL:-0}
+
+
+if (( ${CONSUL} == 1 )) || [ "${CONSUL}" = "true" ]; then
+
+	CONSUL_UID=$(id -u consul)
+	CONSUL_GID=$(id -g consul)
+	
+	exec s6-applyuidgid -u ${USERMAP_UID} -g ${USERMAP_GID} consul agent
+fi
+# EOF

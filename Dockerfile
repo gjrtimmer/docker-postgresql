@@ -44,7 +44,8 @@ RUN echo 'http://pkgs.timmertech.nl/main' >> /etc/apk/repositories && \
 		postgresql-contrib \
 		pgtcl \
 		pg_cron \
-		check_postgres@testing && \
+		check_postgres@testing 
+		consul@testing && \
 	echo "postgres ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/postgres && \
 	chmod 600 /etc/sudoers.d/postgres && \
 	sync
