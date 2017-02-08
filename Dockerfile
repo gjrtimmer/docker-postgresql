@@ -7,7 +7,7 @@ ARG PGV
 
 LABEL \
 	nl.timmertech.build-date=${BUILD_DATE} \
-	nl.timmertech.name=alpine-redis \
+	nl.timmertech.name=alpine-postgresql \
 	nl.timmertech.vendor=timmertech.nl \
 	nl.timmertech.vcs-url="https://gitlab.timmertech.nl/docker/alpine-postgresql.git" \
 	nl.timmertech.vcs-ref=${VCS_REF} \
