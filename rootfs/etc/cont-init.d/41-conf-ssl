@@ -13,17 +13,8 @@ if [[ -f ${PG_CERTDIR}/server.crt && -f ${PG_CERTDIR}/server.key ]]; then
 	# Either file:
 	#  root.crt
 	#  cacert.pem
-	if [[ -f ${PG_CERTDIR}/root.crt || -f ${PG_CERTDIR}/cacert.pem ]]; then
-		declare CA_CERT
-		if [[ -f ${PG_CERTDIR}/root.crt ]]; then
-			CA_CERT=${PG_CERTDIR}/root.crt
-		fi
-		
-		if [[ -f ${PG_CERTDIR}/cacert.pem ]]; then
-			CA_CERT=${PG_CERTDIR}/cacert.pem
-		fi
-		
-		set_postgresql_param "ssl_ca_file" ${CA_CERT}
+	if [[ -f ${PG_CERTDIR}/cacert.crt ]]; then
+		set_postgresql_param "ssl_ca_file" ${PG_CERTDIR}/cacert.crt
 	fi
 fi
 
