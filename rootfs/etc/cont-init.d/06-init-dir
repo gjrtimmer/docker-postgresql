@@ -1,0 +1,13 @@
+#!/usr/bin/with-contenv bash
+set -e
+
+# Load functions
+source /etc/postgresql/functions
+
+if [ ! -d /etc/postgresql/init ]; then
+	mkdir -p /etc/postgresql/init
+fi
+
+chown -R ${PG_USER}:${PG_USER} /etc/postgresql/init
+
+# EOF
