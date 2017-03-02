@@ -42,8 +42,7 @@ RUN echo 'http://nl.alpinelinux.org/alpine/edge/main'  >> /etc/apk/repositories 
 		postgresql-contrib \
 		pgtcl \
 		pg_cron \
-		check_postgres \
-		consul && \
+		check_postgres && \
 	echo "postgres ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/postgres && \
 	chmod 600 /etc/sudoers.d/postgres && \
 	sync
