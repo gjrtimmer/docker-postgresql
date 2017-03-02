@@ -5,9 +5,9 @@ set -e
 source /etc/postgresql/functions
 
 echo "  Trusting connections from the local network..."
-set_hba_param "host all all samenet trust"
+set_hba_param "host		all				all				samenet					trust"
 
 # allow remote connections to postgresql database
-set_hba_param "host all all 0.0.0.0/0 md5"
+set_hba_param "host		all				all				0.0.0.0/0				md5"
 
 # EOF
