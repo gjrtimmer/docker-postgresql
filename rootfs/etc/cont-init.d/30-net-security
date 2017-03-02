@@ -4,10 +4,14 @@ set -e
 # Load functions
 source /etc/postgresql/functions
 
-echo "  Trusting connections from the local network..."
-set_hba_param "host		all				all				samenet					trust"
+if [[ ! -f /etc/postgresql/net-security ]]; then
+	echo "  Trusting connections from the local network..."
+	set_hba_param "host		all				all				samenet					trust"
 
-# allow remote connections to postgresql database
-set_hba_param "host		all				all				0.0.0.0/0				md5"
+	# allow remote connections to postgresql database
+	set_hba_param "host		all				all				0.0.0.0/0				md5"
+	
+	touch /etc/postgresql/net-security
+fi
 
 # EOF
