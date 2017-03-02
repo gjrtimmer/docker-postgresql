@@ -8,6 +8,23 @@ if [[ -f ${PG_CERTDIR}/server.crt && -f ${PG_CERTDIR}/server.key ]]; then
 	PG_SSL=${PG_SSL:-on}
 	set_postgresql_param "ssl_cert_file" "${PG_CERTDIR}/server.crt"
 	set_postgresql_param "ssl_key_file" "${PG_CERTDIR}/server.key"
+	
+	# Check for CA
+	# Either file:
+	#  root.crt
+	#  cacert.pem
+	if [[ -f ${PG_CERTDIR}/root.crt || -f ${PG_CERTDIR}/cacert.pem ]]; then
+		local CA_CERT
+		if [[ -f ${PG_CERTDIR}/root.crt ]]; then
+			CA_CERT=${PG_CERTDIR}/root.crt
+		fi
+		
+		if [[ -f ${PG_CERTDIR}/cacert.pem ]]; then
+			CA_CERT=${PG_CERTDIR}/cacert.pem
+		fi
+		
+		set_postgresql_param "ssl_ca_file" ${CA_CERT}
+	fi
 fi
 
 PG_SSL=${PG_SSL:-off}
