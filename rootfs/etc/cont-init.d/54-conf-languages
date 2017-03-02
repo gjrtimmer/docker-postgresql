@@ -12,19 +12,19 @@ if [[ -n ${DB_NAME} ]]; then
 				
 				# PL/Perl
 				if [ "${PL_PERL}" = true ]; then
-					echo "  Loading language extension PL/Perl"
+					echo "  [${database}] Loading language extension PL/Perl"
 					psql -U ${PG_USER} -d ${database} -c "CREATE EXTENSION IF NOT EXISTS plperl;" >/dev/null 2>&1
 				fi
 				
 				# PL/Python
 				if [ "${PL_PYTHON}" = true ]; then
-					echo "  Loading language extension PL/Python"
+					echo "  [${database}] Loading language extension PL/Python"
 					psql -U ${PG_USER} -d ${database} -c "CREATE EXTENSION IF NOT EXISTS plpython3u;" >/dev/null 2>&1
 				fi
 				
 				# PL/Tcl
 				if [ "${PL_TCL}" = true ]; then
-					echo "  Loading language extension PL/Tcl"
+					echo "  [${database}] Loading language extension PL/Tcl"
 					psql -U ${PG_USER} -d ${database} -c "CREATE EXTENSION IF NOT EXISTS pltcl;" >/dev/null 2>&1
 				fi
 				
