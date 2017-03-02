@@ -14,7 +14,7 @@ if [[ -f ${PG_CERTDIR}/server.crt && -f ${PG_CERTDIR}/server.key ]]; then
 	#  root.crt
 	#  cacert.pem
 	if [[ -f ${PG_CERTDIR}/root.crt || -f ${PG_CERTDIR}/cacert.pem ]]; then
-		local CA_CERT
+		declare CA_CERT
 		if [[ -f ${PG_CERTDIR}/root.crt ]]; then
 			CA_CERT=${PG_CERTDIR}/root.crt
 		fi
