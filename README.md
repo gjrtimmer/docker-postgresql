@@ -3,7 +3,7 @@
 [![](https://images.microbadger.com/badges/version/datacore/alpine-postgresql.svg)](https://microbadger.com/images/datacore/alpine-postgresql)
 [![](https://images.microbadger.com/badges/license/datacore/alpine-postgresql.svg)](https://microbadger.com/images/datacore/alpine-postgresql)
 
-# docker/alpine-postgresql:9.6.2
+# docker/alpine-postgresql:9.6.3
 
 Docker image for running a PostgreSQL server
 
