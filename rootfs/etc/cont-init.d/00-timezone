@@ -3,7 +3,7 @@ set -e
 
 TZ=${TZ:-UTC}
 
-apk add tzdata --quiet --no-progress
+apk add --update --no-cache --quiet --no-progress tzdata
 cp /usr/share/zoneinfo/${TZ} /etc/localtime
 
 # EOF
