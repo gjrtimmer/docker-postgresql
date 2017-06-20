@@ -9,9 +9,7 @@ Docker image for running a PostgreSQL server
 
 <br />
 # Image details:
-- Alpine Linux: 3.4
-- S6-Overlay: 1.18.1.5
-- Postgresql: 9.6.2-r1
+- Postgresql: 9.6.3-r0
 
 # Table of Contents
 - [Introduction](#introduction)
