@@ -33,6 +33,7 @@ RUN echo 'http://nl.alpinelinux.org/alpine/edge/main'  >> /etc/apk/repositories 
 		ca-certificates \
 		shadow \
 		sudo \
+		tzdata \
 		postgresql \
 		postgresql-plperl \
 		postgresql-plperl-contrib \
