@@ -4,6 +4,9 @@ set -e
 # Load functions
 source /etc/postgresql/functions
 
+# Check is database is ready to accept operations
+isDBReady
+
 if [[ -n ${REPLICATION_USER} ]]; then
 	case $REPLICATION_MODE in
 		slave|snapshot|backup) ;; # replication user can only be created on the master

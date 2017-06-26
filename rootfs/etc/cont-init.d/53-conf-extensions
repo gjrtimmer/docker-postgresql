@@ -4,6 +4,9 @@ set -e
 # Load functions
 source /etc/postgresql/functions
 
+# Check is database is ready to accept operations
+isDBReady
+
 if [[ -n ${DB_NAME} ]]; then
 	case $REPLICATION_MODE in
 		slave|snapshot|backup) ;;
