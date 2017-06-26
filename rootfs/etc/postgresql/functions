@@ -57,7 +57,7 @@ set_hba_param() {
 }
 
 isDBReady() {
-	cmd="pg_isready -h ${DBHOST} -p ${DBPORT} -U ${DBUSER} -d {DBNAME} -t 1"
+	cmd="pg_isready -h localhost -p 5432 -U ${DB_USER} -d {DB_NAME} -t 1"
 	timeout=180
 	echo -n "Waiting for database to be ready"
 	while ! $cmd > /dev/null 2>&1
