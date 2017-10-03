@@ -3,13 +3,13 @@
 [![](https://images.microbadger.com/badges/version/datacore/alpine-postgresql.svg)](https://microbadger.com/images/datacore/alpine-postgresql)
 [![](https://images.microbadger.com/badges/license/datacore/alpine-postgresql.svg)](https://microbadger.com/images/datacore/alpine-postgresql)
 
-# docker/alpine-postgresql:9.6.3
+# docker/alpine-postgresql:9.6.5
 
 Docker image for running a PostgreSQL server
 
 <br />
 # Image details:
-- Postgresql: 9.6.3-r0
+- Postgresql: 9.6.5-r0
 
 # Table of Contents
 - [Introduction](#introduction)
@@ -101,7 +101,7 @@ For example, if you want to assign the `postgres` user of the container the UID 
 ```bash
 docker run --name postgresql -itd --restart always \
   --env 'PG_UID=999' --env 'PG_GID=999' \
-  registry.timmertech.nl/docker/apline-postgresql:9.6.0
+  registry.timmertech.nl/docker/apline-postgresql:9.6.5
 ```
 
 
@@ -130,7 +130,7 @@ A new PostgreSQL database can be created by specifying the `DB_NAME` variable wh
 ```bash
 docker run --name postgresql -itd --restart always \
   --env 'DB_NAME=dbname' \
-  registry.timmertech.nl/docker/apline-postgresql:9.6.0
+  registry.timmertech.nl/docker/apline-postgresql:9.6.5
 ```
 
 By default databases are created by copying the standard system database named `template1`. You can specify a different template for your database using the `DB_TEMPLATE` parameter. Refer to [Template Databases](http://www.postgresql.org/docs/9.4/static/manage-ag-templatedbs.html) for further information.
@@ -140,7 +140,7 @@ Additionally, more than one database can be created by specifying a comma separa
 ```bash
 docker run --name postgresql -itd --restart always \
   --env 'DB_NAME=dbname1,dbname2' \
-  registry.timmertech.nl/docker/apline-postgresql:9.6.0
+  registry.timmertech.nl/docker/apline-postgresql:9.6.5
 ```
 
 
@@ -152,7 +152,7 @@ The image also packages the [postgres contrib module](http://www.postgresql.org/
 ```bash
 docker run --name postgresql -itd \
   --env 'DB_NAME=db1,db2' --env 'DB_EXTENSION=unaccent,pg_trgm' \
-  registry.timmertech.nl/docker/apline-postgresql:9.6.0
+  registry.timmertech.nl/docker/apline-postgresql:9.6.5
 ```
 
 The above command enables the `unaccent` and `pg_trgm` modules on the databases listed in `DB_NAME`, namely `db1` and `db2`.
@@ -173,7 +173,7 @@ docker run --name postgresql-snapshot -itd --restart always \
   --env 'REPLICATION_MODE=snapshot' --env 'REPLICATION_SSLMODE=prefer' \
   --env 'REPLICATION_HOST=master' --env 'REPLICATION_PORT=5432'  \
   --env 'REPLICATION_USER=repluser' --env 'REPLICATION_PASS=repluserpass' \
-  registry.timmertech.nl/docker/apline-postgresql:9.6.0
+  registry.timmertech.nl/docker/apline-postgresql:9.6.5
 ```
 
 The difference between a slave and a snapshot is that a slave is read-only and updated whenever the master data is updated (streaming replication), while a snapshot is read-write and is not updated after the initial snapshot of the data from the master.
@@ -199,7 +199,7 @@ docker run --name postgresql-backup -it --rm \
   --env 'REPLICATION_HOST=master' --env 'REPLICATION_PORT=5432'  \
   --env 'REPLICATION_USER=repluser' --env 'REPLICATION_PASS=repluserpass' \
   --volume /srv/docker/backups/postgresql.$(date +%Y%m%d%H%M%S):/var/lib/postgresql \
-  registry.timmertech.nl/docker/apline-postgresql:9.6.0
+  registry.timmertech.nl/docker/apline-postgresql:9.6.5
 ```
 
 Once the backup is generated, the container will exit and the backup of the master data will be available at `/srv/docker/backups/postgresql.XXXXXXXXXXXX/`. Restoring the backup involves starting a container with the data in `/srv/docker/backups/postgresql.XXXXXXXXXXXX`.
