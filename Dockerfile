@@ -1,11 +1,11 @@
 FROM registry.timmertech.nl/docker/alpine-base:latest
-MAINTAINER G.J.R. Timmer <gjr.timmer@gmail.com>
 
 ARG BUILD_DATE
 ARG VCS_REF
 ARG PGV
 
 LABEL \
+	maintainer="G.J.R. Timmer <gjr.timmer@gmail.com>" \
 	nl.timmertech.build-date=${BUILD_DATE} \
 	nl.timmertech.name=alpine-postgresql \
 	nl.timmertech.vendor=timmertech.nl \
