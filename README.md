@@ -7,7 +7,7 @@
 
 Docker image for running a PostgreSQL server
 
-<br />
+
 # Image details:
 - Postgresql: 9.6.5-r0
 
@@ -26,7 +26,7 @@ Docker image for running a PostgreSQL server
 - [Creating Backup](#creating-backup)
 - [Replication](./REPLICATION.md)
 
-<br />
+
 # Introduction
 
 `Dockerfile` to create a [Docker](https://www.docker.com/) container image for [PostgreSQL](http://postgresql.org/).
@@ -34,7 +34,7 @@ Docker image for running a PostgreSQL server
 PostgreSQL is an object-relational database management system (ORDBMS) with an emphasis on extensibility and standards-compliance [[source](https://en.wikipedia.org/wiki/PostgreSQL)].
 
 
-<br />
+
 # Getting Started
 
 ```bash
@@ -42,7 +42,7 @@ docker pull registry.timmertech.nl/docker/alpine-postgresql
 ```
 
 
-<br />
+
 ## Volume Locations
 
 Default Locations:
@@ -55,7 +55,7 @@ Default Locations:
 | ```PG_CERTDIR``` | /etc/postgresql/certs | Certificate directory | 
 
 
-<br />
+
 ## Configuration Options
  - [General Options](#general-options)
    - [Timezone](#timezone)
@@ -63,7 +63,7 @@ Default Locations:
  - [Database Options](#database-options)
 
    
-<br />
+
 ### General Options
 
 | Option | Default | Description |
@@ -73,7 +73,7 @@ Default Locations:
 | [PG_GID](#uidgid-mapping) `GID` | postgres | Map ownership to GID |
 
 
-<br />
+
 #### Timezone
 Set the timezone for the container, defaults to ```UTC```.
 To set the timezone set the desired timezone with the variable ```TZ```.
@@ -87,7 +87,7 @@ docker run --name postgresql -itd --restart always \
 ````
 
 
-<br />
+
 #### UID/GID mapping
 
 The files and processes created by the container are owned by the `postgres` user that is internal to the container. In the absense of user namespace in docker the UID and GID of the containers `postgres` user may have different meaning on the host.
@@ -105,7 +105,7 @@ docker run --name postgresql -itd --restart always \
 ```
 
 
-<br>
+
 ### Database Options
 
 | Option | Description |
@@ -122,7 +122,7 @@ docker run --name postgresql -itd --restart always \
 | PG_CRON | Cron scheduler for postgresql, ```true``` to enable, default: ```false``` |
 
 
-<br>
+
 ## Creating databases
 
 A new PostgreSQL database can be created by specifying the `DB_NAME` variable while starting the container.
@@ -144,7 +144,7 @@ docker run --name postgresql -itd --restart always \
 ```
 
 
-<br>
+
 # Enabling extensions
 
 The image also packages the [postgres contrib module](http://www.postgresql.org/docs/9.4/static/contrib.html). A comma separated list of modules can be specified using the `DB_EXTENSION` parameter.
@@ -158,7 +158,7 @@ docker run --name postgresql -itd \
 The above command enables the `unaccent` and `pg_trgm` modules on the databases listed in `DB_NAME`, namely `db1` and `db2`.
 
  
-<br>
+
 ## Creating Snapshot
 > **Untested**
 > Reason: S6 Implementation
@@ -181,7 +181,7 @@ The difference between a slave and a snapshot is that a slave is read-only and u
 This is useful for developers to quickly snapshot the current state of a live database and use it for development/debugging purposes without altering the database on the live instance.
 
 
-<br>
+
 ## Creating Backup
 > **Untested**
 > Reason: S6 Implementation

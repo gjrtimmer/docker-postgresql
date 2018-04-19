@@ -2,7 +2,7 @@
 
 # docker/alpine-postgresql:9.6.5
 
-<br>
+
 ### Replication Options
 
 | Option | Description |
@@ -14,7 +14,7 @@
 | [REPLICATION_PORT](#setting-up-a-replication-cluster) `POST` | Port number of replication host (default: 5432) |
 | [REPLICATION_SSLMODE](#setting-up-a-replication-cluster) `MODE` | SSL Mode for Replication (default: prefer) |
 
-<br>
+
 ## Creating replication user
 
 Similar to the creation of a database user, a new PostgreSQL replication user can be created by specifying the `REPLICATION_USER` and `REPLICATION_PASS` variables while starting the container.
@@ -34,7 +34,7 @@ docker run --name postgresql -itd --restart always \
 
 *It is a good idea to create a replication user even if you are not going to use it as it will allow you to setup slave nodes and/or generate snapshots and backups when the need arises.*
 
-<br>
+
 ## Setting up a replication cluster
 
 When the container is started, it is by default configured to act as a master node in a replication cluster. This means that you can scale your PostgreSQL database backend when the need arises without incurring any downtime. However do note that a replication user must exist on the master node for this to work.
@@ -53,7 +53,7 @@ Notice that no additional arguments are specified while starting the master node
 To create a replication slave the `REPLICATION_MODE` variable should be set to `slave` and additionally the `REPLICATION_HOST`, `REPLICATION_PORT`, `REPLICATION_SSLMODE`, `REPLICATION_USER` and `REPLICATION_PASS` variables should be specified.
 
 
-<br>
+
 ## Create a slave node
 
 ```bash
