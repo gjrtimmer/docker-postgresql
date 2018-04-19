@@ -1,4 +1,4 @@
-FROM registry.timmertech.nl/docker/alpine-base:latest
+FROM registry.timmertech.nl/docker/alpine-base
 
 ARG BUILD_DATE
 ARG VCS_REF
