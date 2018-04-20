@@ -13,7 +13,7 @@ build:latest:
     - docker build --pull --force-rm=true 
         --build-arg VCS_REF=`git rev-parse --short HEAD` 
         --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` 
-        --build-arg PGV=$(grep -o -E "[0-9]\.[0-9]" VERSION) 
+        --build-arg PGV=$(grep -o -E "[0-9][0-9]\.[0-9]" VERSION) 
         --tag=${REPOSITORY}/${CI_PROJECT_PATH} .
     - docker push ${REPOSITORY}/${CI_PROJECT_PATH}
 
@@ -26,6 +26,6 @@ build:release:
     - docker build --pull --force-rm=true 
         --build-arg VCS_REF=`git rev-parse --short HEAD` 
         --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` 
-        --build-arg PGV=$(grep -o -E "[0-9]\.[0-9]" VERSION) 
+        --build-arg PGV=$(grep -o -E "[0-9][0-9]\.[0-9]" VERSION) 
         --tag=${REPOSITORY}/${CI_PROJECT_PATH}:${CI_BUILD_REF_NAME} .
     - docker push ${REPOSITORY}/${CI_PROJECT_PATH}:${CI_BUILD_REF_NAME}
