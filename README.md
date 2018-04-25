@@ -3,13 +3,13 @@
 [![](https://images.microbadger.com/badges/version/datacore/alpine-postgresql.svg)](https://microbadger.com/images/datacore/alpine-postgresql)
 [![](https://images.microbadger.com/badges/license/datacore/alpine-postgresql.svg)](https://microbadger.com/images/datacore/alpine-postgresql)
 
-# docker/alpine-postgresql:9.6.5
+# docker/alpine-postgresql:10.3
 
 Docker image for running a PostgreSQL server
 
 
 # Image details:
-- Postgresql: 9.6.5-r0
+- Postgresql: 10.3
 
 # Table of Contents
 - [Introduction](#introduction)
@@ -101,7 +101,7 @@ For example, if you want to assign the `postgres` user of the container the UID 
 ```bash
 docker run --name postgresql -itd --restart always \
   --env 'PG_UID=999' --env 'PG_GID=999' \
-  registry.timmertech.nl/docker/apline-postgresql:9.6.5
+  registry.timmertech.nl/docker/apline-postgresql:10.3
 ```
 
 
@@ -114,7 +114,7 @@ docker run --name postgresql -itd --restart always \
 | DB_USER | Username for database(s) provided with `DB_NAME` |
 | DB_PASS | Password for database(s) provided with `DB_NAME` |
 | [DB_NAME](#creating-databases) `NAME` | Database(s) to create, multiple can be provided separated with a comma `,` |
-| [DB_TEMPLATE](http://www.postgresql.org/docs/9.4/static/manage-ag-templatedbs.html) `TEMPLATE` | Template to use for newly created database(s) [Template Databases](http://www.postgresql.org/docs/9.4/static/manage-ag-templatedbs.html) |
+| [DB_TEMPLATE](http://www.postgresql.org/docs/10.3/static/manage-ag-templatedbs.html) `TEMPLATE` | Template to use for newly created database(s) [Template Databases](http://www.postgresql.org/docs/10.3/static/manage-ag-templatedbs.html) |
 | [DB_EXTENSION](#enabling-extensions) `EXTENSION` | Extension to enable for database(s) within `DB_NAME`, multiple can be provided separated with a comma `,` |
 | PL_PERL | PL/Perl language extension, ```true``` to enable, default: ```false``` |
 | PL_PYTHON | PL/Python3 language extension, ```true``` to enable, default: ```false``` |
@@ -130,29 +130,29 @@ A new PostgreSQL database can be created by specifying the `DB_NAME` variable wh
 ```bash
 docker run --name postgresql -itd --restart always \
   --env 'DB_NAME=dbname' \
-  registry.timmertech.nl/docker/apline-postgresql:9.6.5
+  registry.timmertech.nl/docker/apline-postgresql:10.3
 ```
 
-By default databases are created by copying the standard system database named `template1`. You can specify a different template for your database using the `DB_TEMPLATE` parameter. Refer to [Template Databases](http://www.postgresql.org/docs/9.4/static/manage-ag-templatedbs.html) for further information.
+By default databases are created by copying the standard system database named `template1`. You can specify a different template for your database using the `DB_TEMPLATE` parameter. Refer to [Template Databases](http://www.postgresql.org/docs/10.3/static/manage-ag-templatedbs.html) for further information.
 
 Additionally, more than one database can be created by specifying a comma separated list of database names in `DB_NAME`. For example, the following command creates two new databases named `dbname1` and `dbname2`.
 
 ```bash
 docker run --name postgresql -itd --restart always \
   --env 'DB_NAME=dbname1,dbname2' \
-  registry.timmertech.nl/docker/apline-postgresql:9.6.5
+  registry.timmertech.nl/docker/apline-postgresql:10.3
 ```
 
 
 
 # Enabling extensions
 
-The image also packages the [postgres contrib module](http://www.postgresql.org/docs/9.4/static/contrib.html). A comma separated list of modules can be specified using the `DB_EXTENSION` parameter.
+The image also packages the [postgres contrib module](http://www.postgresql.org/docs/10.3/static/contrib.html). A comma separated list of modules can be specified using the `DB_EXTENSION` parameter.
 
 ```bash
 docker run --name postgresql -itd \
   --env 'DB_NAME=db1,db2' --env 'DB_EXTENSION=unaccent,pg_trgm' \
-  registry.timmertech.nl/docker/apline-postgresql:9.6.5
+  registry.timmertech.nl/docker/apline-postgresql:10.3
 ```
 
 The above command enables the `unaccent` and `pg_trgm` modules on the databases listed in `DB_NAME`, namely `db1` and `db2`.
@@ -173,7 +173,7 @@ docker run --name postgresql-snapshot -itd --restart always \
   --env 'REPLICATION_MODE=snapshot' --env 'REPLICATION_SSLMODE=prefer' \
   --env 'REPLICATION_HOST=master' --env 'REPLICATION_PORT=5432'  \
   --env 'REPLICATION_USER=repluser' --env 'REPLICATION_PASS=repluserpass' \
-  registry.timmertech.nl/docker/apline-postgresql:9.6.5
+  registry.timmertech.nl/docker/apline-postgresql:10.3
 ```
 
 The difference between a slave and a snapshot is that a slave is read-only and updated whenever the master data is updated (streaming replication), while a snapshot is read-write and is not updated after the initial snapshot of the data from the master.
@@ -188,7 +188,7 @@ This is useful for developers to quickly snapshot the current state of a live da
 
 Just as the case of setting up a slave node or generating a snapshot, you can also create a backup of the data on the master by specifying `REPLICATION_MODE=backup`.
 
-> The backups are generated with [pg_basebackup](http://www.postgresql.org/docs/9.4/static/app-pgbasebackup.html) using the replication protocol.
+> The backups are generated with [pg_basebackup](http://www.postgresql.org/docs/10.3/static/app-pgbasebackup.html) using the replication protocol.
 
 Once the master node is created as specified in [Setting up a replication cluster](#setting-up-a-replication-cluster), you can create a point-in-time backup using:
 
@@ -199,7 +199,7 @@ docker run --name postgresql-backup -it --rm \
   --env 'REPLICATION_HOST=master' --env 'REPLICATION_PORT=5432'  \
   --env 'REPLICATION_USER=repluser' --env 'REPLICATION_PASS=repluserpass' \
   --volume /srv/docker/backups/postgresql.$(date +%Y%m%d%H%M%S):/var/lib/postgresql \
-  registry.timmertech.nl/docker/apline-postgresql:9.6.5
+  registry.timmertech.nl/docker/apline-postgresql:10.3
 ```
 
 Once the backup is generated, the container will exit and the backup of the master data will be available at `/srv/docker/backups/postgresql.XXXXXXXXXXXX/`. Restoring the backup involves starting a container with the data in `/srv/docker/backups/postgresql.XXXXXXXXXXXX`.

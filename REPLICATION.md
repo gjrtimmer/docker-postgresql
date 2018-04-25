@@ -1,6 +1,6 @@
 [![build status](https://gitlab.timmertech.nl/docker/alpine-postgresql/badges/master/build.svg)](https://gitlab.timmertech.nl/docker/alpine-postgresql/commits/master)
 
-# docker/alpine-postgresql:9.6.5
+# docker/alpine-postgresql:10.3
 
 
 ### Replication Options
@@ -22,7 +22,7 @@ Similar to the creation of a database user, a new PostgreSQL replication user ca
 ```bash
 docker run --name postgresql -itd --restart always \
   --env 'REPLICATION_USER=repluser' --env 'REPLICATION_PASS=repluserpass' \
-  registry.timmertech.nl/docker/apline-postgresql:9.6.5
+  registry.timmertech.nl/docker/apline-postgresql:10.3
 ```
 
 > **Notes**
@@ -45,7 +45,7 @@ Begin by creating the master node of our cluster:
 docker run --name postgresql-master -itd --restart always \
   --env 'DB_USER=dbuser' --env 'DB_PASS=dbuserpass' --env 'DB_NAME=dbname' \
   --env 'REPLICATION_USER=repluser' --env 'REPLICATION_PASS=repluserpass' \
-  registry.timmertech.nl/docker/apline-postgresql:9.6.5
+  registry.timmertech.nl/docker/apline-postgresql:10.3
 ```
 
 Notice that no additional arguments are specified while starting the master node of the cluster.
@@ -62,7 +62,7 @@ docker run --name postgresql-slave01 -itd --restart always \
   --env 'REPLICATION_MODE=slave' --env 'REPLICATION_SSLMODE=prefer' \
   --env 'REPLICATION_HOST=master' --env 'REPLICATION_PORT=5432'  \
   --env 'REPLICATION_USER=repluser' --env 'REPLICATION_PASS=repluserpass' \
-  registry.timmertech.nl/docker/apline-postgresql:9.6.5
+  registry.timmertech.nl/docker/apline-postgresql:10.3
 ```
 
 *In the above command, we used docker links so that we can address the master node using the `master` alias in `REPLICATION_HOST`.*

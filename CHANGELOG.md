@@ -12,4 +12,7 @@
 **9.6.5**
  - Alpine Linux: 3.6
  - Postgresql: 9.6.5
- 
+
+**10.3**
+ - Alpine Linux: 3.7
+ - Postgresql: 10.3
