@@ -9,7 +9,7 @@ if [ ! -d ${PG_RUNDIR} ]; then
 	mkdir -p ${PG_RUNDIR} ${PG_RUNDIR}/${PG_VERSION}-main.pg_stat_tmp
 fi
 
-if [ ! -L /run/postgresql ]; then
+if [ ! -L /run/postgresql/postgresql ]; then
 	ln -s ${PG_RUNDIR} /run/postgresql
 fi
 
