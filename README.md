@@ -3,13 +3,13 @@
 [![](https://images.microbadger.com/badges/version/datacore/alpine-postgresql.svg)](https://microbadger.com/images/datacore/alpine-postgresql)
 [![](https://images.microbadger.com/badges/license/datacore/alpine-postgresql.svg)](https://microbadger.com/images/datacore/alpine-postgresql)
 
-# docker/alpine-postgresql:10.3
+# docker/alpine-postgresql:10.5
 
 Docker image for running a PostgreSQL server
 
 
 # Image details:
-- Postgresql: 10.3
+- Postgresql: 10.5
 
 # Table of Contents
 - [Introduction](#introduction)
