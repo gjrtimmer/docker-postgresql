@@ -6,12 +6,15 @@ ARG PGV
 
 LABEL \
 	maintainer="G.J.R. Timmer <gjr.timmer@gmail.com>" \
-	nl.timmertech.build-date=${BUILD_DATE} \
-	nl.timmertech.name=alpine-postgresql \
-	nl.timmertech.vendor=timmertech.nl \
-	nl.timmertech.vcs-url="https://gitlab.timmertech.nl/docker/alpine-postgresql.git" \
-	nl.timmertech.vcs-ref=${VCS_REF} \
-	nl.timmertech.license=MIT
+	org.label-schema.schema-version="1.0" \
+	org.label-schema.build-date=${BUILD_DATE} \
+	org.label-schema.name=alpine-postgresql \
+	org.label-schema.vendor=timmertech.nl \
+	org.label-schema.url="https://gitlab.timmertech.nl/docker/alpine-postgresql" \
+	org.label-schema.vcs-url="https://gitlab.timmertech.nl/docker/alpine-postgresql.git" \
+	org.label-schema.vcs-ref=${VCS_REF} \
+	nl.timmertech.license=MIT \
+	org.postgresql.version=${PGV}
 
 ENV LANG=en_US.utf8 \
 	MUSL_LOCPATH=en_US.utf8 \

@@ -7,25 +7,16 @@
 
 Docker image for running a PostgreSQL server
 
-
-# Image details:
-- Postgresql: 10.5
-
 # Table of Contents
 - [Introduction](#introduction)
-- [Getting Started](#getting-started)
+- [Installation](#installation)
 - [Volume Locations](#volume-locations)
 - [Configuration Options](#configuration-options)
-  - [General Options](#general-options)
-    - [Timezone](#timezone)
-    - [UID/GID](#uidgid-mapping)
-  - [Database Options](#database-options)
 - [Creating Database](#creating-databases)
 - [Enabling extensions](#enabling-extensions)
 - [Creating Snapshot](#creating-snapshot)
 - [Creating Backup](#creating-backup)
 - [Replication](./REPLICATION.md)
-
 
 # Introduction
 
@@ -33,15 +24,41 @@ Docker image for running a PostgreSQL server
 
 PostgreSQL is an object-relational database management system (ORDBMS) with an emphasis on extensibility and standards-compliance [[source](https://en.wikipedia.org/wiki/PostgreSQL)].
 
+# Installation
 
+<details>
+<summary>Install from DockerHub</summary>
+<p>
 
-# Getting Started
-
+Download:
 ```bash
-docker pull registry.timmertech.nl/docker/alpine-postgresql
+docker pull datacore/alpine-postgresql:latest
 ```
 
+Build:
+```bash
+docker build -t datacore/alpine-postgresql https://github.com/GJRTimmer/docker-alpine-postgresql
+```
+</p>
+</details>
 
+<br/>
+
+<details>
+<summary>Install from TimmerTech</summary>
+<p>
+
+Download:
+```bash
+docker pull registry.timmertech.nl/docker/alpine-postgresql:latest
+```
+
+Build:
+```bash
+docker build -t datacore/alpine-postgresql https://gitlab.timmertech.nl/docker/alpine-postgresql
+```
+</p>
+</details>
 
 ## Volume Locations
 
@@ -54,27 +71,32 @@ Default Locations:
 | ```PG_RUNDIR``` | /var/run/postgresql | Run directory |
 | ```PG_CERTDIR``` | /etc/postgresql/certs | Certificate directory | 
 
-
-
 ## Configuration Options
- - [General Options](#general-options)
-   - [Timezone](#timezone)
-   - [UID/GID](#uidgid-mapping)
- - [Database Options](#database-options)
 
-   
+<details>
+<summary>General</summary>
 
 ### General Options
+
+<p>
 
 | Option | Default | Description |
 |--------|---------|-------------|
 | [TZ](#timezone) | UTC | Set timezone, example ```Europe/Amsterdam``` |
 | [PG_UID](#uidgid-mapping) `UID` | postgres | Map ownership to UID |
 | [PG_GID](#uidgid-mapping) `GID` | postgres | Map ownership to GID |
+</p>
+</details>
 
+<br/>
 
+<details>
+<summary>Timezone</summary>
 
-#### Timezone
+### Timezone
+
+<p>
+
 Set the timezone for the container, defaults to ```UTC```.
 To set the timezone set the desired timezone with the variable ```TZ```.
 
@@ -85,10 +107,17 @@ docker run --name postgresql -itd --restart always \
   --env 'TZ=Europe/Amsterdam' \
   registry.timmertech.nl/docker/apline-postgresql:latest
 ````
+</p>
+</details>
 
+<br />
 
+<details>
+<summary>UID / GID Mapping</summary>
 
-#### UID/GID mapping
+### UID/GID mapping
+
+<p>
 
 The files and processes created by the container are owned by the `postgres` user that is internal to the container. In the absense of user namespace in docker the UID and GID of the containers `postgres` user may have different meaning on the host.
 
@@ -103,10 +132,17 @@ docker run --name postgresql -itd --restart always \
   --env 'PG_UID=999' --env 'PG_GID=999' \
   registry.timmertech.nl/docker/apline-postgresql:10.3
 ```
+</p>
+</details>
 
+<br/>
 
+<details>
+<summary>Database Options</summary>
 
 ### Database Options
+
+<p>
 
 | Option | Description |
 |--------|-------------|
@@ -121,7 +157,8 @@ docker run --name postgresql -itd --restart always \
 | PL_TCL | PL/Tcl language extension, ```true``` to enable, default: ```false``` | 
 | PG_CRON | Cron scheduler for postgresql, ```true``` to enable, default: ```false``` |
 
-
+</p>
+</details>
 
 ## Creating databases
 

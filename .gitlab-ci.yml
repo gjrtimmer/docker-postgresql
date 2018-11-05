@@ -1,31 +1,25 @@
-variables:
-  REPOSITORY: registry.timmertech.nl
-
-stages:
-  - build
-
-build:latest:
+docker:latest:
   stage: build
   only: 
     - master
   script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN ${REPOSITORY}
-    - docker build --pull --force-rm=true 
+    - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} ${CI_REGISTRY}
+    - docker build --pull --force-rm=true --squash 
         --build-arg VCS_REF=`git rev-parse --short HEAD` 
         --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` 
         --build-arg PGV=$(grep -o -E "[0-9][0-9]\.[0-9]" VERSION) 
-        --tag=${REPOSITORY}/${CI_PROJECT_PATH} .
-    - docker push ${REPOSITORY}/${CI_PROJECT_PATH}
+        --tag=${CI_REGISTRY}/${CI_PROJECT_PATH} .
+    - docker push ${CI_REGISTRY}/${CI_PROJECT_PATH}
 
-build:release:
+docker:release:
   stage: build
   only:
     - tags
   script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN ${REPOSITORY}
-    - docker build --pull --force-rm=true 
+    - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} ${CI_REGISTRY}
+    - docker build --pull --force-rm=true --squash 
         --build-arg VCS_REF=`git rev-parse --short HEAD` 
         --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` 
         --build-arg PGV=$(grep -o -E "[0-9][0-9]\.[0-9]" VERSION) 
-        --tag=${REPOSITORY}/${CI_PROJECT_PATH}:${CI_BUILD_REF_NAME} .
-    - docker push ${REPOSITORY}/${CI_PROJECT_PATH}:${CI_BUILD_REF_NAME}
+        --tag=${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_BUILD_REF_NAME} .
+    - docker push ${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_BUILD_REF_NAME}
