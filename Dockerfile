@@ -26,7 +26,8 @@ ENV LANG=en_US.utf8 \
 
 ENV PG_DATADIR=${PG_HOME}/${PG_VERSION}/main
 	
-RUN apk upgrade --update --no-cache && \
+RUN echo '@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories && \
+	apk upgrade --update --no-cache && \
 	apk add --update --no-cache \
 		acl \
 		bash \
@@ -42,7 +43,7 @@ RUN apk upgrade --update --no-cache && \
 		postgresql-pltcl \
 		postgresql-contrib \
 		pgtcl \
-		pg_cron \
+		pg_cron@testing \
 		check_postgres && \
 	echo "postgres ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/postgres && \
 	chmod 600 /etc/sudoers.d/postgres && \
