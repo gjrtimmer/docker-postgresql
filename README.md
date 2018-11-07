@@ -1,8 +1,8 @@
-[![build status](https://gitlab.timmertech.nl/docker/alpine-postgresql/badges/master/build.svg)](https://gitlab.timmertech.nl/docker/alpine-postgresql/commits/master)
-[![](https://images.microbadger.com/badges/image/datacore/alpine-postgresql.svg)](https://microbadger.com/images/datacore/alpine-postgresql)
-[![](https://images.microbadger.com/badges/license/datacore/alpine-postgresql.svg)](https://microbadger.com/images/datacore/alpine-postgresql)
+[![build status](https://gitlab.timmertech.nl/docker/postgresql/badges/master/build.svg)](https://gitlab.timmertech.nl/docker/postgresql/commits/master)
+[![](https://images.microbadger.com/badges/image/datacore/postgresql.svg)](https://microbadger.com/images/datacore/postgresql)
+[![](https://images.microbadger.com/badges/license/datacore/postgresql.svg)](https://microbadger.com/images/datacore/postgresql)
 
-# docker/alpine-postgresql:10.5
+# docker/postgresql:10.5
 
 Docker image for running a PostgreSQL server
 
@@ -31,12 +31,12 @@ PostgreSQL is an object-relational database management system (ORDBMS) with an e
 
 Download:
 ```bash
-docker pull datacore/alpine-postgresql:latest
+docker pull datacore/postgresql:latest
 ```
 
 Build:
 ```bash
-docker build -t datacore/alpine-postgresql https://github.com/GJRTimmer/docker-alpine-postgresql
+docker build -t datacore/postgresql https://github.com/GJRTimmer/docker-postgresql
 ```
 </p>
 </details>
@@ -49,12 +49,12 @@ docker build -t datacore/alpine-postgresql https://github.com/GJRTimmer/docker-a
 
 Download:
 ```bash
-docker pull registry.timmertech.nl/docker/alpine-postgresql:latest
+docker pull registry.timmertech.nl/docker/postgresql:latest
 ```
 
 Build:
 ```bash
-docker build -t datacore/alpine-postgresql https://gitlab.timmertech.nl/docker/alpine-postgresql
+docker build -t datacore/postgresql https://gitlab.timmertech.nl/docker/postgresql
 ```
 </p>
 </details>
@@ -104,7 +104,7 @@ Example:
 ````bash
 docker run --name postgresql -itd --restart always \
   --env 'TZ=Europe/Amsterdam' \
-  registry.timmertech.nl/docker/apline-postgresql:latest
+  registry.timmertech.nl/docker/postgresql:latest
 ````
 </p>
 </details>
@@ -129,7 +129,7 @@ For example, if you want to assign the `postgres` user of the container the UID 
 ```bash
 docker run --name postgresql -itd --restart always \
   --env 'PG_UID=999' --env 'PG_GID=999' \
-  registry.timmertech.nl/docker/apline-postgresql:10.3
+  registry.timmertech.nl/docker/postgresql:10.3
 ```
 </p>
 </details>
@@ -166,7 +166,7 @@ A new PostgreSQL database can be created by specifying the `DB_NAME` variable wh
 ```bash
 docker run --name postgresql -itd --restart always \
   --env 'DB_NAME=dbname' \
-  registry.timmertech.nl/docker/apline-postgresql:10.3
+  registry.timmertech.nl/docker/postgresql:10.3
 ```
 
 By default databases are created by copying the standard system database named `template1`. You can specify a different template for your database using the `DB_TEMPLATE` parameter. Refer to [Template Databases](http://www.postgresql.org/docs/10.3/static/manage-ag-templatedbs.html) for further information.
@@ -176,7 +176,7 @@ Additionally, more than one database can be created by specifying a comma separa
 ```bash
 docker run --name postgresql -itd --restart always \
   --env 'DB_NAME=dbname1,dbname2' \
-  registry.timmertech.nl/docker/apline-postgresql:10.3
+  registry.timmertech.nl/docker/postgresql:10.3
 ```
 
 
@@ -188,7 +188,7 @@ The image also packages the [postgres contrib module](http://www.postgresql.org/
 ```bash
 docker run --name postgresql -itd \
   --env 'DB_NAME=db1,db2' --env 'DB_EXTENSION=unaccent,pg_trgm' \
-  registry.timmertech.nl/docker/apline-postgresql:10.3
+  registry.timmertech.nl/docker/postgresql:10.3
 ```
 
 The above command enables the `unaccent` and `pg_trgm` modules on the databases listed in `DB_NAME`, namely `db1` and `db2`.
@@ -209,7 +209,7 @@ docker run --name postgresql-snapshot -itd --restart always \
   --env 'REPLICATION_MODE=snapshot' --env 'REPLICATION_SSLMODE=prefer' \
   --env 'REPLICATION_HOST=master' --env 'REPLICATION_PORT=5432'  \
   --env 'REPLICATION_USER=repluser' --env 'REPLICATION_PASS=repluserpass' \
-  registry.timmertech.nl/docker/apline-postgresql:10.3
+  registry.timmertech.nl/docker/postgresql:10.3
 ```
 
 The difference between a slave and a snapshot is that a slave is read-only and updated whenever the master data is updated (streaming replication), while a snapshot is read-write and is not updated after the initial snapshot of the data from the master.
@@ -235,7 +235,7 @@ docker run --name postgresql-backup -it --rm \
   --env 'REPLICATION_HOST=master' --env 'REPLICATION_PORT=5432'  \
   --env 'REPLICATION_USER=repluser' --env 'REPLICATION_PASS=repluserpass' \
   --volume /srv/docker/backups/postgresql.$(date +%Y%m%d%H%M%S):/var/lib/postgresql \
-  registry.timmertech.nl/docker/apline-postgresql:10.3
+  registry.timmertech.nl/docker/postgresql:10.3
 ```
 
 Once the backup is generated, the container will exit and the backup of the master data will be available at `/srv/docker/backups/postgresql.XXXXXXXXXXXX/`. Restoring the backup involves starting a container with the data in `/srv/docker/backups/postgresql.XXXXXXXXXXXX`.
