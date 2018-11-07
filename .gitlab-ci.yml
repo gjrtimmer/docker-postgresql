@@ -1,7 +1,6 @@
 stages:
   - build
   - dockerhub
-  - clean
 
 docker:latest:
   stage: build
@@ -48,14 +47,3 @@ dockerhub:release:
   script:
     - curl -s -H 'Content-Type:application/json' --data "{\"source_type\":\"Tag\",\"source_name\":\"${CI_COMMIT_REF_NAME}\"}" -X POST https://registry.hub.docker.com/u/datacore/redis/trigger/${DOCKERHUB_TOKEN}/ > /dev/null
   when: manual
-  
-docker:clean:
-  stage: clean
-  when: always
-  script:
-    - |
-        CONTAINERS=$(docker ps -a | grep runner | grep project | grep concurrent)
-        echo Clearing docker cache...
-        for container in $(docker ps -a | grep runner | grep project-${CI_PROJECT_ID} | grep concurrent | awk '{print $1}'); do
-            docker rm -v $container
-        done
