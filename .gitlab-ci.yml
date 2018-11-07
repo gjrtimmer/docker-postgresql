@@ -54,7 +54,7 @@ docker:clean:
   when: always
   script:
     - |
-        CONTAINERS=$(docker ps -a | grep runner | grep project | grep concurrent | grep cache)
+        CONTAINERS=$(docker ps -a | grep runner | grep project | grep concurrent)
         echo Clearing docker cache...
         for container in $(docker ps -a | grep runner | grep project-${CI_PROJECT_ID} | grep concurrent | grep cache | awk '{print $1}'); do
             docker rm -v $container
