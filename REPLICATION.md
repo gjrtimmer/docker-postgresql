@@ -1,9 +1,8 @@
 [![build status](https://gitlab.timmertech.nl/docker/alpine-postgresql/badges/master/build.svg)](https://gitlab.timmertech.nl/docker/alpine-postgresql/commits/master)
 
-# docker/alpine-postgresql:10.3
+# docker/alpine-postgresql:11.1
 
-
-### Replication Options
+## Replication Options
 
 | Option | Description |
 |--------|-------------|
@@ -14,7 +13,6 @@
 | [REPLICATION_PORT](#setting-up-a-replication-cluster) `POST` | Port number of replication host (default: 5432) |
 | [REPLICATION_SSLMODE](#setting-up-a-replication-cluster) `MODE` | SSL Mode for Replication (default: prefer) |
 
-
 ## Creating replication user
 
 Similar to the creation of a database user, a new PostgreSQL replication user can be created by specifying the `REPLICATION_USER` and `REPLICATION_PASS` variables while starting the container.
@@ -22,7 +20,7 @@ Similar to the creation of a database user, a new PostgreSQL replication user ca
 ```bash
 docker run --name postgresql -itd --restart always \
   --env 'REPLICATION_USER=repluser' --env 'REPLICATION_PASS=repluserpass' \
-  registry.timmertech.nl/docker/apline-postgresql:10.3
+  registry.timmertech.nl/docker/apline-postgresql:11.1
 ```
 
 > **Notes**
@@ -34,7 +32,6 @@ docker run --name postgresql -itd --restart always \
 
 *It is a good idea to create a replication user even if you are not going to use it as it will allow you to setup slave nodes and/or generate snapshots and backups when the need arises.*
 
-
 ## Setting up a replication cluster
 
 When the container is started, it is by default configured to act as a master node in a replication cluster. This means that you can scale your PostgreSQL database backend when the need arises without incurring any downtime. However do note that a replication user must exist on the master node for this to work.
@@ -45,14 +42,12 @@ Begin by creating the master node of our cluster:
 docker run --name postgresql-master -itd --restart always \
   --env 'DB_USER=dbuser' --env 'DB_PASS=dbuserpass' --env 'DB_NAME=dbname' \
   --env 'REPLICATION_USER=repluser' --env 'REPLICATION_PASS=repluserpass' \
-  registry.timmertech.nl/docker/apline-postgresql:10.3
+  registry.timmertech.nl/docker/apline-postgresql:11.1
 ```
 
 Notice that no additional arguments are specified while starting the master node of the cluster.
 
 To create a replication slave the `REPLICATION_MODE` variable should be set to `slave` and additionally the `REPLICATION_HOST`, `REPLICATION_PORT`, `REPLICATION_SSLMODE`, `REPLICATION_USER` and `REPLICATION_PASS` variables should be specified.
-
-
 
 ## Create a slave node
 
@@ -62,7 +57,7 @@ docker run --name postgresql-slave01 -itd --restart always \
   --env 'REPLICATION_MODE=slave' --env 'REPLICATION_SSLMODE=prefer' \
   --env 'REPLICATION_HOST=master' --env 'REPLICATION_PORT=5432'  \
   --env 'REPLICATION_USER=repluser' --env 'REPLICATION_PASS=repluserpass' \
-  registry.timmertech.nl/docker/apline-postgresql:10.3
+  registry.timmertech.nl/docker/apline-postgresql:11.1
 ```
 
 *In the above command, we used docker links so that we can address the master node using the `master` alias in `REPLICATION_HOST`.*
@@ -78,6 +73,6 @@ And just like that with minimal effort you have a PostgreSQL replication cluster
 
 Here are some important notes about a PostgreSQL replication cluster:
 
- - Writes can only occur on the master
- - Slaves are read-only
- - For best performance, limit the reads to the slave nodes
+- Writes can only occur on the master
+- Slaves are read-only
+- For best performance, limit the reads to the slave nodes

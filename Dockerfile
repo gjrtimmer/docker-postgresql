@@ -26,7 +26,8 @@ ENV LANG=en_US.utf8 \
 
 ENV PG_DATADIR=${PG_HOME}/${PG_VERSION}/main
 	
-RUN echo '@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories && \
+RUN echo '@edge http://dl-cdn.alpinelinux.org/alpine/edge/main' >> /etc/apk/repositories && \
+	echo '@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories && \
 	apk upgrade --update --no-cache && \
 	apk add --update --no-cache \
 		acl \
@@ -35,13 +36,13 @@ RUN echo '@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/ap
 		shadow \
 		sudo \
 		tzdata \
-		postgresql \
-		postgresql-plperl \
-		postgresql-plperl-contrib \
-		postgresql-plpython3 \
-		postgresql-plpython3-contrib \
-		postgresql-pltcl \
-		postgresql-contrib \
+		postgresql@edge=${PG_VERSION}-r0 \
+		postgresql-plperl@edge=${PG_VERSION}-r0 \
+		postgresql-plperl-contrib@edge=${PG_VERSION}-r0 \
+		postgresql-plpython3@edge=${PG_VERSION}-r0 \
+		postgresql-plpython3-contrib@edge=${PG_VERSION}-r0 \
+		postgresql-pltcl@edge=${PG_VERSION}-r0 \
+		postgresql-contrib@edge=${PG_VERSION}-r0 \
 		pgtcl \
 		pg_cron@testing \
 		check_postgres && \
