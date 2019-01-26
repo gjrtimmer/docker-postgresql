@@ -2,48 +2,43 @@ stages:
   - build
   - dockerhub
 
-docker:latest:
-  stage: build
-  only: 
-    - master
+.curl: &curl
+  before_script:
+    - apk add --update --no-cache curl
+
+.docker-login: &docker-login
+  before_script:
+    - echo ${CI_JOB_TOKEN} | docker login -u gitlab-ci-token --password-stdin ${CI_REGISTRY}
+
+.docker-build: &docker-build
   script:
-    - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} ${CI_REGISTRY}
     - docker build --pull --force-rm=true --squash 
         --build-arg VCS_REF=`git rev-parse --short HEAD` 
         --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` 
         --build-arg PGV=$(grep -o -E "[0-9][0-9]\.[0-9]" VERSION) 
-        --tag=${CI_REGISTRY}/${CI_PROJECT_PATH} .
-    - docker push ${CI_REGISTRY}/${CI_PROJECT_PATH}
+        --tag=${DOCKER_IMAGE} .
+    - docker push ${DOCKER_IMAGE}
+
+docker:latest:
+  stage: build
+  only: 
+    - master
+  variables:
+    DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}
+  <<: *docker-login
+  <<: *docker-build
 
 docker:release:
   stage: build
   only:
     - tags
-  script:
-    - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} ${CI_REGISTRY}
-    - docker build --pull --force-rm=true --squash 
-        --build-arg VCS_REF=`git rev-parse --short HEAD` 
-        --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` 
-        --build-arg PGV=$(grep -o -E "[0-9][0-9]\.[0-9]" VERSION) 
-        --tag=${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_BUILD_REF_NAME} .
-    - docker push ${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_BUILD_REF_NAME}
+  variables:
+    DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_BUILD_REF_NAME}
+  <<: *docker-login
+  <<: *docker-build
 
-dockerhub:latest:
+dockerhub:
   stage: dockerhub
-  except:
-    - tags
-  before_script:
-    - apk add --update --no-cache curl
-  script:
-    - curl -s -H 'Content-Type:application/json' --data '{"build":true}' -X POST https://registry.hub.docker.com/u/datacore/postgresql/trigger/${DOCKERHUB_TOKEN}/ > /dev/null
-  when: manual
-
-dockerhub:release:
-  stage: dockerhub
-  only:
-    - tags
-  before_script:
-    - apk add --update --no-cache curl
+  <<: *curl
   script:
     - curl -s -H 'Content-Type:application/json' --data "{\"source_type\":\"Tag\",\"source_name\":\"${CI_COMMIT_REF_NAME}\"}" -X POST https://registry.hub.docker.com/u/datacore/postgresql/trigger/${DOCKERHUB_TOKEN}/ > /dev/null
-  when: manual
