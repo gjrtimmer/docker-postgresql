@@ -51,7 +51,9 @@ RUN echo '@edge http://dl-cdn.alpinelinux.org/alpine/edge/main' >> /etc/apk/repo
 	sync
 	
 COPY rootfs/ /
-		
+
+HEALTHCHECK --interval=10s --timeout=5s --start-period=60s --retries=3 CMD [ "pg_isready",  "-U",  "postgres" ]
+
 EXPOSE 5432/tcp
 
 WORKDIR ${PG_HOME}
