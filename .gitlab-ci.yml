@@ -24,7 +24,7 @@ docker:latest:
   only: 
     - master
   variables:
-    DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}
+    DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:latest
   <<: *docker-login
   <<: *docker-build
 
