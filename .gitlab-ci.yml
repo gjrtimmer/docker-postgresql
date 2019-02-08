@@ -1,10 +1,8 @@
+image: registry.timmertech.nl/docker/docker:latest
+
 stages:
   - build
   - dockerhub
-
-.curl: &curl
-  before_script:
-    - apk add --update --no-cache curl
 
 .docker-login: &docker-login
   before_script:
@@ -39,6 +37,5 @@ docker:release:
 
 dockerhub:
   stage: dockerhub
-  <<: *curl
   script:
     - curl -s -H 'Content-Type:application/json' --data "{\"source_type\":\"Tag\",\"source_name\":\"${CI_COMMIT_REF_NAME}\"}" -X POST https://registry.hub.docker.com/u/datacore/postgresql/trigger/${DOCKERHUB_TOKEN}/ > /dev/null
