@@ -15,14 +15,32 @@ stages:
         --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` 
         --build-arg PGV=$(grep -o -E "[0-9][0-9]\.[0-9]" VERSION) 
         --tag=${DOCKER_IMAGE} .
+
+.docker-push: &docker-push
+  after_script:
     - docker push ${DOCKER_IMAGE}
 
 docker:latest:
   stage: build
   only: 
     - master
+  except:
+    - tags
   variables:
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:latest
+  <<: *docker-login
+  <<: *docker-build
+  <<: *docker-push
+
+docker:branches:
+  stage: build
+  only:
+    - branches
+  except:
+    - master
+    - tags
+  variables:
+    DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_REF_NAME}
   <<: *docker-login
   <<: *docker-build
 
@@ -31,11 +49,23 @@ docker:release:
   only:
     - tags
   variables:
-    DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_BUILD_REF_NAME}
+    DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_REF_NAME}
   <<: *docker-login
   <<: *docker-build
+  <<: *docker-push
 
-dockerhub:
+dockerhub:latest:
   stage: dockerhub
+  only:
+    - master
+  except:
+    - tags
+  script:
+    - curl -s -H 'Content-Type:application/json' --data '{"build":true}' -X POST https://registry.hub.docker.com/u/datacore/postgresql/trigger/${DOCKERHUB_TOKEN}/ > /dev/null
+
+dockerhub:release:
+  stage: dockerhub
+  only:
+    - tags
   script:
     - curl -s -H 'Content-Type:application/json' --data "{\"source_type\":\"Tag\",\"source_name\":\"${CI_COMMIT_REF_NAME}\"}" -X POST https://registry.hub.docker.com/u/datacore/postgresql/trigger/${DOCKERHUB_TOKEN}/ > /dev/null
