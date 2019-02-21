@@ -1,4 +1,4 @@
-FROM registry.timmertech.nl/docker/alpine-base:3.6
+FROM registry.timmertech.nl/docker/alpine-base:3.8
 
 ARG BUILD_DATE
 ARG VCS_REF
@@ -27,7 +27,8 @@ ENV LANG=en_US.utf8 \
 
 ENV PG_DATADIR=${PG_HOME}/${PGV_SHORT}/main
 
-RUN echo '@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories && \
+RUN echo '@community http://dl-cdn.alpinelinux.org/alpine/v3.7/community' >> /etc/apk/repositories && \
+    echo '@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories && \
     apk upgrade --update --no-cache && \
     apk add --update --no-cache \
     acl \
@@ -44,7 +45,8 @@ RUN echo '@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/ap
     postgresql-pltcl=${PG_VERSION}-r0 \
     postgresql-contrib=${PG_VERSION}-r0 \
     pgtcl \
-    pg_cron@testing && \
+    pg_cron@testing \
+    check_postgres@community && \
     echo "postgres ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/postgres && \
     chmod 600 /etc/sudoers.d/postgres && \
     sync
