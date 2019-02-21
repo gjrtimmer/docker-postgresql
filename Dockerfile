@@ -1,4 +1,4 @@
-FROM registry.timmertech.nl/docker/alpine-base
+FROM alpine:3.6
 
 ARG BUILD_DATE
 ARG VCS_REF
@@ -27,8 +27,7 @@ ENV LANG=en_US.utf8 \
 
 ENV PG_DATADIR=${PG_HOME}/${PGV_SHORT}/main
 
-RUN echo '@edge http://dl-cdn.alpinelinux.org/alpine/edge/main' >> /etc/apk/repositories && \
-    echo '@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories && \
+RUN echo '@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories && \
     apk upgrade --update --no-cache && \
     apk add --update --no-cache \
     acl \
@@ -37,16 +36,15 @@ RUN echo '@edge http://dl-cdn.alpinelinux.org/alpine/edge/main' >> /etc/apk/repo
     shadow \
     sudo \
     tzdata \
-    postgresql@edge=${PG_VERSION}-r0 \
-    postgresql-plperl@edge=${PG_VERSION}-r0 \
-    postgresql-plperl-contrib@edge=${PG_VERSION}-r0 \
-    postgresql-plpython3@edge=${PG_VERSION}-r0 \
-    postgresql-plpython3-contrib@edge=${PG_VERSION}-r0 \
-    postgresql-pltcl@edge=${PG_VERSION}-r0 \
-    postgresql-contrib@edge=${PG_VERSION}-r0 \
+    postgresql=${PG_VERSION}-r0 \
+    postgresql-plperl=${PG_VERSION}-r0 \
+    postgresql-plperl-contrib=${PG_VERSION}-r0 \
+    postgresql-plpython3=${PG_VERSION}-r0 \
+    postgresql-plpython3-contrib=${PG_VERSION}-r0 \
+    postgresql-pltcl=${PG_VERSION}-r0 \
+    postgresql-contrib=${PG_VERSION}-r0 \
     pgtcl \
-    pg_cron@testing \
-    check_postgres && \
+    pg_cron@testing && \
     echo "postgres ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/postgres && \
     chmod 600 /etc/sudoers.d/postgres && \
     sync
