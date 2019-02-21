@@ -13,7 +13,8 @@ stages:
     - docker build --pull --force-rm=true --squash 
         --build-arg VCS_REF=`git rev-parse --short HEAD` 
         --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` 
-        --build-arg PGV=$(grep -o -E "[0-9][0-9]\.[0-9]" VERSION) 
+        --build-arg PGV=$(cat VERSION) 
+        --build-arg PGV_SHORT=$(grep -o -E "[0-9]{1,2}\.[0-9]" VERSION) 
         --tag=${DOCKER_IMAGE} .
 
 .docker-push: &docker-push
