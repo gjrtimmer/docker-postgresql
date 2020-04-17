@@ -1,22 +1,21 @@
-[![build status](https://gitlab.timmertech.nl/docker/postgresql/badges/master/build.svg)](https://gitlab.timmertech.nl/docker/postgresql/commits/master)
+[![build status](https://gitlab.timmertech.nl/docker/postgresql/badges/master/pipeline.svg)](https://gitlab.timmertech.nl/docker/postgresql/commits/master)
 [![](https://images.microbadger.com/badges/image/datacore/postgresql.svg)](https://microbadger.com/images/datacore/postgresql)
 [![](https://images.microbadger.com/badges/license/datacore/postgresql.svg)](https://microbadger.com/images/datacore/postgresql)
 
-# docker/postgresql:11.1
-
 Docker image for running a PostgreSQL server
-
-# Table of Contents
 
 - [Introduction](#introduction)
 - [Installation](#installation)
-- [Volume Locations](#volume-locations)
-- [Configuration Options](#configuration-options)
-- [Creating Database](#creating-databases)
+  - [Volume Locations](#volume-locations)
+  - [Configuration Options](#configuration-options)
+    - [General Options](#general-options)
+    - [Timezone](#timezone)
+    - [UID/GID mapping](#uidgid-mapping)
+    - [Database Options](#database-options)
+  - [Creating databases](#creating-databases)
 - [Enabling extensions](#enabling-extensions)
-- [Creating Snapshot](#creating-snapshot)
-- [Creating Backup](#creating-backup)
-- [Replication](./REPLICATION.md)
+  - [Creating Snapshot](#creating-snapshot)
+  - [Creating Backup](#creating-backup)
 
 # Introduction
 
@@ -39,7 +38,7 @@ docker pull datacore/postgresql:latest
 Build:
 
 ```bash
-git clone https://github.com/GJRTimmer/docker-postgresql.git
+git clone https://github.com/gjrtimmer/docker-postgresql.git
 cd docker-postgresql
 docker build --build-arg=PGV=$(cat VERSION) -t datacore/postgresql .
 ```
