@@ -1,5 +1,9 @@
 # Changelog
 
+**12.2**
+  - alpine: 3.11
+  - postgresql: 12.2
+
 **11.7**
   - alpine: 3.10
   - postgresql: 11.7

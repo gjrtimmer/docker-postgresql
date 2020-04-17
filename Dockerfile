@@ -1,4 +1,4 @@
-FROM registry.timmertech.nl/docker/alpine-base:3.10
+FROM registry.timmertech.nl/docker/alpine-base:3.11
 
 ARG BUILD_DATE
 ARG VCS_REF
@@ -14,7 +14,7 @@ LABEL \
     org.label-schema.url="https://gitlab.timmertech.nl/docker/alpine-postgresql" \
     org.label-schema.vcs-url="https://gitlab.timmertech.nl/docker/alpine-postgresql.git" \
     org.label-schema.vcs-ref=${VCS_REF} \
-    org.label-schema.alpine-version=3.10 \
+    org.label-schema.alpine-version=3.11 \
     nl.timmertech.license=MIT \
     org.postgresql.version=${PGV}
 
@@ -28,7 +28,7 @@ ENV LANG=en_US.utf8 \
 
 ENV PG_DATADIR=${PG_HOME}/${PGV_SHORT}/main
 
-RUN echo '@community http://dl-cdn.alpinelinux.org/alpine/v3.10/community' >> /etc/apk/repositories && \
+RUN echo '@community http://dl-cdn.alpinelinux.org/alpine/v3.11/community' >> /etc/apk/repositories && \
     echo '@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories && \
     apk upgrade --update --no-cache && \
     apk add --update --no-cache \
