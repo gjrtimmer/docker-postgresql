@@ -1,6 +1,4 @@
-[![build status](https://gitlab.timmertech.nl/docker/alpine-postgresql/badges/master/build.svg)](https://gitlab.timmertech.nl/docker/alpine-postgresql/commits/master)
-
-# docker/alpine-postgresql:11.1
+[![build status](https://gitlab.timmertech.nl/docker/alpine-postgresql/badges/master/pipeline.svg)](https://gitlab.timmertech.nl/docker/alpine-postgresql/commits/master)
 
 ## Replication Options
 

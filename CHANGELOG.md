@@ -1,5 +1,9 @@
 # Changelog
 
+**10.12**
+  - alpine: 3.8
+  - postgesql: 10.12
+
 **10.5**
   - alpine: 3.8
   - postgresql: 10.5
