@@ -54,19 +54,3 @@ docker:release:
   <<: *docker-login
   <<: *docker-build
   <<: *docker-push
-
-dockerhub:latest:
-  stage: dockerhub
-  only:
-    - master
-  except:
-    - tags
-  script:
-    - curl -s -H 'Content-Type:application/json' --data '{"build":true}' -X POST ${DOCKERHUB_TRIGGER_URL} > /dev/null
-
-dockerhub:release:
-  stage: dockerhub
-  only:
-    - tags
-  script:
-    - curl -s -H 'Content-Type:application/json' --data "{\"source_type\":\"Tag\",\"source_name\":\"${CI_COMMIT_REF_NAME}\"}" -X POST ${DOCKERHUB_TRIGGER_URL} > /dev/null
