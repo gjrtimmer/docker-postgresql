@@ -14,7 +14,7 @@ LABEL \
     org.label-schema.url="https://gitlab.timmertech.nl/docker/alpine-postgresql" \
     org.label-schema.vcs-url="https://gitlab.timmertech.nl/docker/alpine-postgresql.git" \
     org.label-schema.vcs-ref=${VCS_REF} \
-    org.label-schema.alpine-version=3.11 \
+    org.alpinelinux.version=3.11 \
     nl.timmertech.license=MIT \
     org.postgresql.version=${PGV}
 
