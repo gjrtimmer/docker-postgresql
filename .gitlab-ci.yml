@@ -10,7 +10,7 @@ stages:
 
 .docker-build: &docker-build
   script:
-    - docker build --pull --force-rm=true --squash 
+    - docker build --pull --force-rm=true 
         --build-arg VCS_REF=`git rev-parse --short HEAD` 
         --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` 
         --build-arg PGV=$(cat VERSION) 
