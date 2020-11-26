@@ -1,4 +1,4 @@
-FROM registry.timmertech.nl/docker/alpine-base:3.11
+FROM registry.timmertech.nl/docker/alpine-base:3.12
 
 ARG BUILD_DATE
 ARG VCS_REF
@@ -14,7 +14,7 @@ LABEL \
     org.label-schema.url="https://gitlab.timmertech.nl/docker/alpine-postgresql" \
     org.label-schema.vcs-url="https://gitlab.timmertech.nl/docker/alpine-postgresql.git" \
     org.label-schema.vcs-ref=${VCS_REF} \
-    org.alpinelinux.version=3.11 \
+    org.alpinelinux.version=3.12 \
     nl.timmertech.license=MIT \
     org.postgresql.version=${PGV}
 
