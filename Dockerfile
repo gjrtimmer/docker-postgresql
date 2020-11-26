@@ -16,11 +16,13 @@ LABEL \
     org.label-schema.vcs-ref=${VCS_REF} \
     org.alpinelinux.version=3.12 \
     nl.timmertech.license=MIT \
-    org.postgresql.version=${PGV}
+    org.postgresql.version=${PGV} \
+    com.github.citrusdata.pg_cron.version=1.3.0
 
 ENV LANG=en_US.utf8 \
     MUSL_LOCPATH=en_US.utf8 \
     PG_VERSION=${PGV} \
+    PG_CRON_VERSION=1.3.0 \
     PG_HOME=/var/lib/postgresql \
     PG_LOGDIR=/var/log/postgresql \
     PG_RUNDIR=/var/run/postgresql \
@@ -28,8 +30,7 @@ ENV LANG=en_US.utf8 \
 
 ENV PG_DATADIR=${PG_HOME}/${PGV_SHORT}/main
 
-RUN echo '@community http://dl-cdn.alpinelinux.org/alpine/v3.12/community' >> /etc/apk/repositories && \
-    echo '@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories && \
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
     apk upgrade --update --no-cache && \
     apk add --update --no-cache \
     acl \
@@ -45,9 +46,9 @@ RUN echo '@community http://dl-cdn.alpinelinux.org/alpine/v3.12/community' >> /e
     postgresql-plpython3-contrib=${PG_VERSION}-r0 \
     postgresql-pltcl=${PG_VERSION}-r0 \
     postgresql-contrib=${PG_VERSION}-r0 \
+    postgresql-pg_cron \
     pgtcl \
-    pg_cron@testing \
-    check_postgres@community && \
+    check_postgres && \
     echo "postgres ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/postgres && \
     chmod 600 /etc/sudoers.d/postgres && \
     sync

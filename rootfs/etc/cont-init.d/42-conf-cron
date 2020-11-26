@@ -10,6 +10,9 @@ case $REPLICATION_MODE in
 		if [ "${PG_CRON}" = true ]; then
 			# Preload pg_cron shared libraries
 			set_postgresql_param "shared_preload_libraries" "pg_cron"
+
+			# Set pg_cron database
+			set_postgresql_param "cron.database_name" "${PG_CRON_DB}"
 		fi
 	;;
 esac

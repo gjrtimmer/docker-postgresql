@@ -167,6 +167,7 @@ docker run --name postgresql -itd --restart always \
 | PL_PYTHON | PL/Python3 language extension, ```true``` to enable, default: ```false``` |
 | PL_TCL | PL/Tcl language extension, ```true``` to enable, default: ```false``` | 
 | PG_CRON | Cron scheduler for postgresql, ```true``` to enable, default: ```false``` |
+| PG_CRON_DB | Cron scheduler database `PG_CRON_DB`, default: ```postgres``` |
 
 </p>
 </details>

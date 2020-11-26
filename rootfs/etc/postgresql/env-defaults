@@ -31,5 +31,6 @@ PL_PERL=${PL_PERL:false}
 PL_PYTHON=${PL_PYTHON:false}
 PL_TCL=${PL_TCL:false}
 PG_CRON=${PG_CRON:false}
+PG_CRON_DB=${PG_CRON_DB:postgres}
 
 # EOF
