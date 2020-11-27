@@ -18,13 +18,22 @@ if [[ -n ${DB_NAME} ]]; then
 					psql -U ${PG_USER} -c "CREATE DATABASE \"${database}\" WITH TEMPLATE = \"${DB_TEMPLATE}\";" >/dev/null
 				fi
 
-				#load_extensions ${database}
-
 				if [[ -n ${DB_USER} ]]; then
 					echo "  Granting access to ${DB_USER} user..."
 					psql -U ${PG_USER} -c "GRANT ALL PRIVILEGES ON DATABASE \"${database}\" to \"${DB_USER}\";" >/dev/null
 				fi
 			done
+
+			for file in /etc/postgresql/init.d/*.sql; do
+				BASENAME=$(basename $file)
+				DATABASE=$(awk -F'-' '{print $2}' <<< "${BASENAME}")
+
+				if [[ ! -z $(psql -U ${PG_USER} -Atc "SELECT 1 FROM pg_catalog.pg_database WHERE datname = '${DATABASE}'";) ]]; then
+					echo "  Executing ${BASENAME}"
+					psql --username ${PG_USER} --dbname ${DATABASE} --file ${file}
+				fi
+			done
+
 		;;
 	esac
 fi
