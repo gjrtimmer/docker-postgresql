@@ -60,7 +60,7 @@ workflow:
         --build-arg CI_PROJECT_NAME="${CI_PROJECT_NAME}"
         --build-arg CI_PROJECT_URL="${CI_PROJECT_URL}"
         --build-arg DOCKER_IMAGE="${DOCKER_IMAGE}"
-        --build-arg ALPINE_VERSION="${ALPINE_VERSION}"
+        --build-arg ALPINE_VERSION=${ALPINE_VERSION}
         --build-arg PROXY=${PROXY}
         --build-arg PGV=${PGV}
         --build-arg PGV_SHORT=$(echo ${PGV} | grep -o -E "[0-9]{1,2}\.[0-9]")
