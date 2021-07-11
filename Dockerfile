@@ -1,7 +1,44 @@
-FROM registry.timmertech.nl/docker/alpine-base:3.12
+# Proxy argument is used to use the GitLab container proxy
+# When PROXY remains empty the build will default back to
+# the direct use of docker hub
+ARG PROXY
+
+# Alpine version will define the postgresql version to be used
+ARG ALPINE_VERSION
+
+FROM "${PROXY}ghcr.io/linuxserver/baseimage-alpine:$ALPINE_VERSION" as postgresql
+
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
+    apk upgrade --update --no-cache && \
+    apk add --update --no-cache \
+        acl \
+        bash \
+        ca-certificates \
+        shadow \
+        sudo \
+        tzdata \
+        postgresql \
+        postgresql-plperl \
+        postgresql-plperl-contrib \
+        postgresql-plpython3 \
+        postgresql-plpython3-contrib \
+        postgresql-pltcl \
+        postgresql-contrib \
+        postgresql-pg_cron \
+        pgtcl \
+        check_postgres && \
+        echo "postgres ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/postgres && \
+        chmod 600 /etc/sudoers.d/postgres && \
+        sync
+
+# Runtime container
+FROM postgresl as runtime
 
 ARG BUILD_DATE
+ARG CI_PROJECT_NAME
+ARG CI_PROJECT_URL
 ARG VCS_REF
+ARG DOCKER_IMAGE
 ARG PGV
 ARG PGV_SHORT
 
@@ -9,13 +46,13 @@ LABEL \
     maintainer="G.J.R. Timmer <gjr.timmer@gmail.com>" \
     org.label-schema.schema-version="1.0" \
     org.label-schema.build-date=${BUILD_DATE} \
-    org.label-schema.name=alpine-postgresql \
-    org.label-schema.vendor=timmertech.nl \
-    org.label-schema.url="https://gitlab.timmertech.nl/docker/alpine-postgresql" \
-    org.label-schema.vcs-url="https://gitlab.timmertech.nl/docker/alpine-postgresql.git" \
+    org.label-schema.name=${CI_PROJECT_NAME} \
+    org.label-schema.url="${CI_PROJECT_URL}" \
+    org.label-schema.vcs-url="${CI_PROJECT_URL}.git" \
     org.label-schema.vcs-ref=${VCS_REF} \
-    org.alpinelinux.version=3.12 \
-    nl.timmertech.license=MIT \
+    org.label-schema.docker.image="${DOCKER_IMAGE}" \
+    org.label-schema.alpine-version="${ALPINE_VERSION}" \
+    org.label-schema.license=MIT \
     org.postgresql.version=${PGV} \
     com.github.citrusdata.pg_cron.version=1.3.0
 
@@ -30,35 +67,4 @@ ENV LANG=en_US.utf8 \
 
 ENV PG_DATADIR=${PG_HOME}/${PGV_SHORT}/main
 
-RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
-    apk upgrade --update --no-cache && \
-    apk add --update --no-cache \
-    acl \
-    bash \
-    ca-certificates \
-    shadow \
-    sudo \
-    tzdata \
-    postgresql=${PG_VERSION}-r0 \
-    postgresql-plperl=${PG_VERSION}-r0 \
-    postgresql-plperl-contrib=${PG_VERSION}-r0 \
-    postgresql-plpython3=${PG_VERSION}-r0 \
-    postgresql-plpython3-contrib=${PG_VERSION}-r0 \
-    postgresql-pltcl=${PG_VERSION}-r0 \
-    postgresql-contrib=${PG_VERSION}-r0 \
-    postgresql-pg_cron \
-    pgtcl \
-    check_postgres && \
-    echo "postgres ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/postgres && \
-    chmod 600 /etc/sudoers.d/postgres && \
-    sync
-
-COPY rootfs/ /
-
-HEALTHCHECK --interval=10s --timeout=5s --start-period=60s --retries=3 CMD [ "pg_isready",  "-U",  "postgres" ]
-
-EXPOSE 5432/tcp
-
-WORKDIR ${PG_HOME}
-
-VOLUME ["${PG_HOME}", "${PG_CERTDIR}", "${PG_LOGDIR}", "${PG_RUNDIR}"]
+# EOF
