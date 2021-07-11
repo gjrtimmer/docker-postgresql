@@ -43,7 +43,7 @@ workflow:
     ALPINE_VERSION: "3.14"
     DOCKER_FILE: Dockerfile
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:latest
-    PROXY: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/
+    PROXY: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/"
   before_script:
     - echo "${CI_DEPENDENCY_PROXY_PASSWORD}" | docker login -u "${CI_DEPENDENCY_PROXY_USER}" --password-stdin "${CI_DEPENDENCY_PROXY_SERVER}"
     - echo ${CI_JOB_TOKEN} | docker login -u gitlab-ci-token --password-stdin ${CI_REGISTRY}
