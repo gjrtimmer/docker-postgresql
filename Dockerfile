@@ -49,8 +49,7 @@ LABEL \
     org.label-schema.docker.image="${DOCKER_IMAGE}" \
     org.label-schema.alpine-version="${ALPINE_VERSION}" \
     org.label-schema.license=MIT \
-    org.postgresql.version=${PGV} \
-    com.github.citrusdata.pg_cron.version=1.3.0
+    org.postgresql.version=${PGV}
 
 ENV LANG=en_US.utf8 \
     MUSL_LOCPATH=en_US.utf8 \
