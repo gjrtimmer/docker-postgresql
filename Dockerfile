@@ -27,7 +27,7 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repos
         sync
 
 # Runtime container
-FROM postgresl as runtime
+FROM postgresql as runtime
 
 ARG BUILD_DATE
 ARG CI_PROJECT_NAME
