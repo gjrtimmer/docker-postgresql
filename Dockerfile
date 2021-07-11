@@ -1,12 +1,7 @@
-# Proxy argument is used to use the GitLab container proxy
-# When PROXY remains empty the build will default back to
-# the direct use of docker hub
-ARG PROXY
-
 # Alpine version will define the postgresql version to be used
 ARG ALPINE_VERSION
 
-FROM "${PROXY}ghcr.io/linuxserver/baseimage-alpine:$ALPINE_VERSION" as postgresql
+FROM ghcr.io/linuxserver/baseimage-alpine:${ALPINE_VERSION} as postgresql
 
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
     apk upgrade --update --no-cache && \
