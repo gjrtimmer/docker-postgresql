@@ -36,6 +36,7 @@ ARG VCS_REF
 ARG DOCKER_IMAGE
 ARG PGV
 ARG PGV_SHORT
+ARG ALPINE_VERSION
 
 LABEL \
     maintainer="G.J.R. Timmer <gjr.timmer@gmail.com>" \
