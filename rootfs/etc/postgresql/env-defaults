@@ -17,7 +17,9 @@ PG_IDENT_CONF=${PG_DATA_DIR}/pg_ident.conf
 PG_RECOVERY_CONF=${PG_DATA_DIR}/recovery.conf
 
 # SSL/TLS
-PG_SSL=${PG_SSL:-}
+# Off by default; please not even if the certificates are found in the PG_CERTS_DIR
+# SSL/TLS will only be activated wit
+PG_SSL=${PG_SSL:-off}
 
 # Replication
 REPLICATION_MODE=${REPLICATION_MODE:-$PSQL_MODE} # backward compatibility

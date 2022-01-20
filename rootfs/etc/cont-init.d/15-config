@@ -71,20 +71,6 @@ fi
 # set permissions on PG_CERTS_DIR
 chown abc:abc "${PG_CERTS_DIR}"
 
-if [ -f "${PG_CERTS_DIR}/server.crt" ]; then
-	if [ "$(stat -c "%a" "${PG_CERTS_DIR}/server.crt")" != "644" ]; then
-		log-init "invalid permissions for ${PG_CERTS_DIR}/server.crt; expect: 644"
-    exit 101
-	fi
-fi
-
-if [ -f "${PG_CERTS_DIR}/server.key" ]; then
-	if [ "$(stat -c "%a" "${PG_CERTS_DIR}/server.key")" != "640" ]; then
-    log-init "invalid permissions for ${PG_CERTS_DIR}/server.key; expect: 640"
-		exit 102
-	fi
-fi
-
 
 ################################################################################
 # Create Database init.d for custom load scripts
@@ -106,17 +92,17 @@ fi
 
 if [[ -z ${DB_USER} ]]; then
   log-init "ERROR: required variable DB_USER not set"
-  exit 201
+  exit 15
 fi
 
 if [[ -z ${DB_PASS} ]]; then
   log-init "ERROR: required variable DB_PASS not set"
-  exit 202
+  exit 16
 fi
 
 if [[ -z ${DB_NAME} ]]; then
   log-init "ERROR: required variable DB_NAME not set"
-  exit 203
+  exit 17
 fi
 
 if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
@@ -124,17 +110,17 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 		slave|snapshot|backup)
 		if [[ -z $REPLICATION_HOST ]]; then
 			log-init "ERROR: REPLICATION_MODE=${REPLICATION_MODE^^}; required variable REPLICATION_HOST not set"
-			exit 204
+			exit 18
 		fi
 
 		if [[ -z $REPLICATION_USER ]]; then
 			log-init "ERROR: REPLICATION_MODE=${REPLICATION_MODE^^}; required variable REPLICATION_USER not set"
-			exit 205
+			exit 19
 		fi
 
 		if [[ -z $REPLICATION_PASS ]]; then
 			echo "ERROR: REPLICATION_MODE=${REPLICATION_MODE^^}; required variable REPLICATION_PASS not set"
-			exit 206
+			exit 20
 		fi
 	esac
 fi

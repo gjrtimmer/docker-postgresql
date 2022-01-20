@@ -14,7 +14,7 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 			timeout=$((timeout - 1))
 			if [[ $timeout -eq 0 ]]; then
 				echo " [TIMEOUT]"
-				exit 220
+				exit 30
 			fi
 			echo -n "."
 			sleep 1
@@ -62,7 +62,7 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 				rm -rf "${PG_HOME}/${PG_OLD_VERSION:?}"
 				mv "${PG_HOME}/${PG_OLD_VERSION}.migrating" "${PG_HOME}/${PG_OLD_VERSION}"
 				log-init "data Restore Succesful. Exiting..."
-				exit 230
+				exit 10
 			fi
 
 			# we're ready to migrate, move back the old data and remove the trap

@@ -98,4 +98,15 @@ is_db_ready() {
 	echo "  [CONNECTED]"
 }
 
+
+################################################################################
+# Check if enabled
+is_enabled() {
+	if [ "${1,,}" == "on" ] || (( $1 == 1 )); then
+		return 0 # 0 == true
+	else
+		return 1 # 1 == false
+	fi
+}
+
 # EOF
