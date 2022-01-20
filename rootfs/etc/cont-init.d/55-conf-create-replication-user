@@ -1,0 +1,30 @@
+#!/usr/bin/with-contenv bash
+set -e
+
+################################################################################
+# shellcheck source=../postgresql/functions
+source /etc/postgresql/functions
+
+
+################################################################################
+# Check is database is ready to accept operations
+is_db_ready
+
+
+################################################################################
+# Create replication user on master
+if [[ -n ${REPLICATION_USER} ]]; then
+	case ${REPLICATION_MODE,,} in
+		slave|snapshot|backup) ;; # replication user can only be created on the master
+		*)
+			log-init "creating replication user: ${REPLICATION_USER}"
+			if [[ -z $(psql -U "${PG_USER}" -Atc "SELECT 1 FROM pg_catalog.pg_user WHERE usename = \"${REPLICATION_USER}\"";) ]]; then
+				psql -U "${PG_USER}" -c "CREATE ROLE \"${REPLICATION_USER}\" WITH REPLICATION LOGIN ENCRYPTED PASSWORD \"${REPLICATION_PASS}\";" >/dev/null
+			fi
+
+			set_hba_param "host replication ${REPLICATION_USER} 0.0.0.0/0 md5"
+		;;
+	esac
+fi
+
+# EOF
