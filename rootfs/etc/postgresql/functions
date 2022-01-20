@@ -33,7 +33,7 @@ set_postgresql_param() {
 		if [[ "${current}" != "${value}" ]]; then
 
 			if [[ ${verbosity} == verbose ]]; then
-				log-init "Setting postgresql.conf parameter: ${key} = '${value}'"
+				log-init "setting postgresql.conf parameter: ${key} = '${value}'"
 			fi
 
 			# shellcheck disable=SC2001
@@ -57,8 +57,8 @@ set_recovery_param() {
 
 		if [[ "${current}" != "${value}" ]]; then
 			case ${hide} in
-				true)  	log-init "Setting primary_conninfo parameter: ${key}" ;;
-				*) 			log-init "Setting primary_conninfo parameter: ${key} = '${value}'" ;;
+				true)  	log-init "setting primary_conninfo parameter: ${key}" ;;
+				*) 			log-init "setting primary_conninfo parameter: ${key} = '${value}'" ;;
 			esac
 
 			s6-setuidgid abc sed -i "s|${key}=[^ ']*|${key}=${value}|" "${PG_RECOVERY_CONF}"
@@ -83,19 +83,19 @@ set_hba_param() {
 is_db_ready() {
 	cmd="pg_isready -h localhost -p 5432 -U ${DB_USER} -d {DB_NAME} -t 1"
 	timeout=180
-	echo -n "Waiting for database to be ready "
+	echo -n "  waiting for database to be ready "
 	while ! $cmd > /dev/null 2>&1
 	do
 		timeout=$((timeout - 1))
 		if [[ $timeout -eq 0 ]]; then
-			echo "[TIMEOUT]"
+			echo "  [TIMEOUT]"
 			return 1
 		fi
 
 		echo -n "."
 		sleep 1
 	done
-	echo "[CONNECTED]"
+	echo "  [CONNECTED]"
 }
 
 # EOF
