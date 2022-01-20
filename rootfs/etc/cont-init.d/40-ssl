@@ -2,10 +2,14 @@
 # shellcheck shell=bash disable=SC1008
 set -e
 
+
+################################################################################
 # shellcheck source=../postgresql/functions
 source /etc/postgresql/functions
 
 
+################################################################################
+# Configure SSL/TLS
 if is_enabled "${PG_SSL}"; then
 	log-init "SSL/TLS: Enabled"
 

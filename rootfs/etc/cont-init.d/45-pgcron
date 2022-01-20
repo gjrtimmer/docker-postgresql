@@ -2,10 +2,15 @@
 # shellcheck shell=bash disable=SC1008
 set -e
 
+
+################################################################################
 # shellcheck source=../postgresql/functions
 source /etc/postgresql/functions
 
-case ${REPLICATION_MODE} in
+
+################################################################################
+# Configure pg_cron
+case ${REPLICATION_MODE,,} in
 	slave|snapshot|backup) ;;
 	*)
 		if is_enabled "${PG_CRON}"; then

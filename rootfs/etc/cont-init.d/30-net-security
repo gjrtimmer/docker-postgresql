@@ -2,9 +2,14 @@
 # shellcheck shell=bash disable=SC1008
 set -e
 
+
+################################################################################
 # shellcheck source=../postgresql/functions
 source /etc/postgresql/functions
 
+
+################################################################################
+# Configure net-security
 if [ ! -f "${PG_DATA_DIR}/net-security" ]; then
 	echo "  Trusting connections from the local network..."
 	set_hba_param "host	all				all				samenet					trust"

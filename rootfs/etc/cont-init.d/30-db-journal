@@ -2,9 +2,13 @@
 # shellcheck shell=bash disable=SC1008
 set -e
 
+
+################################################################################
 # shellcheck source=../postgresql/functions
 source /etc/postgresql/functions
 
+
+################################################################################
 # Configure journal
 set_postgresql_param "wal_level" "${PG_JOURNAL_WAL_LEVEL,,}"
 set_postgresql_param "wal_keep_segments" "${PG_JOURNAL_WAL_KEEP_SEGMENTS}"

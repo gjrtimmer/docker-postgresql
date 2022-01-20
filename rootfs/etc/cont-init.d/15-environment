@@ -26,3 +26,5 @@ env -0 | sort -z | while IFS='=' read -r -d '' k v; do
     fi
   fi
 done
+
+# EOF
