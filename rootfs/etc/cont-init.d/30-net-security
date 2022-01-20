@@ -11,7 +11,7 @@ source /etc/postgresql/functions
 ################################################################################
 # Configure net-security
 if [ ! -f "${PG_DATA_DIR}/net-security" ]; then
-	echo "  Trusting connections from the local network..."
+	log-init "trusting connections from the local network..."
 	set_hba_param "host	all				all				samenet					trust"
 
 	# allow remote connections to postgresql database

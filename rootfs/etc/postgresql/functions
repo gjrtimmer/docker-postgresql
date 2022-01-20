@@ -73,7 +73,7 @@ set_hba_param() {
 
 	# shellcheck disable=SC2001
 	if ! grep -q "$(sed "s| | \\\+|g" <<< "${value}")" "${PG_HBA_CONF}"; then
-		log-init "${value}" >> "${PG_HBA_CONF}"
+		echo "${value}" >> "${PG_HBA_CONF}"
 	fi
 }
 
