@@ -1,0 +1,49 @@
+#!/usr/bin/with-contenv bash
+
+# shellcheck disable=SC2034
+PG_VERSION=$(postgres --version | awk '{print $3}')
+PG_VERSION_SLUG=$(postgres --version | awk '{print $3}' | grep -o -E '[0-9]{1,2}\.[0-9]{1,2}')
+
+PG_HOME="${HOME}/data"
+PG_DATA_DIR="${PG_HOME}/$(postgres --version | awk '{print $3}' | grep -o -E '[0-9]{1,2}\.[0-9]{1,2}')/main"
+PG_INIT_DB="${HOME}/init.db.d"
+PG_CERTS_DIR="${HOME}/certs"
+PG_LOG_DIR="${HOME}/logs"
+PG_RUN_DIR=/var/run/postgresql
+
+PG_CONF=${PG_DATA_DIR}/postgresql.conf
+PG_HBA_CONF=${PG_DATA_DIR}/pg_hba.conf
+PG_IDENT_CONF=${PG_DATA_DIR}/pg_ident.conf
+PG_RECOVERY_CONF=${PG_DATA_DIR}/recovery.conf
+
+# SSL/TLS
+PG_SSL=${PG_SSL:-}
+
+# Replication
+REPLICATION_MODE=${REPLICATION_MODE:-$PSQL_MODE} # backward compatibility
+REPLICATION_MODE=${REPLICATION_MODE:-}
+REPLICATION_USER=${REPLICATION_USER:-}
+REPLICATION_PASS=${REPLICATION_PASS:-}
+REPLICATION_HOST=${REPLICATION_HOST:-}
+REPLICATION_PORT=${REPLICATION_PORT:-5432}
+REPLICATION_SSLMODE=${REPLICATION_SSLMODE:-prefer}
+
+# Postgresql Root User
+PG_USER=${PG_USER:-postgres}
+PG_PASS=${PG_PASS:-postgres}
+
+# Database
+DB_NAME=${DB_NAME:-}
+DB_USER=${DB_USER:-}
+DB_PASS=${DB_PASS:-}
+DB_TEMPLATE=${DB_TEMPLATE:-template1}
+
+DB_EXTENSION=${DB_EXTENSION:-}
+
+PL_PERL=${PL_PERL:-false}
+PL_PYTHON=${PL_PYTHON:-false}
+PL_TCL=${PL_TCL:-false}
+PG_CRON=${PG_CRON:-false}
+PG_CRON_DB=${PG_CRON_DB:-pgcron}
+
+# EOF

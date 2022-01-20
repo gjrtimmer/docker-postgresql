@@ -1,0 +1,28 @@
+#!/usr/bin/with-contenv bash
+set -e
+
+################################################################################
+# shellcheck source=../postgresql/functions
+source /etc/postgresql/functions
+
+
+################################################################################
+# Load Environment Variables
+set -o allexport
+# shellcheck source=../postgresql/env-defaults
+. /etc/postgresql/env-defaults
+set +o allexport
+
+# Print Environment
+log-init "Environment Variables:"
+env -0 | sort -z | while IFS='=' read -r -d '' k v; do
+  if [ -z "$v" ]; then
+    log-init "  $k=<not-set>"
+  else
+    if [ "$k" == "PG_PASS" ] || [ "$k" == "DB_PASS" ] || [ "$k" == "REPLICATION_PASS" ]; then
+      log-init "  $k=********"
+    else
+      log-init "  $k=$v"
+    fi
+  fi
+done

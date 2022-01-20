@@ -1,0 +1,101 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash disable=SC1008
+set -e
+
+# shellcheck source=env-defaults
+source /etc/postgresql/env-defaults
+
+
+################################################################################
+# Logging
+log-init() {
+	s6-echo -- "[cont-init.d] ${0##*/}: $1"
+}
+
+################################################################################
+## Execute command as PG_USER
+exec_as_postgres() {
+  sudo -HEu postgres "$@"
+}
+
+
+################################################################################
+# Set postgresql parameter
+set_postgresql_param() {
+	local key=${1}
+	local value=${2}
+	local verbosity=${3:-verbose}
+
+	if [[ -n ${value} ]]; then
+		local current
+		current=$(s6-setuidgid abc sed -n -e "s/^\(${key} = '\)\([^ ']*\)\(.*\)$/\2/p" "${PG_CONF}")
+
+		if [[ "${current}" != "${value}" ]]; then
+
+			if [[ ${verbosity} == verbose ]]; then
+				log-init "Setting postgresql.conf parameter: ${key} = '${value}'"
+			fi
+
+			# shellcheck disable=SC2001
+			value="$(echo "${value}" | sed 's|[&]|\\&|g')"
+			s6-setuidgid abc sed -i "s|^[#]*[ ]*${key} = .*|${key} = '${value}'|" "${PG_CONF}"
+		fi
+	fi
+}
+
+
+################################################################################
+# Set recovery database parameter
+set_recovery_param() {
+	local key=${1}
+	local value=${2}
+	local hide=${3}
+
+	if [[ -n ${value} ]]; then
+		local current
+		current=$(s6-setuidgid abc sed -n -e "s/^\(.*\)\(${key}=\)\([^ ']*\)\(.*\)$/\3/p" "${PG_RECOVERY_CONF}")
+
+		if [[ "${current}" != "${value}" ]]; then
+			case ${hide} in
+				true)  	log-init "Setting primary_conninfo parameter: ${key}" ;;
+				*) 			log-init "Setting primary_conninfo parameter: ${key} = '${value}'" ;;
+			esac
+
+			s6-setuidgid abc sed -i "s|${key}=[^ ']*|${key}=${value}|" "${PG_RECOVERY_CONF}"
+		fi
+	fi
+}
+
+
+# Set HBA Parameter
+set_hba_param() {
+	local value=${1}
+
+	# shellcheck disable=SC2001
+	if ! grep -q "$(sed "s| | \\\+|g" <<< "${value}")" "${PG_HBA_CONF}"; then
+		log-init "${value}" >> "${PG_HBA_CONF}"
+	fi
+}
+
+
+################################################################################
+# Check if database is ready for connections
+is_db_ready() {
+	cmd="pg_isready -h localhost -p 5432 -U ${DB_USER} -d {DB_NAME} -t 1"
+	timeout=180
+	echo -n "Waiting for database to be ready "
+	while ! $cmd > /dev/null 2>&1
+	do
+		timeout=$((timeout - 1))
+		if [[ $timeout -eq 0 ]]; then
+			echo "[TIMEOUT]"
+			return 1
+		fi
+
+		echo -n "."
+		sleep 1
+	done
+	echo "[CONNECTED]"
+}
+
+# EOF
