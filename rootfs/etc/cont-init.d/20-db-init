@@ -79,7 +79,7 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 
 		s6-setuidgid abc initdb \
 			--pgdata="${PG_DATA_DIR}" \
-			--username=abc \
+			--username="${PG_USER}" \
 			--locale="${LANG}" \
 			--encoding=unicode \
 			--auth=trust ${PG_PASS:+--pwfile=/tmp/pwfile} >/dev/null
@@ -92,7 +92,7 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 
 			echo -n "  migration in progress. Please be patient..."
 			s6-setuidgid abc pg_upgrade \
-				--username=abc \
+				--username="${PG_USER}" \
 				--old-datadir="${PG_OLD_DATADIR}" \
 				--new-datadir="${PG_DATA_DIR}" \
 				--old-options="-c config_file=${PG_OLD_CONF} --hba_file=${PG_OLD_HBA_CONF} --ident_file=${PG_OLD_IDENT_CONF}" \
