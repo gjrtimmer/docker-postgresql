@@ -23,7 +23,7 @@ if [[ -n ${DB_NAME} ]]; then
 
 				# shellcheck disable=SC2013
 				for EXTENSION in $(awk -F',' '{for (i = 1 ; i <= NF ; i++) print $i}' <<< "${DB_EXTENSION}"); do
-					log-init "loading ${EXTENSION} extension into database [${DATABASE}]"
+					log-init "[${DATABASE}] loading ${EXTENSION} extension"
 					psql -U "${PG_USER}" -d "${DATABASE}" -c "CREATE EXTENSION IF NOT EXISTS ${EXTENSION};" >/dev/null 2>&1
 				done
 
