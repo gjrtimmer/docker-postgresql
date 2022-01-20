@@ -1,15 +1,12 @@
 image: registry.timmertech.nl/docker/docker:latest
 
-
 stages:
   - build
   - trigger
 
-
 variables:
-  CI: 'true'
+  CI: "true"
   DOCKER_DRIVER: overlay2
-
 
 ################################################################################
 # Workflow
@@ -18,20 +15,17 @@ workflow:
     # If $VERSION variable defined have it take precedence over the commit tag
     - if: $VERSION
       variables:
-        GRADLE: './gradlew ${GRADLE_TASKS} -Pversion=${VERSION}'
-        RELEASE: '${VERSION}'
+        RELEASE: "${VERSION}"
     # When the CI_COMMIT_TAG is present we are override the Gradle command
     # and configuring the tag as the version to build
     - if: $CI_COMMIT_TAG
       variables:
-        GRADLE: './gradlew ${GRADLE_TASKS} -Pversion=${CI_COMMIT_TAG}'
-        RELEASE: '${CI_COMMIT_TAG}'
+        RELEASE: "${CI_COMMIT_TAG}"
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-    - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS'
+    - if: "$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS"
       when: never
-    - if: '$CI_COMMIT_BRANCH'
+    - if: "$CI_COMMIT_BRANCH"
     - when: always
-
 
 ################################################################################
 # Template(s)
@@ -40,32 +34,13 @@ workflow:
   stage: build
   interruptible: true
   variables:
-    ALPINE_VERSION: '3.14'
     DOCKER_FILE: Dockerfile
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:latest
   before_script:
     - echo "${CI_DEPENDENCY_PROXY_PASSWORD}" | docker login -u "${CI_DEPENDENCY_PROXY_USER}" --password-stdin "${CI_DEPENDENCY_PROXY_SERVER}"
     - echo ${CI_JOB_TOKEN} | docker login -u gitlab-ci-token --password-stdin ${CI_REGISTRY}
   script:
-    - docker build
-        --build-arg=ALPINE_VERSION=${ALPINE_VERSION}
-        --target=postgresql
-        --tag postgres.version .
-    - export PGV=$(docker run --rm --name postgres.version --entrypoint='' -t postgres.version postgres --version)
-    - export PGV=$(echo ${PGV} | awk '{print $3}')
-    - docker build --pull
-        --build-arg VCS_REF="${CI_COMMIT_SHORT_SHA}"
-        --build-arg BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-        --build-arg CI_PROJECT_NAME="${CI_PROJECT_NAME}"
-        --build-arg CI_PROJECT_URL="${CI_PROJECT_URL}"
-        --build-arg DOCKER_IMAGE="${DOCKER_IMAGE}"
-        --build-arg ALPINE_VERSION=${ALPINE_VERSION}
-        --build-arg PGV=${PGV}
-        --build-arg PGV_SHORT=$(echo ${PGV} | grep -o -E "[0-9]{1,2}\.[0-9]")
-        --file=${DOCKER_FILE}
-        --tag=${DOCKER_IMAGE} .
-    - docker push ${DOCKER_IMAGE}
-
+    - make build push
 
 ################################################################################
 # Job Configuration
@@ -77,7 +52,6 @@ release:
   only:
     - tags
 
-
 branches:
   extends: .build
   variables:
@@ -87,13 +61,11 @@ branches:
   except:
     - master
 
-
 update:
   extends: .build
   only:
     - master
     - schedules
-
 
 docker.hub:
   stage: trigger
@@ -103,6 +75,4 @@ docker.hub:
     - schedules
   script:
     - curl -s -H -X POST ${DOCKERHUB_TRIGGER} > /dev/null
-
-
 # EOF
