@@ -1,0 +1,32 @@
+#!/usr/bin/with-contenv bash
+set -e
+
+
+################################################################################
+# shellcheck source=../postgresql/functions
+source /etc/postgresql/functions
+
+
+################################################################################
+# Check is database is ready to accept operations
+is_db_ready
+
+
+################################################################################
+# Create replication user on master
+case ${REPLICATION_MODE,,} in
+	slave|snapshot|backup) ;;
+	*)
+		if is_enabled "${PG_CRON}"; then
+			log-init "loading cron scheduler extension"
+			psql -U "${PG_USER}" -c "CREATE EXTENSION IF NOT EXISTS pg_cron;" >/dev/null 2>&1
+
+			if [[ -n ${DB_USER} ]]; then
+				log-init "granting cron access to ${DB_USER} user..."
+				psql -U "${PG_USER}" -c "GRANT USAGE ON SCHEMA cron TO \"${DB_USER}\";" >/dev/null
+			fi
+		fi
+	;;
+esac
+
+# EOF
