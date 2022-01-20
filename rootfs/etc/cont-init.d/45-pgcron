@@ -1,0 +1,21 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash disable=SC1008
+set -e
+
+# shellcheck source=../postgresql/functions
+source /etc/postgresql/functions
+
+case ${REPLICATION_MODE} in
+	slave|snapshot|backup) ;;
+	*)
+		if is_enabled "${PG_CRON}"; then
+			# Preload pg_cron shared libraries
+			set_postgresql_param "shared_preload_libraries" "pg_cron"
+
+			# Set pg_cron database
+			set_postgresql_param "cron.database_name" "${PG_CRON_DB}"
+		fi
+	;;
+esac
+
+# EOF
