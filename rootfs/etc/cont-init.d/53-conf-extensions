@@ -1,0 +1,35 @@
+#!/usr/bin/with-contenv bash
+set -e
+
+
+################################################################################
+# shellcheck source=../postgresql/functions
+source /etc/postgresql/functions
+
+
+################################################################################
+# Check is database is ready to accept operations
+is_db_ready
+
+
+################################################################################
+# Create extensions in database
+if [[ -n ${DB_NAME} ]]; then
+	case ${REPLICATION_MODE,,} in
+		slave|snapshot|backup) ;;
+		*)
+			# shellcheck disable=SC2013
+			for DATABASE in $(awk -F',' '{for (i = 1 ; i <= NF ; i++) print $i}' <<< "${DB_NAME}"); do
+
+				# shellcheck disable=SC2013
+				for EXTENSION in $(awk -F',' '{for (i = 1 ; i <= NF ; i++) print $i}' <<< "${DB_EXTENSION}"); do
+					log-init "loading ${EXTENSION} extension into database [${DATABASE}]"
+					psql -U "${PG_USER}" -d "${DATABASE}" -c "CREATE EXTENSION IF NOT EXISTS ${EXTENSION};" >/dev/null 2>&1
+				done
+
+			done
+		;;
+	esac
+fi
+
+# EOF
