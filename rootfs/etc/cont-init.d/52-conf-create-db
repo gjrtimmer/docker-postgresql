@@ -20,15 +20,15 @@ if [[ -n ${DB_NAME} ]]; then
 
 		*)
 			# shellcheck disable=SC2013
-			for database in $(awk -F',' '{for (i = 1 ; i <= NF ; i++) print $i}' <<< "${DB_NAME}"); do
-				log-init "creating database: ${database}..."
-				if [[ -z $(psql -U "${PG_USER}" -Atc "SELECT 1 FROM pg_catalog.pg_database WHERE datname = '${database}'";) ]]; then
-					psql -U "${PG_USER}" -c "CREATE DATABASE \"${database}\" WITH TEMPLATE = \"${DB_TEMPLATE}\";" >/dev/null
+			for DATABASE in $(awk -F',' '{for (i = 1 ; i <= NF ; i++) print $i}' <<< "${DB_NAME}"); do
+				log-init "creating database: ${DATABASE}..."
+				if [[ -z $(psql -U "${PG_USER}" -Atc "SELECT 1 FROM pg_catalog.pg_database WHERE datname = \"${DATABASE}\"";) ]]; then
+					psql -U "${PG_USER}" -c "CREATE DATABASE \"${DATABASE}\" WITH TEMPLATE = \"${DB_TEMPLATE}\";" >/dev/null
 				fi
 
 				if [[ -n ${DB_USER} ]]; then
 					log-init "granting access to ${DB_USER} user..."
-					psql -U "${PG_USER}" -c "GRANT ALL PRIVILEGES ON DATABASE \"${database}\" to \"${DB_USER}\";" >/dev/null
+					psql -U "${PG_USER}" -c "GRANT ALL PRIVILEGES ON DATABASE \"${DATABASE}\" to \"${DB_USER}\";" >/dev/null
 				fi
 			done
 
@@ -42,7 +42,7 @@ if [[ -n ${DB_NAME} ]]; then
 					if [ -f "${SQL}" ]; then
 						BASENAME=$(basename "${SQL}")
 
-						if [[ -n $(psql -U "${PG_USER}" -Atc "SELECT 1 FROM pg_catalog.pg_database WHERE datname = '${DB}'";) ]]; then
+						if [[ -n $(psql -U "${PG_USER}" -Atc "SELECT 1 FROM pg_catalog.pg_database WHERE datname = \"${DB}\"";) ]]; then
 							log-init "executing [${BASENAME}] on database [${DB}]"
 							psql --username "${PG_USER}" --dbname "${DB}" --file "${SQL}"
 						fi

@@ -22,8 +22,8 @@ if [[ -n ${DB_USER} ]]; then
 
 		*)
 			log-init "creating database user: ${DB_USER}"
-			if [[ -z $(psql -U "${PG_USER}" -Atc "SELECT 1 FROM pg_catalog.pg_user WHERE usename = '${DB_USER}'";) ]]; then
-				psql -U "${PG_USER}" -c "CREATE ROLE \"${DB_USER}\" with LOGIN CREATEDB PASSWORD '${DB_PASS}';" >/dev/null
+			if [[ -z $(psql -U "${PG_USER}" -Atc "SELECT 1 FROM pg_catalog.pg_user WHERE usename = \"${DB_USER}\"";) ]]; then
+				psql -U "${PG_USER}" -c "CREATE ROLE \"${DB_USER}\" with LOGIN CREATEDB PASSWORD \"${DB_PASS}\";" >/dev/null
 			fi
 		;;
 	esac
