@@ -1,0 +1,20 @@
+{
+    "files.defaultLanguage": "shellscript",
+    "files.associations": {
+        "untitled-*": "shellscript",
+        "**/root/[!.]": "shellscript",
+        "**/hooks[!.]": "shellscript",
+        "config.env": "shellscript",
+        "deploy.env": "shellscript"
+    },
+    "[shellscript]": {
+        "files.eol": "\n",
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true
+    },
+    "shellcheck.enable": true,
+    "shellcheck.run": "onSave",
+    "shellcheck.customArgs": [
+        "-x"
+    ]
+}

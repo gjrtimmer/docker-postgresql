@@ -1,3 +1,5 @@
+data/
+tmp/
 .gitattributes
 .gitignore
 .gitlab-ci.yml
