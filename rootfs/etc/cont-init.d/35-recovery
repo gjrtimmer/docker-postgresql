@@ -1,0 +1,30 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash disable=SC1008
+set -e
+
+# shellcheck source=../postgresql/functions
+source /etc/postgresql/functions
+
+if [[ ${REPLICATION_MODE,,} == slave ]]; then
+	log-init "configuring recovery..."
+
+	if [[ ! -f ${PG_RECOVERY_CONF} ]]; then
+		# initialize recovery.conf on the firstrun (slave only)
+		s6-setuidgid abc touch "${PG_RECOVERY_CONF}"
+		(
+			echo "standby_mode = 'on'";
+			echo "primary_conninfo = 'host=${REPLICATION_HOST} port=${REPLICATION_PORT} user=${REPLICATION_USER} password=${REPLICATION_PASS} sslmode=${REPLICATION_SSLMODE}'";
+		) > "${PG_RECOVERY_CONF}"
+	else
+		set_recovery_param "host"      "${REPLICATION_HOST}"
+		set_recovery_param "port"      "${REPLICATION_PORT}"
+		set_recovery_param "user"      "${REPLICATION_USER}"
+		set_recovery_param "password"  "${REPLICATION_PASS}"    "true"
+		set_recovery_param "sslmode"   "${REPLICATION_SSLMODE}"
+	fi
+else
+	# recovery.conf can only exist on a slave node, its existence otherwise causes problems
+	rm -rf "${PG_RECOVERY_CONF}"
+fi
+
+# EOF
