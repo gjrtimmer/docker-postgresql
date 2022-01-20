@@ -2,7 +2,7 @@
 # shellcheck shell=bash disable=SC1008
 set -e
 
-# shellcheck disable=SC1091
+# shellcheck source=../postgresql/functions
 source /etc/postgresql/functions
 
 if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
