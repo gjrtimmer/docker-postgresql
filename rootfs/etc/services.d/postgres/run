@@ -1,15 +1,16 @@
 #!/usr/bin/with-contenv bash
+# shellcheck shell=bash disable=SC1008
 set -e
 
 
 ################################################################################
-# shellcheck source=../postgresql/functions
+# shellcheck source=../../postgresql/functions
 source /etc/postgresql/functions
 
 
 ################################################################################
-# Stopping postgres
-log-init "stopping postgres server; configuration completed"
-s6-setuidgid abc pg_ctl -D "${PG_DATA_DIR}" -w stop >/dev/null
+# Start PostgreSQL
+# shellcheck disable=SC2086
+exec s6-setuidgid abc /usr/bin/postgres -D "${PG_DATA_DIR}"
 
 # EOF

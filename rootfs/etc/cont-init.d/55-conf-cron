@@ -23,7 +23,8 @@ case ${REPLICATION_MODE,,} in
 
 			if [[ -n ${DB_USER} ]]; then
 				log-init "granting cron access to ${DB_USER} user..."
-				psql -U "${PG_USER}" -c "GRANT USAGE ON SCHEMA cron TO \"${DB_USER}\";" >/dev/null
+				QRY_GRANT_ACCESS="$(printf "GRANT USAGE ON SCHEMA cron TO %s;" "${DB_USER}")"
+				psql -U "${PG_USER}" -c "${QRY_GRANT_ACCESS}" >/dev/null
 			fi
 		fi
 	;;
