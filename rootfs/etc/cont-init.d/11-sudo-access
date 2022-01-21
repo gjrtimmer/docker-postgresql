@@ -11,7 +11,7 @@ source /etc/postgresql/functions
 # Configure sudo access
 if [ ! -f /etc/sudoers.d/abc ]; then
   log-init "setting up sudo access"
-  log-init "abc ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/abc
+  echo "abc ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/abc
   chmod 600 /etc/sudoers.d/abc
 fi
 
