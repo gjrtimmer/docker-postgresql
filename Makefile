@@ -67,6 +67,12 @@ run: ## Run the container
 		-e DB_USER=test \
 		-e DB_PASS=test \
 		-e DB_NAME=test \
+		-e DB_EXTENSION=pg_trgm \
+		-e PG_CRON=true \
+		-e PG_CRON_WORKERS_BACKGROUND=on \
+		-e PL_PERL=true \
+		-e PL_PYTHON=true \
+		-e PL_TCL=true \
 		-v $(DATA_DIR):/config \
 		--interactive \
 		--tty \
