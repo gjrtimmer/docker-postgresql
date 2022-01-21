@@ -45,15 +45,6 @@ workflow:
 ################################################################################
 # Job Configuration
 ################################################################################
-psql:9:
-  extends: .build
-  variables:
-    ALPINE_VERSION: "3.6"
-    DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:9
-  only:
-    - master
-    - schedules
-
 psql:10:
   extends: .build
   variables:
