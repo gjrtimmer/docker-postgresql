@@ -34,7 +34,6 @@ workflow:
   stage: build
   interruptible: true
   variables:
-    DOCKER_FILE: Dockerfile
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:latest
   before_script:
     - echo "${CI_DEPENDENCY_PROXY_PASSWORD}" | docker login -u "${CI_DEPENDENCY_PROXY_USER}" --password-stdin "${CI_DEPENDENCY_PROXY_SERVER}"
@@ -49,6 +48,7 @@ psql:10:
   extends: .build
   variables:
     ALPINE_VERSION: "3.8"
+    DOCKER_FILE: Dockerfile.10
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:10
   only:
     - master
@@ -58,6 +58,7 @@ psql:11:
   extends: .build
   variables:
     ALPINE_VERSION: "3.10"
+    DOCKER_FILE: Dockerfile.11
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:11
   only:
     - master
@@ -67,6 +68,7 @@ psql:12:
   extends: .build
   variables:
     ALPINE_VERSION: "3.12"
+    DOCKER_FILE: Dockerfile
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:12
   only:
     - master
@@ -76,6 +78,7 @@ psql:13:
   extends: .build
   variables:
     ALPINE_VERSION: "3.14"
+    DOCKER_FILE: Dockerfile
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:13
   only:
     - master
@@ -85,6 +88,7 @@ psql:14:
   extends: .build
   variables:
     ALPINE_VERSION: "3.15"
+    DOCKER_FILE: Dockerfile
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:14
   only:
     - master
