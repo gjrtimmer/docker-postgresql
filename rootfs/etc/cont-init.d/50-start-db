@@ -15,6 +15,7 @@ chmod 0700 -R "${PG_DATA_DIR}"
 set_postgresql_param "listen_addresses" "127.0.0.1" quiet
 
 log-init "starting postgres server for configuration"
-s6-setuidgid abc pg_ctl -D "${PG_DATA_DIR}" -w start > "${PG_LOG_DIR}/psql_startup.log" &
+# shellcheck disable=SC2086
+s6-setuidgid abc pg_ctl start -D "${PG_DATA_DIR}" -w -t ${PG_TIMEOUT_STARTUP} -l "${PG_LOG_DIR}/psql-config.log" > /dev/null &
 
 # EOF
