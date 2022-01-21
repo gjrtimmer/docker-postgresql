@@ -14,18 +14,19 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repos
     shadow \
     sudo \
     tzdata \
-    postgresql \
-    postgresql-plperl \
-    postgresql-plperl-contrib \
-    postgresql-plpython3 \
-    postgresql-plpython3-contrib \
-    postgresql-pltcl \
-    postgresql-contrib \
-    postgresql-pg_cron@edge \
+    postgresql14 \
+    postgresql14-plperl \
+    postgresql14-plperl-contrib \
+    postgresql14-plpython3 \
+    postgresql14-plpython3-contrib \
+    postgresql14-pltcl \
+    postgresql14-contrib \
+    postgresql14-jit \
+    postgresql-pg_cron \
     pgtcl \
     check_postgres && \
-    echo "postgres ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/postgres && \
-    chmod 600 /etc/sudoers.d/postgres && \
+    echo "abc ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/abc && \
+    chmod 600 /etc/sudoers.d/abc && \
     sync
 
 

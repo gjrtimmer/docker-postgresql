@@ -44,41 +44,11 @@ workflow:
 ################################################################################
 # Job Configuration
 ################################################################################
-psql:10:
-  extends: .build
-  variables:
-    ALPINE_VERSION: "3.8"
-    DOCKER_FILE: Dockerfile.10
-    DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:10
-  only:
-    - master
-    - schedules
-
-psql:11:
-  extends: .build
-  variables:
-    ALPINE_VERSION: "3.10"
-    DOCKER_FILE: Dockerfile.11
-    DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:11
-  only:
-    - master
-    - schedules
-
-psql:12:
-  extends: .build
-  variables:
-    ALPINE_VERSION: "3.12"
-    DOCKER_FILE: Dockerfile
-    DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:12
-  only:
-    - master
-    - schedules
-
 psql:13:
   extends: .build
   variables:
-    ALPINE_VERSION: "3.14"
-    DOCKER_FILE: Dockerfile
+    ALPINE_VERSION: "3.15"
+    DOCKER_FILE: Dockerfile.13
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:13
   only:
     - master
@@ -88,8 +58,17 @@ psql:14:
   extends: .build
   variables:
     ALPINE_VERSION: "3.15"
-    DOCKER_FILE: Dockerfile
+    DOCKER_FILE: Dockerfile.14
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:14
+  only:
+    - master
+    - schedules
+
+psql:latest:
+  extends: .build
+  variables:
+    DOCKER_FILE: Dockerfile
+    DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:latest
   only:
     - master
     - schedules

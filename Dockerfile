@@ -21,11 +21,12 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repos
     postgresql-plpython3-contrib \
     postgresql-pltcl \
     postgresql-contrib \
+    postgresql-jit \
     postgresql-pg_cron \
     pgtcl \
     check_postgres && \
-    echo "postgres ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/postgres && \
-    chmod 600 /etc/sudoers.d/postgres && \
+    echo "abc ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/abc && \
+    chmod 600 /etc/sudoers.d/abc && \
     sync
 
 
