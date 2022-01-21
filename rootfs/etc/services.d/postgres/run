@@ -11,6 +11,6 @@ source /etc/postgresql/functions
 ################################################################################
 # Start PostgreSQL
 # shellcheck disable=SC2086
-exec s6-setuidgid abc /usr/bin/postgres -D "${PG_DATA_DIR}"
+exec s6-setuidgid abc ${PG_COMMAND} -D "${PG_DATA_DIR}"
 
 # EOF

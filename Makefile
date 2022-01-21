@@ -18,6 +18,7 @@ help: ## This help.
 DOCKER_FILE := $(or ${DOCKER_FILE},Dockerfile)
 IMAGE_NAME := $(or ${DOCKER_IMAGE},postgres:master)
 DATA_DIR := $(or ${DATA_DIR},data)
+ALPINE_VERSION := $(or ${ALPINE_VERSION},${ALPINE_VERSION},latest)
 
 
 # DOCKER TASKS
@@ -26,7 +27,7 @@ DATA_DIR := $(or ${DATA_DIR},data)
 # $(eval PGV ?= $(shell echo "$(PSQL_VERSION)" | awk '{print $$3}'))
 # $(eval PGV_SHORT ?= $(shell echo $(PGV) | grep -o -E "[0-9]{1,2}\.[0-9]"))
 build: ## Build the container
-	$(eval ALPINE_VERSION ?= $(shell docker run --rm -t alpine:latest head -1 /etc/alpine-release|tr -d '\r'|grep -o -E "[0-9]{1,2}\.[0-9][0-9]"))
+	$(eval ALPINE_VERSION ?= $(shell docker run --rm -t alpine:$(ALPINE_VERSION) head -1 /etc/alpine-release|tr -d '\r'|grep -o -E "[0-9]{1,2}\.[0-9][0-9]"))
 	$(eval BUILD_DATE ?= $(shell date -u +"%Y-%m-%dT%H:%M:%SZ"))
 	$(eval CI_PROJECT_URL ?= $(or ${CI_PROJECT_URL},${CI_PROJECT_URL},$(shell echo $$(git config --get remote.origin.url | sed 's/....$$//'))))
 	$(eval CI_COMMIT_SHORT_SHA ?= $(or ${CI_COMMIT_SHORT_SHA},${CI_COMMIT_SHORT_SHA},$(shell git rev-parse --short HEAD)))
@@ -67,7 +68,6 @@ run: ## Run the container
 		-e DB_USER=test \
 		-e DB_PASS=test \
 		-e DB_NAME=test \
-		-e DB_EXTENSION=pg_trgm \
 		-e PG_CRON=true \
 		-e PG_CRON_WORKERS_BACKGROUND=on \
 		-e PL_PERL=true \
