@@ -42,7 +42,8 @@ ARG ALPINE_VERSION
 ENV LANG='en_US.utf8' \
     MUSL_LOCPATH='en_US.utf8' \
     HOME=/config \
-    S6_BEHAVIOUR_IF_STAGE2_FAILS=2
+    S6_BEHAVIOUR_IF_STAGE2_FAILS=2 \
+    S6_SYNC_DISKS=1
 
 HEALTHCHECK --interval=10s --timeout=5s --start-period=60s --retries=3 CMD [ "pg_isready",  "-U",  "postgres" ]
 
