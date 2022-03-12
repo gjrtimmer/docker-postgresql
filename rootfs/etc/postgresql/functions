@@ -102,12 +102,12 @@ is_db_ready() {
 ################################################################################
 # Check if enabled
 is_enabled() {
-    local ENABLED
+    local BOOL
 
-    ENABLED=${1}
+    BOOL=${1}
 
     # shellcheck disable=2086
-    if (( ENABLED == 1 )) || [ ${ENABLED} == true ] || [ ${ENABLED,,} == "true" ] || [ ${ENABLED,,} == "enable" ] || [ ${ENABLED,,} == "enabled" ] || [ ${ENABLED,,} == "on" ]; then
+    if (( BOOL == 1 )) || [ ${BOOL} == true ] || [ ${BOOL,,} == "true" ] || [ ${BOOL,,} == "enable" ] || [ ${BOOL,,} == "enabled" ] || [ ${BOOL,,} == "on" ]; then
         return 0
     fi
 
