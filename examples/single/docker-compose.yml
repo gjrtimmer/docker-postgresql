@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  psql-single:
+    image: gjrtimmer/postgresql:latest
+    container_name: psql-single
+    hostname: psql
+    restart: unless-stopped
+    environment:
+      TZ: Europe/Amsterdam
+      PUID: ${PUID}
+      PGID: ${PGID}
+      DB_USER: postgres
+      DB_PASS: postgres
+      DB_NAME: test
+      PL_PERL: "ENABLED"
+      PL_PYTHON: "ENABLED"
+      PL_TCL: "ENABLED"
+    ports:
+      - 5432:5432
+    volumes:
+      - ${PWD}/data:/config

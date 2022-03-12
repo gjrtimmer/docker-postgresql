@@ -1,2 +1,4 @@
 data/
 tmp/
+examples/.env
+!examples/single/data
