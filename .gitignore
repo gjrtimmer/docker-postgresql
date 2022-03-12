@@ -1,4 +1,4 @@
 data/
 tmp/
 examples/.env
-!examples/single/data
+!examples/single/data/.keep
