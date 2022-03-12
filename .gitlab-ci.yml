@@ -38,6 +38,7 @@ workflow:
   before_script:
     - echo "${CI_DEPENDENCY_PROXY_PASSWORD}" | docker login -u "${CI_DEPENDENCY_PROXY_USER}" --password-stdin "${CI_DEPENDENCY_PROXY_SERVER}"
     - echo ${CI_JOB_TOKEN} | docker login -u gitlab-ci-token --password-stdin ${CI_REGISTRY}
+    - echo ${DOCKERHUB_PASS} | docker login -u ${DOCKERHUB_USER} --password-stdin ${DOCKERHUB_REGISTRY}
   script:
     - make build push
 
@@ -50,9 +51,13 @@ psql:13:
     ALPINE_VERSION: "3.15"
     DOCKER_FILE: Dockerfile.13
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:13
+    DOCKER_IMAGE_HUB: ${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${CI_PROJECT_PATH}:13
   only:
     - master
     - schedules
+  after_script:
+    - docker tag ${DOCKER_IMAGE} ${DOCKER_IMAGE_HUB}
+    - docker push ${DOCKER_IMAGE_HUB}
 
 psql:14:
   extends: .build
@@ -63,6 +68,9 @@ psql:14:
   only:
     - master
     - schedules
+  after_script:
+    - docker tag ${DOCKER_IMAGE} ${DOCKER_IMAGE_HUB}
+    - docker push ${DOCKER_IMAGE_HUB}
 
 psql:latest:
   extends: .build
@@ -73,6 +81,9 @@ psql:latest:
   only:
     - master
     - schedules
+  after_script:
+    - docker tag ${DOCKER_IMAGE} ${DOCKER_IMAGE_HUB}
+    - docker push ${DOCKER_IMAGE_HUB}
 
 branches:
   extends: .build
@@ -82,13 +93,4 @@ branches:
     - branches
   except:
     - master
-
-docker.hub:
-  stage: trigger
-  interruptible: true
-  only:
-    - tags
-    - schedules
-  script:
-    - curl -s -H -X POST ${DOCKERHUB_TRIGGER} > /dev/null
 # EOF
