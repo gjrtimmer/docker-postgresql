@@ -37,8 +37,8 @@ workflow:
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:latest
   before_script:
     - echo "${CI_DEPENDENCY_PROXY_PASSWORD}" | docker login -u "${CI_DEPENDENCY_PROXY_USER}" --password-stdin "${CI_DEPENDENCY_PROXY_SERVER}"
-    - echo ${CI_JOB_TOKEN} | docker login -u gitlab-ci-token --password-stdin ${CI_REGISTRY}
-    - echo ${DOCKERHUB_PASS} | docker login -u ${DOCKERHUB_USER} --password-stdin ${DOCKERHUB_REGISTRY}
+    - echo "${CI_JOB_TOKEN}" | docker login -u gitlab-ci-token --password-stdin ${CI_REGISTRY}
+    - echo "${DOCKERHUB_PASS}" | docker login -u ${DOCKERHUB_USER} --password-stdin ${DOCKERHUB_REGISTRY}
   script:
     - make build push
 
