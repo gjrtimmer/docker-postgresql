@@ -12,7 +12,7 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 	case ${REPLICATION_MODE,,} in slave|snapshot|backup)
 		echo -n "  waiting for ${REPLICATION_HOST} to accept connections (60s timeout)"
 		timeout=60
-		while [ ! "$(pg_isready -h "${REPLICATION_HOST}" -p "${REPLICATION_PORT}" -t 1 >/dev/null 2>&1)" ]
+		while [ ! "$(pg_isready -h "${REPLICATION_HOST}" -p "${REPLICATION_PORT}" -t 1)" ]
 		do
 			timeout=$((timeout - 1))
 			if [[ $timeout -eq 0 ]]; then
