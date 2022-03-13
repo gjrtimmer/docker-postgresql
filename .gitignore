@@ -1,5 +1,15 @@
+# Exclude PSQL data
 data/*
 !data/.keep
-!examples/*/data/.keep
+
+# Exclude PSQL data from examples
+examples/*/data/*
+!examples/single/data/.keep
+!examples/master/data/.keep
+
+# Exclude PSQL data from backups
+examples/master/backup/*
+!examples/master/backup/.keep
+
 examples/.env
 tmp/

@@ -16,9 +16,11 @@ services:
       PL_PERL: "ENABLED"
       PL_PYTHON: "ENABLED"
       PL_TCL: "ENABLED"
+      PG_CRON: "ENABLED"
       REPLICATION_USER: replicate
       REPLICATION_PASS: replicate
       REPLICATION_MODE: master
+    network_mode: bridge
     ports:
       - 5432:5432
     volumes:
