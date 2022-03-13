@@ -82,14 +82,35 @@ set_hba_param() {
 # Check if database is ready for connections
 is_db_ready() {
 	cmd="pg_isready -h localhost -p 5432 -U ${DB_USER} -d postgres -t 1"
-	timeout=180
-	echo -n "  waiting for database to be ready "
+	timeout=${PG_READY_CONNECT_TIMEOUT}
+	echo -n "  waiting for database to be ready (${PG_READY_CONNECT_TIMEOUT}s timeout)"
 	while ! $cmd > /dev/null 2>&1
 	do
 		timeout=$((timeout - 1))
 		if [[ $timeout -eq 0 ]]; then
 			echo "  [TIMEOUT]"
 			return 1
+		fi
+
+		echo -n "."
+		sleep 1
+	done
+	echo "  [CONNECTED]"
+}
+
+
+################################################################################
+# Check if master is ready for connections
+is_master_ready() {
+	cmd="pg_isready -h ${REPLICATION_HOST} -p ${REPLICATION_PORT} -U ${REPLICATION_USER} -d postgres -t 1"
+	timeout=${PG_READY_CONNECT_MASTER_TIMEOUT}
+	echo -n "  waiting for ${REPLICATION_HOST} to accept connections (${PG_READY_CONNECT_MASTER_TIMEOUT}s timeout)"
+	while ! $cmd > /dev/null 2>&1
+	do
+		timeout=$((timeout - 1))
+		if [[ $timeout -eq 0 ]]; then
+			echo "  [TIMEOUT]"
+			exit 30
 		fi
 
 		echo -n "."

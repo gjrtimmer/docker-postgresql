@@ -10,19 +10,8 @@ source /etc/postgresql/functions
 
 if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 	case ${REPLICATION_MODE,,} in slave|snapshot|backup)
-		echo -n "  waiting for ${REPLICATION_HOST} to accept connections (60s timeout)"
-		timeout=60
-		while [ ! "$(pg_isready -h "${REPLICATION_HOST}" -p "${REPLICATION_PORT}" -U "${REPLICATION_USER}" -d postgres -t 1 >/dev/null 2>&1)" ]
-		do
-			timeout=$((timeout - 1))
-			if [[ $timeout -eq 0 ]]; then
-				echo " [TIMEOUT]"
-				exit 30
-			fi
-			echo -n "."
-			sleep 1
-		done
-		echo " [CONNECTED]"
+		# Wait for master to be ready
+		is_master_ready
 
 		case ${REPLICATION_MODE,,} in
 			slave)
