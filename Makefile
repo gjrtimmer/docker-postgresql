@@ -39,7 +39,7 @@ build: ## Build the container
 		--build-arg BUILD_DATE="$(BUILD_DATE)" \
 		--build-arg VCS_REF="$(CI_COMMIT_SHORT_SHA)" \
 		--build-arg CI_PROJECT_URL="$(CI_PROJECT_URL)" \
-		--build-arg CI_PROJECT_NAME="postgres" \
+		--build-arg CI_PROJECT_NAME="postgresql" \
 		--file=$(DOCKER_FILE) \
 		--tag $(IMAGE_NAME) .
 
