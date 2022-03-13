@@ -16,19 +16,19 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 		case ${REPLICATION_MODE,,} in
 			slave)
 				log-init "replicating initial data from ${REPLICATION_HOST}..."
-				s6-setuidgid abc exec PGPASSWORD="${REPLICATION_PASS}" pg_basebackup -D "${PG_DATA_DIR}" \
+				s6-setuidgid abc exec env PGPASSWORD="${REPLICATION_PASS}" pg_basebackup -D "${PG_DATA_DIR}" \
 					-h "${REPLICATION_HOST}" -p "${REPLICATION_PORT}" -U "${REPLICATION_USER}" -X stream -w >/dev/null
 			;;
 
 			snapshot)
 				log-init "generating a snapshot data on ${REPLICATION_HOST}..."
-				s6-setuidgid abc exec PGPASSWORD="${REPLICATION_PASS}" pg_basebackup -D "${PG_DATA_DIR}" \
+				s6-setuidgid abc exec env PGPASSWORD="${REPLICATION_PASS}" pg_basebackup -D "${PG_DATA_DIR}" \
 					-h "${REPLICATION_HOST}" -p "${REPLICATION_PORT}" -U "${REPLICATION_USER}" -X fetch -w >/dev/null
 			;;
 
 			backup)
 				log-init "backing up data on $REPLICATION_HOST..."
-				s6-setuidgid abc exec PGPASSWORD="${REPLICATION_PASS}" pg_basebackup -D "${PG_DATA_DIR}" \
+				s6-setuidgid abc exec env PGPASSWORD="${REPLICATION_PASS}" pg_basebackup -D "${PG_DATA_DIR}" \
 					-h "${REPLICATION_HOST}" -p "${REPLICATION_PORT}" -U "${REPLICATION_USER}" -X fetch -w >/dev/null
 				exit 0
 			;;
