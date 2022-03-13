@@ -1,4 +1,5 @@
-data/
-tmp/
+data/*
+!data/.keep
+!examples/*/data/.keep
 examples/.env
-!examples/single/data/.keep
+tmp/
