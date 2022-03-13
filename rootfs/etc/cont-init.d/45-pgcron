@@ -21,7 +21,7 @@ case ${REPLICATION_MODE,,} in
 			set_postgresql_param "cron.database_name" "${PG_CRON_DB}"
 
 			# Configure Background Workers
-			if is_enabled ${PG_CRON_WORKERS_BACKGROUND}; then
+			if is_enabled "${PG_CRON_WORKERS_BACKGROUND}"; then
 				# Schedule jobs via background workers instead of localhost connections
 				set_postgresql_param "cron.use_background_workers" "on"
 
