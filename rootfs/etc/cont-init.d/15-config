@@ -90,20 +90,25 @@ if [ "$PG_PASS" == "postgres" ]; then
   log-init "WARNING: postgres user password still set to default; only use this for test/dev environments"
 fi
 
-if [[ -z ${DB_USER} ]]; then
-  log-init "ERROR: required variable DB_USER not set"
-  exit 15
-fi
+case ${REPLICATION_MODE,,} in
+	slave|snapshot|backup) ;;
+	*)
+		if [[ -z ${DB_USER} ]]; then
+			log-init "ERROR: required variable DB_USER not set"
+			exit 15
+		fi
 
-if [[ -z ${DB_PASS} ]]; then
-  log-init "ERROR: required variable DB_PASS not set"
-  exit 16
-fi
+		if [[ -z ${DB_PASS} ]]; then
+			log-init "ERROR: required variable DB_PASS not set"
+			exit 16
+		fi
 
-if [[ -z ${DB_NAME} ]]; then
-  log-init "ERROR: required variable DB_NAME not set"
-  exit 17
-fi
+		if [[ -z ${DB_NAME} ]]; then
+			log-init "ERROR: required variable DB_NAME not set"
+			exit 17
+		fi
+	;;
+esac
 
 if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 	case ${REPLICATION_MODE,,} in
