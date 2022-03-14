@@ -21,9 +21,7 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 			;;
 
 			snapshot)
-				log-init "generating a snapshot data on ${REPLICATION_HOST}..."
-				s6-setuidgid abc exec env PGPASSWORD="${REPLICATION_PASS}" pg_basebackup -D "${PG_DATA_DIR}" \
-					-h "${REPLICATION_HOST}" -p "${REPLICATION_PORT}" -U "${REPLICATION_USER}" -X fetch -w >/dev/null
+				psql-snapshot
 			;;
 
 			backup)
