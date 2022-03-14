@@ -1,10 +1,14 @@
 version: '3.9'
 
+networks:
+  psql-playground:
+    external: true
+
 services:
   psql-master:
     image: gjrtimmer/postgresql:latest
     container_name: psql-master
-    hostname: psql
+    hostname: master
     restart: unless-stopped
     environment:
       TZ: Europe/Amsterdam
@@ -20,7 +24,10 @@ services:
       REPLICATION_USER: replicate
       REPLICATION_PASS: replicate
       REPLICATION_MODE: master
-    network_mode: bridge
+      PG_JOURNAL_MAX_SENDERS: 10
+    networks:
+      psql-playground:
+        ipv4_address: 172.50.0.10
     ports:
       - 5432:5432
     volumes:

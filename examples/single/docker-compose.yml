@@ -1,10 +1,14 @@
 version: '3.9'
 
+networks:
+  psql-playground:
+    external: true
+
 services:
   psql-single:
     image: gjrtimmer/postgresql:latest
     container_name: psql-single
-    hostname: psql
+    hostname: single
     restart: unless-stopped
     environment:
       TZ: Europe/Amsterdam
@@ -17,6 +21,11 @@ services:
       PL_PYTHON: "ENABLED"
       PL_TCL: "ENABLED"
       PG_CRON: "ENABLED"
+      PG_JOURNAL_WAL_LEVEL: minimal
+      PG_JOURNAL_MAX_SENDERS: 0
+    networks:
+      psql-playground:
+        ipv4_address: 172.50.0.5
     ports:
       - 5432:5432
     volumes:
