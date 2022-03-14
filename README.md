@@ -19,3 +19,4 @@
 | 50   | Backup completed succesfully                                                    | N.A.                                                             |
 | 51   | Backup failed                                                                   | Check log file                                                   |
 | 52   | Invalid option for PG_BACKUP_FORMAT                                             | Valid options: `p|plain` or `t|tar`                              |
+| 61   | Snapshot failed                                                                 | Check logfile                                                    |
