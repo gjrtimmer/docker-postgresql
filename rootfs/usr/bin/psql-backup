@@ -40,8 +40,8 @@ case ${PG_BACKUP_FORMAT,,} in
 
   *)
     # Invalid option for PG_BACKUP_FORMAT
-    # Logging handeld by parent
-    return 52
+    log-init "invalid option for PG_BACKUP_FORMAT; valid options are p|plain|t|tar"
+    exit 52
   ;;
 esac
 
@@ -80,7 +80,19 @@ else
 fi
 
 log-init "backing up data on $REPLICATION_HOST..."
-s6-setuidgid abc exec env PGPASSWORD="${REPLICATION_PASS}" pg_basebackup "${PARAMS[@]}" || return 51
+s6-setuidgid abc exec env PGPASSWORD="${REPLICATION_PASS}" pg_basebackup "${PARAMS[@]}"; BACKUP_STATUS=$?
 
-# Return backup succesful to container
-return 50
+case $BACKUP_STATUS in
+  50)
+    log-init "backup of ${REPLICATION_HOST} completed"
+  ;;
+  51)
+    log-init "backup of ${REPLICATION_HOST} failed; see log file"
+    if is_enabled "${PG_BACKUP_REMOVE_DATA_ON_FAILURE}"; then
+      rm -R "${PG_DATA_DIR:?}/"*
+    fi
+  ;;
+esac
+
+# Return backup exit code
+exit ${BACKUP_STATUS}
