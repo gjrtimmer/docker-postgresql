@@ -16,7 +16,7 @@ help: ## This help.
 
 # Image configuration
 DOCKER_FILE := $(or ${DOCKER_FILE},Dockerfile)
-IMAGE_NAME := $(or ${DOCKER_IMAGE},postgres:master)
+IMAGE_NAME := $(or ${DOCKER_IMAGE},postgres:latest)
 DATA_DIR := $(or ${DATA_DIR},data)
 ALPINE_VERSION := $(or ${ALPINE_VERSION},${ALPINE_VERSION},latest)
 
@@ -60,7 +60,7 @@ run: ## Run the container
 	@mkdir -p ${PWD}/data
 	@docker run \
 		--rm \
-		--name psql-master \
+		--name psql-test \
 		--hostname psql \
 		-e TZ=Europe/Amsterdam \
 		-e PUID=$(PUID) \
@@ -79,7 +79,7 @@ run: ## Run the container
 
 # Create shell in container
 shell: ## Container Shell
-	@docker exec -it psql-master bash
+	@docker exec -it psql-test bash
 
 
 # Clean data directory
