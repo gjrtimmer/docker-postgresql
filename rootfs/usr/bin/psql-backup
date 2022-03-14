@@ -41,7 +41,7 @@ case ${PG_BACKUP_FORMAT,,} in
   *)
     # Invalid option for PG_BACKUP_FORMAT
     # Logging handeld by parent
-    exit 52
+    return 52
   ;;
 esac
 
@@ -80,7 +80,7 @@ else
 fi
 
 log-init "backing up data on $REPLICATION_HOST..."
-s6-setuidgid abc exec env PGPASSWORD="${REPLICATION_PASS}" pg_basebackup "${PARAMS[@]}" || exit 51
+s6-setuidgid abc exec env PGPASSWORD="${REPLICATION_PASS}" pg_basebackup "${PARAMS[@]}" || return 51
 
 # Return backup succesful to container
-exit 50
+return 50
