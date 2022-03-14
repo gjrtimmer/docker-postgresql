@@ -1,4 +1,5 @@
 data/
+examples/
 tmp/
 .gitattributes
 .gitignore
@@ -6,4 +7,3 @@ tmp/
 CHANGELOG.md
 LICENSE
 README.md
-REPOSITORY
