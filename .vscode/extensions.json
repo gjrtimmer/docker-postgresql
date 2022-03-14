@@ -1,0 +1,10 @@
+{
+    "recommendations": [
+        "aaron-bond.better-comments",
+        "eamodio.gitlens",
+        "timonwong.shellcheck",
+        "yzhang.markdown-all-in-one",
+        "PKief.material-icon-theme",
+        "ms-azuretools.vscode-docker"
+    ]
+}

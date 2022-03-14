@@ -1,4 +1,5 @@
 {
+    "files.eol": "\n",
     "files.defaultLanguage": "shellscript",
     "files.associations": {
         "untitled-*": "shellscript",
@@ -16,5 +17,28 @@
     "shellcheck.run": "onSave",
     "shellcheck.customArgs": [
         "-x"
-    ]
+    ],
+    "terminal.integrated.defaultProfile.windows": "WSL",
+    "terminal.integrated.profiles.windows": {
+        "PowerShell": {
+            "source": "PowerShell",
+            "icon": "terminal-powershell"
+        },
+        "Command Prompt": {
+            "path": [
+                "${env:windir}\\Sysnative\\cmd.exe",
+                "${env:windir}\\System32\\cmd.exe"
+            ],
+            "args": [],
+            "icon": "terminal-cmd"
+        },
+        "Git Bash": null,
+        "WSL": {
+            "path": [
+                "C:\\WINDOWS\\System32\\wsl.exe"
+            ],
+            "args": [],
+            "icon": "terminal-ubuntu"
+        }
+    }
 }
