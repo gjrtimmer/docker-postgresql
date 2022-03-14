@@ -35,6 +35,9 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 					;;
 					51)
 						log-init "backup of ${REPLICATION_HOST} failed; see log file"
+						if is_enabled "${PG_BACKUP_REMOVE_DATA_ON_FAILURE}"; then
+							rm -R "${PG_DATA_DIR:?}/"*
+						fi
 					;;
 					52)
 						log-init "invalid option for PG_BACKUP_FORMAT; valid options are p|plain|t|tar"
