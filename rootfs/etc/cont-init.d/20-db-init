@@ -27,7 +27,7 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 			;;
 
 			backup)
-				psql-backup;
+				psql-backup
 			;;
 		esac
 	;;
