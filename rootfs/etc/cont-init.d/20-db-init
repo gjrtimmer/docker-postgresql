@@ -31,7 +31,7 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 				s6-setuidgid abc exec env PGPASSWORD="${REPLICATION_PASS}" pg_basebackup -D "${PG_DATA_DIR}" \
 					-h "${REPLICATION_HOST}" -p "${REPLICATION_PORT}" -U "${REPLICATION_USER}" -X fetch -w -P
 				log-init "backup of ${REPLICATION_HOST} completed"
-				exit 50
+				kill -s SIGTERM 1
 			;;
 		esac
 	;;
