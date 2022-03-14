@@ -79,7 +79,7 @@ else
   PARAMS+=(--username="${REPLICATION_USER}")
 fi
 
-log-init "backing up data on $REPLICATION_HOST..."
+log-init "backing up data of $REPLICATION_HOST..."
 s6-setuidgid abc exec env PGPASSWORD="${REPLICATION_PASS}" pg_basebackup "${PARAMS[@]}"; BACKUP_STATUS=$?
 
 case $BACKUP_STATUS in
