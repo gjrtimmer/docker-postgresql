@@ -1,0 +1,81 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash disable=SC1008
+set -e
+
+
+################################################################################
+# shellcheck source=../postgresql/functions
+source /etc/postgresql/functions
+
+
+# Backup parameters
+declare -a PARAMS=()
+
+# Password is provided by the environment
+# Do not prompt for password
+PARAMS+=(--no-password)
+
+# Configure backup directory
+PARAMS+=(--pgdata="${PG_DATA_DIR}")
+
+# Configure wal directory
+if [ -n "${PG_BACKUP_WAL_DIR}" ]; then
+  # shellcheck disable=SC2206
+  PARAMS+=(--waldir=${PG_BACKUP_WAL_DIR})
+fi
+
+# Backup format
+# shellcheck disable=SC2206
+case ${PG_BACKUP_FORMAT,,} in
+  p|plain)
+    PARAMS+=(--format=${PG_BACKUP_FORMAT,,})
+  ;;
+
+  t|tar)
+    PARAMS+=(--format=${PG_BACKUP_FORMAT,,})
+    if is_enabled "${PG_BACKUP_TAR_COMPRESS}"; then
+      PARAMS+=(--compress=${PG_BACKUP_TAR_COMPRESS_LEVEL})
+    fi
+  ;;
+
+  *)
+    # Invalid option for PG_BACKUP_FORMAT
+    # Logging handeld by parent
+    exit 52
+  ;;
+esac
+
+# Configure backup rate
+if [ -n "${PG_BACKUP_RATE}" ]; then
+  # shellcheck disable=SC2206
+  PARAMS+=(--max-rate=${PG_BACKUP_RATE})
+fi
+
+# Configure backup label
+PARAMS+=(--label="${PG_BACKUP_LABEL}")
+
+# Configure checkpoint
+PARAMS+=(--checkpoint="${PG_BACKUP_CHECKPOINT}")
+
+# Show progress; unable to turn off by envvars
+PARAMS+=(--progress)
+
+# Status interval
+# shellcheck disable=SC2206
+PARAMS+=(--status-interval=${PG_BACKUP_STATUS_INTERVAL})
+
+# Configure Connection
+if is_enabled "${PG_SSL}"; then
+  # SSL/TLS Enabled
+  PARAMS+=(--dbname=TODO)
+else
+  PARAMS+=(--host="${REPLICATION_HOST}")
+  PARAMS+=(--port="${REPLICATION_PORT}")
+  PARAMS+=(--username="${REPLICATION_USER}")
+fi
+
+log-init "backing up data on $REPLICATION_HOST..."
+s6-setuidgid abc exec env PGPASSWORD="${REPLICATION_PASS}" pg_basebackup "${PARAMS[@]}" || exit 51
+
+# Return backup succesful to container
+exit 50

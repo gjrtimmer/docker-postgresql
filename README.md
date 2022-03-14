@@ -16,3 +16,6 @@
 | 42   | Invalid permissions for `PG_CERTS_DIR/server.crt`                               | File permissions for server.crt needs to be set to `644`         |
 | 43   | Certificate not found `PG_CERTS_DIR/server.key`                                 | Place certificate in correct path                                |
 | 44   | Invalid permissions for `PG_CERTS_DIR/server.key`                               | File permissions for server.key needs to be set to `640`         |
+| 50   | Backup completed succesfully                                                    | N.A.                                                             |
+| 51   | Backup failed                                                                   | Check log file                                                   |
+| 52   | Invalid option for PG_BACKUP_FORMAT                                             | Valid options: `p|plain` or `t|tar`                              |

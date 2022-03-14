@@ -11,28 +11,7 @@ source /etc/postgresql/functions
 ################################################################################
 # Configure SSL/TLS
 if is_enabled "${PG_SSL}"; then
-	log-init "SSL/TLS: Enabled"
-
-	if [ ! -f "${PG_CERTS_DIR}/server.crt" ]; then
-		log-init "ERROR: SSL/TLS is enabled certificate not found [${PG_CERTS_DIR}/server.crt]"
-		exit 41
-	else
-		if [ "$(stat -c "%a" "${PG_CERTS_DIR}/server.crt")" != "644" ]; then
-			log-init "invalid permissions for ${PG_CERTS_DIR}/server.crt; expect: 644"
-			exit 42
-		fi
-	fi
-
-	if [ ! -f "${PG_CERTS_DIR}/server.key" ]; then
-		log-init "ERROR: SSL/TLS is enabled certificate key not found [${PG_CERTS_DIR}/server.key]"
-		exit 43
-	else
-	  if [ "$(stat -c "%a" "${PG_CERTS_DIR}/server.key")" != "640" ]; then
-			log-init "invalid permissions for ${PG_CERTS_DIR}/server.key; expect: 640"
-			exit 44
-		fi
-	fi
-
+	log-init "configuring SSL/TLS"
 	if [[ -f ${PG_CERTS_DIR}/server.crt && -f ${PG_CERTS_DIR}/server.key ]]; then
 		set_postgresql_param "ssl_cert_file" "${PG_CERTS_DIR}/server.crt"
 		set_postgresql_param "ssl_key_file" "${PG_CERTS_DIR}/server.key"

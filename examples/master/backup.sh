@@ -4,11 +4,12 @@
 docker run \
   --rm \
   --name psql-backup \
-  --network=bridge \
-  --env REPLICATION_USER=replicate \
-  --env REPLICATION_PASS=replicate \
-  --env REPLICATION_HOST=psql-master \
+  --network psql-playground \
+  --link psql-master:master \
+  --env REPLICATION_USER=replicator \
+  --env REPLICATION_PASS=replicator \
+  --env REPLICATION_HOST=master \
   --env REPLICATION_PORT=5432 \
   --env REPLICATION_MODE=backup \
-  --volume "${PWD}/backup:/var/lib/postgresql" \
+  --volume "${PWD}/backup/postgresql.$(date +%Y%m%d-%H%M):/config" \
   gjrtimmer/postgresql:latest

@@ -28,16 +28,20 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 
 			backup)
 				log-init "backing up data on $REPLICATION_HOST..."
-				s6-setuidgid abc exec env PGPASSWORD="${REPLICATION_PASS}" pg_basebackup -D "${PG_DATA_DIR}" \
-					-h "${REPLICATION_HOST}" -p "${REPLICATION_PORT}" -U "${REPLICATION_USER}" -X fetch -w -P
-				log-init "backup of ${REPLICATION_HOST} completed"
-				log-init "syncing disks"
-				s6-sync
+				psql-backup; BACKUP_STATUS=$?
+				case $BACKUP_STATUS in
+					50)
+						log-init "backup of ${REPLICATION_HOST} completed"
+					;;
+					51)
+						log-init "backup of ${REPLICATION_HOST} failed; see log file"
+					;;
+					52)
+						log-init "invalid option for PG_BACKUP_FORMAT; valid options are p|plain|t|tar"
+					;;
+				esac
 
-				exit 50
-
-				# Gracefull terminate container
-				kill -s SIGTERM 1
+				exit ${BACKUP_STATUS}
 			;;
 		esac
 	;;

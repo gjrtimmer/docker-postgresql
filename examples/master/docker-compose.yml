@@ -21,8 +21,8 @@ services:
       PL_PYTHON: "ENABLED"
       PL_TCL: "ENABLED"
       PG_CRON: "ENABLED"
-      REPLICATION_USER: replicate
-      REPLICATION_PASS: replicate
+      REPLICATION_USER: replicator
+      REPLICATION_PASS: replicator
       REPLICATION_MODE: master
       PG_JOURNAL_MAX_SENDERS: 10
     networks:
