@@ -64,6 +64,11 @@ PARAMS+=(--progress)
 # shellcheck disable=SC2206
 PARAMS+=(--status-interval=${PG_BACKUP_STATUS_INTERVAL})
 
+# Verbose logging
+if is_enabled "${PG_BACKUP_VERBOSE}"; then
+  PARAMS+=(--verbose)
+fi
+
 # Configure Connection
 if is_enabled "${PG_SSL}"; then
   # SSL/TLS Enabled
