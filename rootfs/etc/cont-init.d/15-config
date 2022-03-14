@@ -71,6 +71,20 @@ fi
 
 
 ################################################################################
+# Create Database init.d for custom load scripts
+if [ "${REPLICATION_MODE,,}" != "backup" ] && [ "${REPLICATION_MODE,,}" != "slave" ]; then
+	if [ ! -d "${PG_INIT_DB}" ]; then
+		log-init "creating directory::init.db.d [${PG_INIT_DB}]"
+		mkdir -p "${PG_INIT_DB}"
+	fi
+
+	# Set permissions on PG_INIT_DB
+	log-init "setting permissions::init.db.d"
+	chown -R abc:abc "${PG_INIT_DB}"
+fi
+
+
+################################################################################
 # Verify SSL/TLS
 if is_enabled "${PG_SSL}"; then
 	log-init "SSL/TLS: Enabled"
@@ -99,25 +113,27 @@ fi
 # set permissions on PG_CERTS_DIR
 chown abc:abc "${PG_CERTS_DIR}"
 
+
 if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 	case ${REPLICATION_MODE,,} in
-		backup)
-			# NOOP
+		slave|snapshot|backup)
+			if [[ -z $REPLICATION_HOST ]]; then
+				log-init "ERROR: REPLICATION_MODE=${REPLICATION_MODE^^}; required variable REPLICATION_HOST not set"
+				exit 18
+			fi
+
+			if [[ -z $REPLICATION_USER ]]; then
+				log-init "ERROR: REPLICATION_MODE=${REPLICATION_MODE^^}; required variable REPLICATION_USER not set"
+				exit 19
+			fi
+
+			if [[ -z $REPLICATION_PASS ]]; then
+				echo "ERROR: REPLICATION_MODE=${REPLICATION_MODE^^}; required variable REPLICATION_PASS not set"
+				exit 20
+			fi
 		;;
 
 		*)
-			################################################################################
-			# Create Database init.d for custom load scripts
-			if [ ! -d "${PG_INIT_DB}" ]; then
-				log-init "creating directory::init.db.d [${PG_INIT_DB}]"
-				mkdir -p "${PG_INIT_DB}"
-			fi
-
-			# Set permissions on PG_INIT_DB
-			log-init "setting permissions::init.db.d"
-			chown -R abc:abc "${PG_INIT_DB}"
-
-
 			################################################################################
 			# validate Configuration
 			if [ "$PG_PASS" == "postgres" ]; then
@@ -137,27 +153,6 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 			if [[ -z ${DB_NAME} ]]; then
 				log-init "ERROR: required variable DB_NAME not set"
 				exit 17
-			fi
-		;;
-	esac
-fi
-
-if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
-	case ${REPLICATION_MODE,,} in
-		slave|snapshot|backup)
-			if [[ -z $REPLICATION_HOST ]]; then
-				log-init "ERROR: REPLICATION_MODE=${REPLICATION_MODE^^}; required variable REPLICATION_HOST not set"
-				exit 18
-			fi
-
-			if [[ -z $REPLICATION_USER ]]; then
-				log-init "ERROR: REPLICATION_MODE=${REPLICATION_MODE^^}; required variable REPLICATION_USER not set"
-				exit 19
-			fi
-
-			if [[ -z $REPLICATION_PASS ]]; then
-				echo "ERROR: REPLICATION_MODE=${REPLICATION_MODE^^}; required variable REPLICATION_PASS not set"
-				exit 20
 			fi
 		;;
 	esac
