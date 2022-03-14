@@ -19,13 +19,13 @@ PARAMS+=(--no-password)
 PARAMS+=(--pgdata="${PG_DATA_DIR}")
 
 # Configure wal directory
-if [ -n "${PG_SNAPSHOT_WAL_DIR}" ]; then
+if [[ -n ${PG_SNAPSHOT_WAL_DIR} ]]; then
   # shellcheck disable=SC2206
   PARAMS+=(--waldir=${PG_SNAPSHOT_WAL_DIR})
 fi
 
 # Configure backup rate
-if [ -n "${PG_SNAPSHOT_RATE}" ]; then
+if [[ -n ${PG_SNAPSHOT_RATE} ]]; then
   # shellcheck disable=SC2206
   PARAMS+=(--max-rate=${PG_SNAPSHOT_RATE})
 fi

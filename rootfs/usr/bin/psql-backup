@@ -19,7 +19,7 @@ PARAMS+=(--no-password)
 PARAMS+=(--pgdata="${PG_DATA_DIR}")
 
 # Configure wal directory
-if [ -n "${PG_BACKUP_WAL_DIR}" ]; then
+if [[ -n ${PG_BACKUP_WAL_DIR} ]]; then
   # shellcheck disable=SC2206
   PARAMS+=(--waldir=${PG_BACKUP_WAL_DIR})
 fi
@@ -46,7 +46,7 @@ case ${PG_BACKUP_FORMAT,,} in
 esac
 
 # Configure backup rate
-if [ -n "${PG_BACKUP_RATE}" ]; then
+if [[ -n ${PG_BACKUP_RATE} ]]; then
   # shellcheck disable=SC2206
   PARAMS+=(--max-rate=${PG_BACKUP_RATE})
 fi
