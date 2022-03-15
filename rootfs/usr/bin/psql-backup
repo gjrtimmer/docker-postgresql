@@ -88,11 +88,6 @@ case $BACKUP_STATUS in
     exit 50
   ;;
   *)
-    log-init "backup of ${REPLICATION_HOST} failed; see log file"
-    if is_enabled "${PG_BACKUP_REMOVE_DATA_ON_FAILURE}"; then
-      rm -R "${PG_DATA_DIR:?}/"*
-    fi
-
     # Return backup exit code
     exit ${BACKUP_STATUS}
   ;;
