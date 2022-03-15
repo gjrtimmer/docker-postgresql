@@ -47,4 +47,24 @@ docker network rm psql-playground
 
 **Important: If you want to be able to run a backup of your single instance please use (#Master-with-Backup)[Master with Backup] configuration; the single node has the journal set to minimal; and has no wal senders required for the backup process.**
 
-## Master with Backup
+## Master
+
+
+## Create backup from Master
+
+## Create snapshot from Master
+
+Start [Master](#master) node first.
+
+With `bash`
+
+```bash
+cd snapshot
+./create-snapshot.sh
+```
+
+With `docker-compose`
+
+```bash
+PUID=$(id -u) PGID=$(id -g) docker-compose up
+```

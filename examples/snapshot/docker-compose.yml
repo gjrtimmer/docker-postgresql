@@ -10,8 +10,6 @@ services:
     container_name: psql-snapshot
     hostname: snapshot
     restart: unless-stopped
-    links:
-      - psql-master:master
     environment:
       TZ: Europe/Amsterdam
       PUID: ${PUID}
