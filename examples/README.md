@@ -36,10 +36,12 @@ docker network rm psql-playground
 
 ### docker network IP assignment
 
-| IP          | Example |
-| ----------- | ------- |
-| 172.50.0.5  | Single  |
-| 172.50.0.10 | Master  |
+| IP          | Example  |
+| ----------- | -------- |
+| 172.50.0.5  | Single   |
+| 172.50.0.10 | Master   |
+| 172.50.0.15 | Backup   |
+| 172.50.0.20 | Snapshot |
 
 ## Single
 

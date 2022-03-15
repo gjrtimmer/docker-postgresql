@@ -1,0 +1,34 @@
+version: '3.9'
+
+networks:
+  psql-playground:
+    external: true
+
+services:
+  psql-snapshot:
+    image: gjrtimmer/postgresql:latest
+    container_name: psql-snapshot
+    hostname: snapshot
+    restart: unless-stopped
+    links:
+      - psql-master:master
+    environment:
+      TZ: Europe/Amsterdam
+      PUID: ${PUID}
+      PGID: ${PGID}
+      PL_PERL: "ENABLED"
+      PL_PYTHON: "ENABLED"
+      PL_TCL: "ENABLED"
+      PG_CRON: "ENABLED"
+      REPLICATION_USER: replicator
+      REPLICATION_PASS: replicator
+      REPLICATION_HOST: master
+      REPLICATION_PORT: 5432
+      REPLICATION_MODE: snapshot
+    networks:
+      psql-playground:
+        ipv4_address: 172.50.0.20
+    ports:
+      - 15432:5432
+    volumes:
+      - ${PWD}/data:/config

@@ -1,0 +1,28 @@
+version: '3.9'
+
+networks:
+  psql-playground:
+    external: true
+
+services:
+  psql-backup:
+    image: gjrtimmer/postgresql:latest
+    container_name: psql-backup
+    hostname: backup
+    restart: unless-stopped
+    links:
+      - psql-master:master
+    environment:
+      TZ: Europe/Amsterdam
+      PUID: ${PUID}
+      PGID: ${PGID}
+      REPLICATION_USER: replicator
+      REPLICATION_PASS: replicator
+      REPLICATION_HOST: master
+      REPLICATION_PORT: 5432
+      REPLICATION_MODE: backup
+    networks:
+      psql-playground:
+        ipv4_address: 172.50.0.15
+    volumes:
+      - ${PWD}/data:/config

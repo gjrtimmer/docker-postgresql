@@ -8,12 +8,12 @@ examples/*/data/*
 !examples/master/data/.keep
 
 # Exclude PSQL data from backups
-examples/master/backup/*
-!examples/master/backup/.keep
+examples/backup/data/*
+!examples/backup/data/.keep
 
 # Exclude PSQL data from snapshot
-examples/master/snapshot/*
-!examples/master/snapshot/.keep
+examples/snapshot/data/*
+!examples/snapshot/data/.keep
 
 examples/.env
 tmp/
