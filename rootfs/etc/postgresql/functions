@@ -237,7 +237,7 @@ psql_configure_net_security() {
 	# allow remote connections to postgresql database
 	set_hba_param "host	all				all				0.0.0.0/0				md5"
 
-	touch "${PG_DATA_DIR}/net-security"
+	s6-setuidgid abc touch "${PG_DATA_DIR}/net-security"
 }
 
 psql_validate_certs() {
