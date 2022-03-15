@@ -31,6 +31,8 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
     ;;
 
     *)
+      psql_configure_initdb_dir
+
       psql_validate_pgpass
       psql_validate_db_user
       psql_validate_db_pass
