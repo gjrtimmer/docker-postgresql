@@ -13,8 +13,6 @@ exec_as_postgres() {
   sudo -HEu postgres "$@"
 }
 
-## Loading dev-defaults
-log-init "loading env-defaults"
 # shellcheck source=env-defaults
 source /etc/postgresql/env-defaults
 
