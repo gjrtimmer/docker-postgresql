@@ -96,6 +96,25 @@ is_db_ready() {
 	echo "  [CONNECTED]"
 }
 
+## Check if database is ready for connections
+is_db_ready_socket() {
+	cmd="pg_isready -h /run -p 5432 -d postgres -t 1"
+	timeout=${PG_READY_CONNECT_TIMEOUT}
+	echo -n "  waiting for database to be ready (${PG_READY_CONNECT_TIMEOUT}s timeout)"
+	while ! $cmd > /dev/null 2>&1
+	do
+		timeout=$((timeout - 1))
+		if [[ $timeout -eq 0 ]]; then
+			echo "  [TIMEOUT]"
+			return 1
+		fi
+
+		echo -n "."
+		sleep 1
+	done
+	echo "  [CONNECTED]"
+}
+
 ## Check if master is ready for connections
 is_master_ready() {
 	cmd="pg_isready -h ${REPLICATION_HOST} -p ${REPLICATION_PORT} -U ${REPLICATION_USER} -d postgres -t 1"

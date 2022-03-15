@@ -9,7 +9,7 @@ source /etc/postgresql/functions
 
 ################################################################################
 # Check is database is ready to accept operations
-is_db_ready
+is_db_ready_socket
 
 
 ################################################################################
