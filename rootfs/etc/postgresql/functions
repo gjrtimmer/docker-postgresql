@@ -98,7 +98,7 @@ is_db_ready() {
 
 ## Check if database is ready for connections
 is_db_ready_socket() {
-	cmd="pg_isready -h /run -p 5432 -d postgres -t 1"
+	cmd="pg_isready -h /run/postgresql -p 5432 -d postgres -t 1"
 	timeout=${PG_READY_CONNECT_TIMEOUT}
 	echo -n "  waiting for database to be ready (${PG_READY_CONNECT_TIMEOUT}s timeout)"
 	while ! $cmd > /dev/null 2>&1
