@@ -58,3 +58,4 @@ fi
 log-init "generating snapshot of $REPLICATION_HOST..."
 s6-setuidgid abc exec env PGPASSWORD="${REPLICATION_PASS}" pg_basebackup "${PARAMS[@]}" || exit 61
 log-init "snapshot of ${REPLICATION_HOST} completed"
+log-init "use credentials from ${REPLICATION_HOST} to login to the snapshot database"
