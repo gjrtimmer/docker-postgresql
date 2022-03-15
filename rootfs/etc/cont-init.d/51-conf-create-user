@@ -1,18 +1,9 @@
 #!/usr/bin/with-contenv bash
 set -e
 
-
-################################################################################
 # shellcheck source=../postgresql/functions
 source /etc/postgresql/functions
 
-
-################################################################################
-# Check is database is ready to accept operations
-is_db_ready_socket
-
-
-################################################################################
 # Configure DB_USER
 if [[ -n ${DB_USER} ]]; then
 	case ${REPLICATION_MODE,,} in
@@ -21,6 +12,9 @@ if [[ -n ${DB_USER} ]]; then
 		;;
 
 		*)
+			# Check is database is ready to accept operations
+			is_db_ready_socket
+
 			# Create default database user
 			log-init "creating database user: ${DB_USER}"
 			QRY_CHECK_USER="$(printf "SELECT 1 FROM pg_catalog.pg_user WHERE usename = '%s';" "${DB_USER}")"

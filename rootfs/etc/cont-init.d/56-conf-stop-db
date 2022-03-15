@@ -1,13 +1,9 @@
 #!/usr/bin/with-contenv bash
 set -e
 
-
-################################################################################
 # shellcheck source=../postgresql/functions
 source /etc/postgresql/functions
 
-
-################################################################################
 # Stopping postgres
 log-init "stopping postgres server; configuration completed"
 # shellcheck disable=SC2086

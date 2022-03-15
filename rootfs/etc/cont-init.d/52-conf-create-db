@@ -1,18 +1,9 @@
 #!/usr/bin/with-contenv bash
 set -e
 
-
-################################################################################
 # shellcheck source=../postgresql/functions
 source /etc/postgresql/functions
 
-
-################################################################################
-# Check is database is ready to accept operations
-is_db_ready_socket
-
-
-################################################################################
 # Create database
 if [[ -n ${DB_NAME} ]]; then
 	case ${REPLICATION_MODE,,} in
@@ -20,6 +11,9 @@ if [[ -n ${DB_NAME} ]]; then
 			log-init "database not created on a ${REPLICATION_MODE} node. Skipping..."
 			;;
 		*)
+			# Check is database is ready to accept operations
+			is_db_ready_socket
+
 			# shellcheck disable=SC2013
 			for DATABASE in $(awk -F',' '{for (i = 1 ; i <= NF ; i++) print $i}' <<< "${DB_NAME}"); do
 				log-init "creating database: ${DATABASE}..."

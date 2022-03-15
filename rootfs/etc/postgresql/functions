@@ -79,7 +79,7 @@ set_hba_param() {
 
 ## Check if database is ready for connections
 is_db_ready() {
-	cmd="pg_isready -h localhost -p 5432 -U ${DB_USER} -d postgres -t 1"
+	cmd="pg_isready -h localhost -p 5432 -U ${PG_PASS} -d postgres -t 1"
 	timeout=${PG_READY_CONNECT_TIMEOUT}
 	echo -n "  waiting for database to be ready (${PG_READY_CONNECT_TIMEOUT}s timeout)"
 	while ! $cmd > /dev/null 2>&1

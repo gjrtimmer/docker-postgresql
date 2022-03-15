@@ -1,11 +1,8 @@
 #!/usr/bin/with-contenv bash
 set -e
 
-
-################################################################################
 # shellcheck source=../postgresql/functions
 source /etc/postgresql/functions
-
 
 # listen on all interfaces
 set_postgresql_param "listen_addresses" "*" quiet

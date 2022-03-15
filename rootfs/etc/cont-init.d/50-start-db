@@ -2,13 +2,9 @@
 # shellcheck shell=bash disable=SC1008
 set -e
 
-
-################################################################################
 # shellcheck source=../postgresql/functions
 source /etc/postgresql/functions
 
-
-################################################################################
 # start postgres server internally for the creation of users and databases
 rm -rf "${PG_DATA_DIR}/postmaster.pid"
 chmod 0700 -R "${PG_DATA_DIR}"

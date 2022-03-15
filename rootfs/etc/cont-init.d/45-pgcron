@@ -2,13 +2,9 @@
 # shellcheck shell=bash disable=SC1008
 set -e
 
-
-################################################################################
 # shellcheck source=../postgresql/functions
 source /etc/postgresql/functions
 
-
-################################################################################
 # Configure pg_cron
 case ${REPLICATION_MODE,,} in
 	standby|snapshot|backup) ;;
