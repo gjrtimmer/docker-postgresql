@@ -1,0 +1,40 @@
+#!/usr/bin/with-contenv bash
+set -e
+
+# shellcheck source=../postgresql/functions
+source /etc/postgresql/functions
+
+# Set container timezone
+container_set_timezone
+
+# Configure directories
+psql_configure_data_dir
+psql_configure_log_dir
+psql_configure_run_dir
+psql_configure_certs_dir
+
+# Validate Configuration
+psql_validate_certs
+
+if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
+	case ${REPLICATION_MODE,,} in
+    slave)
+      psql_validate_replicate_params
+    ;;
+
+    snapshot)
+      psql_validate_replicate_params
+    ;;
+
+    backup)
+      psql_validate_replicate_params
+    ;;
+
+    *)
+      psql_validate_pgpass
+      psql_validate_db_user
+      psql_validate_db_pass
+      psql_validate_db_name
+    ;;
+  esac
+fi

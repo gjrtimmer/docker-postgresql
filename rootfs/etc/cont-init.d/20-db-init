@@ -9,81 +9,82 @@ source /etc/postgresql/functions
 
 
 if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
-	case ${REPLICATION_MODE,,} in slave|snapshot|backup)
-		# Wait for master to be ready
-		is_master_ready
+	case ${REPLICATION_MODE,,} in
+		slave|snapshot|backup)
+			# Wait for master to be ready
+			is_master_ready
 
-		case ${REPLICATION_MODE,,} in
-			slave)
-				log-init "replicating initial data from ${REPLICATION_HOST}..."
-				s6-setuidgid abc exec env PGPASSWORD="${REPLICATION_PASS}" pg_basebackup -D "${PG_DATA_DIR}" \
-					-h "${REPLICATION_HOST}" -p "${REPLICATION_PORT}" -U "${REPLICATION_USER}" -X stream -w >/dev/null
-			;;
+			case ${REPLICATION_MODE,,} in
+				slave)
+					log-init "replicating initial data from ${REPLICATION_HOST}..."
+					s6-setuidgid abc exec env PGPASSWORD="${REPLICATION_PASS}" pg_basebackup -D "${PG_DATA_DIR}" \
+						-h "${REPLICATION_HOST}" -p "${REPLICATION_PORT}" -U "${REPLICATION_USER}" -X stream -w >/dev/null
+				;;
 
-			snapshot)
-				psql-snapshot
-			;;
+				snapshot)
+					psql-snapshot
+				;;
 
-			backup)
-				psql-backup
-			;;
-		esac
-	;;
+				backup)
+					psql-backup
+				;;
+			esac
+		;;
 
-	*)
-		log-init "initializing database..."
-		PG_OLD_VERSION=$(find "${PG_HOME}"/[0-9][0-9].[0-9]/main -maxdepth 1 -name PG_VERSION 2>/dev/null | grep -v "${PG_VERSION}" | sort -r | head -n1 | cut -d'/' -f5)
-		if [[ -n ${PG_OLD_VERSION} ]]; then
-			log-init "migrating PostgreSQL ${PG_OLD_VERSION} data to ${PG_VERSION}..."
+		*)
+			log-init "initializing database..."
+			PG_OLD_VERSION=$(find "${PG_HOME}"/[0-9][0-9].[0-9]/main -maxdepth 1 -name PG_VERSION 2>/dev/null | grep -v "${PG_VERSION}" | sort -r | head -n1 | cut -d'/' -f5)
+			if [[ -n ${PG_OLD_VERSION} ]]; then
+				log-init "migrating PostgreSQL ${PG_OLD_VERSION} data to ${PG_VERSION}..."
 
-			# TODO: Diskspace check
+				# TODO: Diskspace check
 
-			# protect the existing data from being altered by apt-get
-			mv "${PG_HOME}/${PG_OLD_VERSION}" "${PG_HOME}/${PG_OLD_VERSION}.migrating"
+				# protect the existing data from being altered by apt-get
+				mv "${PG_HOME}/${PG_OLD_VERSION}" "${PG_HOME}/${PG_OLD_VERSION}.migrating"
 
-			log-init "installing PostgreSQL ${PG_OLD_VERSION}..."
-			if ! ( apk add --update --no-cache postgresql="${PG_OLD_VERSION}" postgresql-client="${PG_OLD_VERSION}" ) >/dev/null; then
-				log-init "ERROR: Failed to install PostgreSQL ${PG_OLD_VERSION}. Restoring data..."
+				log-init "installing PostgreSQL ${PG_OLD_VERSION}..."
+				if ! ( apk add --update --no-cache postgresql="${PG_OLD_VERSION}" postgresql-client="${PG_OLD_VERSION}" ) >/dev/null; then
+					log-init "ERROR: Failed to install PostgreSQL ${PG_OLD_VERSION}. Restoring data..."
 
-				# First move the old data back
+					# First move the old data back
+					rm -rf "${PG_HOME}/${PG_OLD_VERSION:?}"
+					mv "${PG_HOME}/${PG_OLD_VERSION}.migrating" "${PG_HOME}/${PG_OLD_VERSION}"
+					log-init "data Restore Succesful. Exiting..."
+					exit 10
+				fi
+
+				# we're ready to migrate, move back the old data and remove the trap
 				rm -rf "${PG_HOME}/${PG_OLD_VERSION:?}"
 				mv "${PG_HOME}/${PG_OLD_VERSION}.migrating" "${PG_HOME}/${PG_OLD_VERSION}"
-				log-init "data Restore Succesful. Exiting..."
-				exit 10
 			fi
 
-			# we're ready to migrate, move back the old data and remove the trap
-			rm -rf "${PG_HOME}/${PG_OLD_VERSION:?}"
-			mv "${PG_HOME}/${PG_OLD_VERSION}.migrating" "${PG_HOME}/${PG_OLD_VERSION}"
-		fi
+			if [[ -n ${PG_PASS} ]]; then
+				echo "${PG_PASS}" > /tmp/pwfile
+			fi
 
-		if [[ -n ${PG_PASS} ]]; then
-			echo "${PG_PASS}" > /tmp/pwfile
-		fi
-
-		s6-setuidgid abc initdb \
-			--pgdata="${PG_DATA_DIR}" \
-			--username="${PG_USER}" \
-			--locale="${LANG}" \
-			--encoding=unicode \
-			--auth=trust ${PG_PASS:+--pwfile=/tmp/pwfile} >/dev/null
-
-		if [[ -n ${PG_OLD_VERSION} ]]; then
-			PG_OLD_DATADIR=${PG_HOME}/${PG_OLD_VERSION}/main
-			PG_OLD_CONF=${PG_OLD_DATADIR}/postgresql.conf
-			PG_OLD_HBA_CONF=${PG_OLD_DATADIR}/pg_hba.conf
-			PG_OLD_IDENT_CONF=${PG_OLD_DATADIR}/pg_ident.conf
-
-			echo -n "  migration in progress. Please be patient..."
-			s6-setuidgid abc pg_upgrade \
+			s6-setuidgid abc initdb \
+				--pgdata="${PG_DATA_DIR}" \
 				--username="${PG_USER}" \
-				--old-datadir="${PG_OLD_DATADIR}" \
-				--new-datadir="${PG_DATA_DIR}" \
-				--old-options="-c config_file=${PG_OLD_CONF} --hba_file=${PG_OLD_HBA_CONF} --ident_file=${PG_OLD_IDENT_CONF}" \
-				--new-options="-c config_file=${PG_CONF} --hba_file=${PG_HBA_CONF} --ident_file=${PG_IDENT_CONF}" >/dev/null
-			echo " [DONE]"
-		fi
-	;;
+				--locale="${LANG}" \
+				--encoding=unicode \
+				--auth=trust ${PG_PASS:+--pwfile=/tmp/pwfile} >/dev/null
+
+			if [[ -n ${PG_OLD_VERSION} ]]; then
+				PG_OLD_DATADIR=${PG_HOME}/${PG_OLD_VERSION}/main
+				PG_OLD_CONF=${PG_OLD_DATADIR}/postgresql.conf
+				PG_OLD_HBA_CONF=${PG_OLD_DATADIR}/pg_hba.conf
+				PG_OLD_IDENT_CONF=${PG_OLD_DATADIR}/pg_ident.conf
+
+				echo -n "  migration in progress. Please be patient..."
+				s6-setuidgid abc pg_upgrade \
+					--username="${PG_USER}" \
+					--old-datadir="${PG_OLD_DATADIR}" \
+					--new-datadir="${PG_DATA_DIR}" \
+					--old-options="-c config_file=${PG_OLD_CONF} --hba_file=${PG_OLD_HBA_CONF} --ident_file=${PG_OLD_IDENT_CONF}" \
+					--new-options="-c config_file=${PG_CONF} --hba_file=${PG_HBA_CONF} --ident_file=${PG_IDENT_CONF}" >/dev/null
+				echo " [DONE]"
+			fi
+		;;
 	esac
 
 	# Configure filesystem journal

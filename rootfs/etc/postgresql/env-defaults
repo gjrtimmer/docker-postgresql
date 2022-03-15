@@ -1,6 +1,10 @@
 #!/usr/bin/with-contenv bash
-
 # shellcheck disable=SC2034
+
+# Global
+TZ=${TZ:-UTC}
+
+# Postgres
 PG_COMMAND=${PG_COMMAND:-/usr/bin/postgres}
 PG_VERSION=$(${PG_COMMAND} --version | awk '{print $3}')
 PG_VERSION_SLUG=$(${PG_COMMAND} --version | awk '{print $3}' | grep -o -E '[0-9]{1,2}\.[0-9]{1,2}')
