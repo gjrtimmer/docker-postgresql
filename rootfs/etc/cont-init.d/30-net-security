@@ -7,7 +7,7 @@ source /etc/postgresql/functions
 
 # Configure net-security
 case ${REPLICATION_MODE,,} in
-	slave|backup) ;;
+	standby|backup) ;;
 	snapshot)
 		psql_configure_net_security
 	;;

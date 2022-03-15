@@ -9,12 +9,12 @@ source /etc/postgresql/functions
 
 
 ################################################################################
-# Configure Replication/slave mode
-if [[ ${REPLICATION_MODE,,} == slave ]]; then
+# Configure Replication/standby mode
+if [[ ${REPLICATION_MODE,,} == standby ]]; then
 	log-init "configuring recovery..."
 
 	if [[ ! -f ${PG_RECOVERY_CONF} ]]; then
-		# initialize recovery.conf on the firstrun (slave only)
+		# initialize recovery.conf on the firstrun (standby only)
 		s6-setuidgid abc touch "${PG_RECOVERY_CONF}"
 		(
 			echo "standby_mode = 'on'";
@@ -28,7 +28,7 @@ if [[ ${REPLICATION_MODE,,} == slave ]]; then
 		set_recovery_param "sslmode"   "${REPLICATION_SSLMODE}"
 	fi
 else
-	# recovery.conf can only exist on a slave node, its existence otherwise causes problems
+	# recovery.conf can only exist on a standby node, its existence otherwise causes problems
 	rm -rf "${PG_RECOVERY_CONF}"
 fi
 

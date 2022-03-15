@@ -11,7 +11,7 @@ source /etc/postgresql/functions
 ################################################################################
 # Configure pg_cron
 case ${REPLICATION_MODE,,} in
-	slave|snapshot|backup) ;;
+	standby|snapshot|backup) ;;
 	*)
 		if is_enabled "${PG_CRON}"; then
 			# Preload pg_cron shared libraries

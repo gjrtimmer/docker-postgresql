@@ -18,7 +18,7 @@ psql_validate_certs
 
 if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 	case ${REPLICATION_MODE,,} in
-    slave)
+    standby)
       psql_validate_replicate_params
     ;;
 

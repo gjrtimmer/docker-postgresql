@@ -16,7 +16,7 @@ is_db_ready
 # Create extensions in database
 if [[ -n ${DB_NAME} ]]; then
 	case ${REPLICATION_MODE,,} in
-		slave|snapshot|backup) ;;
+		standby|snapshot|backup) ;;
 		*)
 			# shellcheck disable=SC2013
 			for DATABASE in $(awk -F',' '{for (i = 1 ; i <= NF ; i++) print $i}' <<< "${DB_NAME}"); do

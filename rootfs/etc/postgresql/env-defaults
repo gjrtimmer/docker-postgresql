@@ -68,7 +68,7 @@ PG_JOURNAL_CHECKPOINT_SEGMENTS=${PG_JOURNAL_CHECKPOINT_SEGMENTS:-8}
 
 # Backup
 case ${REPLICATION_MODE,,} in
-  slave)
+  standby)
   ;;
 
   snapshot)

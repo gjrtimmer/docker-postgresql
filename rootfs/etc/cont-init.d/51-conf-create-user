@@ -16,7 +16,7 @@ is_db_ready
 # Configure DB_USER
 if [[ -n ${DB_USER} ]]; then
 	case ${REPLICATION_MODE,,} in
-		slave|snapshot|backup)
+		standby|snapshot|backup)
 			log-init "database user cannot be created on a ${REPLICATION_MODE} node. Skipping..."
 		;;
 
