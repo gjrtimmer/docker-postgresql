@@ -211,6 +211,16 @@ psql_configure_initdb_dir() {
 	chown -R abc:abc "${PG_INIT_DB}"
 }
 
+psql_configure_net_security() {
+	log-init "trusting connections from the local network..."
+	set_hba_param "host	all				all				samenet					trust"
+
+	# allow remote connections to postgresql database
+	set_hba_param "host	all				all				0.0.0.0/0				md5"
+
+	touch "${PG_DATA_DIR}/net-security"
+}
+
 psql_validate_certs() {
 	if is_enabled "${PG_SSL}"; then
 		log-init "SSL/TLS: Enabled"

@@ -2,22 +2,21 @@
 # shellcheck shell=bash disable=SC1008
 set -e
 
-
-################################################################################
 # shellcheck source=../postgresql/functions
 source /etc/postgresql/functions
 
-
-################################################################################
 # Configure net-security
-if [ ! -f "${PG_DATA_DIR}/net-security" ]; then
-	log-init "trusting connections from the local network..."
-	set_hba_param "host	all				all				samenet					trust"
+case ${REPLICATION_MODE,,} in
+	slave|backup) ;;
+	snapshot)
+		psql_configure_net_security
+	;;
 
-	# allow remote connections to postgresql database
-	set_hba_param "host	all				all				0.0.0.0/0				md5"
-
-	touch "${PG_DATA_DIR}/net-security"
-fi
+	*)
+		if [ ! -f "${PG_DATA_DIR}/net-security" ]; then
+			psql_configure_net_security
+		fi
+	;;
+esac
 
 # EOF
