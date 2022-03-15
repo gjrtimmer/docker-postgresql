@@ -6,7 +6,7 @@ docker run \
   --name psql-snapshot \
   --network psql-playground \
   --link psql-master:master \
-  --port 105432:5432 \
+  --publish 15432:5432 \
   --env REPLICATION_USER=replicator \
   --env REPLICATION_PASS=replicator \
   --env REPLICATION_HOST=master \
