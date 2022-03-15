@@ -58,6 +58,21 @@ PUID=$(id -u) PGID=$(id -g) docker-compose up
 
 ## Create backup from Master
 
+Start [Master](#master) node first.
+
+With `bash`
+
+```bash
+cd backup
+./create-backup.sh
+```
+
+With `docker-compose`
+
+```bash
+PUID=$(id -u) PGID=$(id -g) docker-compose up
+```
+
 ## Create snapshot from Master
 
 Start [Master](#master) node first.
