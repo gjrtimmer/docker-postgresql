@@ -7,8 +7,11 @@ source /etc/postgresql/functions
 # Create extensions in database
 if [[ -n ${DB_NAME} ]]; then
 	case ${REPLICATION_MODE,,} in
-		standby|snapshot|backup) ;;
-		*)
+		standby|backup)
+			log-init "extensions not loaded on a ${REPLICATION_MODE} node. Skipping..."
+		;;
+
+		snapshot|*)
 			# Check is database is ready to accept operations
 			is_db_ready_socket
 

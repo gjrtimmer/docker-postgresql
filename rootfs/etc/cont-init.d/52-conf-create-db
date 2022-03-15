@@ -9,7 +9,8 @@ if [[ -n ${DB_NAME} ]]; then
 	case ${REPLICATION_MODE,,} in
 		standby|snapshot|backup)
 			log-init "database not created on a ${REPLICATION_MODE} node. Skipping..."
-			;;
+		;;
+
 		*)
 			# Check is database is ready to accept operations
 			is_db_ready_socket
