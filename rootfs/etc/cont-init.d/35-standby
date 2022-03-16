@@ -16,9 +16,12 @@ if [[ ${REPLICATION_MODE,,} == standby ]]; then
 
 	# configure standby connection
 		set_postgresql_param "primary_conninfo" "host=${REPLICATION_HOST} port=${REPLICATION_PORT} user=${REPLICATION_USER} password=${REPLICATION_PASS} sslmode=${REPLICATION_SSLMODE}"
-		set_postgresql_param "hot_standby" "${PG_STANDBY_HOT}"
 		set_postgresql_param "max_standby_archive_delay" "${PG_STANDBY_MAX_ARCHIVE_DELAY}"
 		set_postgresql_param "max_standby_streaming_delay" "${PG_STANDBY_MAX_STREAMING_DELAY}"
+
+		if is_enabled "${PG_STANDBY_HOT}"; then
+			set_postgresql_param "hot_standby" "${PG_STANDBY_HOT}"
+		fi
 
 else
 	# recovery.conf can only exist on a standby node, its existence otherwise causes problems

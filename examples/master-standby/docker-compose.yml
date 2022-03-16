@@ -49,6 +49,7 @@ services:
       REPLICATION_HOST: master
       REPLICATION_PORT: 5432
       REPLICATION_MODE: standby
+      PG_STANDBY_HOT: enabled
     networks:
       psql-playground:
         ipv4_address: 172.50.0.31
@@ -73,6 +74,7 @@ services:
       REPLICATION_HOST: master
       REPLICATION_PORT: 5432
       REPLICATION_MODE: standby
+      PG_STANDBY_HOT: enabled
     networks:
       psql-playground:
         ipv4_address: 172.50.0.32
