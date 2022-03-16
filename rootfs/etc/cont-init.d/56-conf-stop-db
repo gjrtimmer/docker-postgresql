@@ -4,13 +4,21 @@ set -e
 # shellcheck source=../postgresql/functions
 source /etc/postgresql/functions
 
-# Stopping postgres
-log-init "stopping postgres server; configuration completed"
-# shellcheck disable=SC2086
-s6-setuidgid abc pg_ctl stop -D "${PG_DATA_DIR}" -w -m fast -t ${PG_TIMEOUT_SHUTDOWN}
+case ${REPLICATION_MODE,,} in
+  standby|backup)
+    log-init "skipping due to replication mode = ${REPLICATION_MODE,,}"
+  ;;
 
-# Remove postmaster PID file
-rm -rf "${PG_DATA_DIR}/postmaster.pid"
+  *)
+    # Stopping postgres
+    log-init "stopping postgres server; configuration completed"
+    # shellcheck disable=SC2086
+    s6-setuidgid abc pg_ctl stop -D "${PG_DATA_DIR}" -w -m fast -t ${PG_TIMEOUT_SHUTDOWN}
+
+    # Remove postmaster PID file
+    rm -rf "${PG_DATA_DIR}/postmaster.pid"
+  ;;
+esac
 
 # Sync disks
 s6-sync

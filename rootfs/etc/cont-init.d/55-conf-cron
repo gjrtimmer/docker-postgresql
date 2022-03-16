@@ -7,10 +7,10 @@ source /etc/postgresql/functions
 # Create replication user on master
 case ${REPLICATION_MODE,,} in
 	standby|backup)
-		log-init "cron scheduler not loaded on a ${REPLICATION_MODE} node. Skipping..."
+		log-init "skipping due to replication mode = ${REPLICATION_MODE,,}"
 	;;
 
-	snapshot|*)
+	*)
 		# Check is database is ready to accept operations
 		is_db_ready_socket
 

@@ -8,10 +8,10 @@ source /etc/postgresql/functions
 if [[ -n ${DB_NAME} ]]; then
 	case ${REPLICATION_MODE,,} in
 		standby|backup)
-			log-init "language extensions not loaded on a ${REPLICATION_MODE} node. Skipping..."
+			log-init "skipping due to replication mode = ${REPLICATION_MODE,,}"
 		;;
 
-		snapshot|*)
+		*)
 			# Check is database is ready to accept operations
 			is_db_ready_socket
 

@@ -8,7 +8,7 @@ source /etc/postgresql/functions
 if [[ -n ${DB_NAME} ]]; then
 	case ${REPLICATION_MODE,,} in
 		standby|snapshot|backup)
-			log-init "database not created on a ${REPLICATION_MODE} node. Skipping..."
+			log-init "skipping due to replication mode = ${REPLICATION_MODE,,}"
 		;;
 
 		*)

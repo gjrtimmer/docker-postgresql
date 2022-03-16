@@ -8,7 +8,7 @@ source /etc/postgresql/functions
 if [[ -n ${DB_USER} ]]; then
 	case ${REPLICATION_MODE,,} in
 		standby|snapshot|backup)
-			log-init "database user cannot be created on a ${REPLICATION_MODE} node. Skipping..."
+			log-init "skipping due to replication mode = ${REPLICATION_MODE,,}"
 		;;
 
 		*)

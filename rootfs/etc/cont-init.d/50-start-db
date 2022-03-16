@@ -10,6 +10,14 @@ rm -rf "${PG_DATA_DIR}/postmaster.pid"
 chmod 0700 -R "${PG_DATA_DIR}"
 set_postgresql_param "listen_addresses" "127.0.0.1" quiet
 
-log-init "starting postgres server for configuration"
-# shellcheck disable=SC2086
-s6-setuidgid abc pg_ctl start -D "${PG_DATA_DIR}" -w -t ${PG_TIMEOUT_STARTUP} > /dev/null &
+case ${REPLICATION_MODE,,} in
+  standby|backup)
+    log-init "skipping due to replication mode = ${REPLICATION_MODE,,}"
+  ;;
+
+  *)
+    log-init "starting postgres server for configuration"
+    # shellcheck disable=SC2086
+    s6-setuidgid abc pg_ctl start -D "${PG_DATA_DIR}" -w -t ${PG_TIMEOUT_STARTUP} > /dev/null &
+  ;;
+esac
