@@ -15,6 +15,9 @@ declare -a PARAMS=()
 # Do not prompt for password
 PARAMS+=(--no-password)
 
+# Xlog Transaction Mode
+PARAMS+=(--xlog-method=fetch)
+
 # Configure backup directory
 PARAMS+=(--pgdata="${PG_DATA_DIR}")
 

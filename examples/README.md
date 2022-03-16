@@ -36,12 +36,15 @@ docker network rm psql-playground
 
 ### docker network IP assignment
 
-| IP          | Example  |
-| ----------- | -------- |
-| 172.50.0.5  | Single   |
-| 172.50.0.10 | Master   |
-| 172.50.0.15 | Backup   |
-| 172.50.0.20 | Snapshot |
+| IP          | Example        | Server         |
+| ----------- | -------------- | -------------- |
+| 172.50.0.5  | Single         | psql-single    |
+| 172.50.0.10 | Master         | psql-master    |
+| 172.50.0.15 | Backup         | psql-backup    |
+| 172.50.0.20 | Snapshot       | psql-snapshot  |
+| 172.50.0.25 | Master-Standby | psql-master    |
+| 172.50.0.31 | Master-Standby | psql-standby-1 |
+| 172.50.0.32 | Master-Standby | psql-standby-2 |
 
 ## Single
 
@@ -88,4 +91,26 @@ With `docker-compose`
 
 ```bash
 PUID=$(id -u) PGID=$(id -g) docker-compose up
+```
+
+## Master with Standby
+
+In `examples/master-standby` you can find the example on how to setup a master/standby cluster.
+
+### Start Master
+
+```bash
+PUID=$(id -u) PGID=$(id -g) docker-compose up psql-master
+```
+
+### Start Standby-1
+
+```bash
+PUID=$(id -u) PGID=$(id -g) docker-compose up psql-standby-1
+```
+
+### Start Standby-2
+
+```bash
+PUID=$(id -u) PGID=$(id -g) docker-compose up psql-standby-2
 ```

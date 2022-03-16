@@ -2,18 +2,30 @@
 data/*
 !data/.keep
 
-# Exclude PSQL data from examples
-examples/*/data/*
+# Exclude PSQL data from single example
+examples/single/data/*
 !examples/single/data/.keep
+
+# Exclude PSQL data from master example
+examples/master/data/*
 !examples/master/data/.keep
 
-# Exclude PSQL data from backups
+# Exclude PSQL data from backup example
 examples/backup/data/*
 !examples/backup/data/.keep
 
-# Exclude PSQL data from snapshot
+# Exclude PSQL data from snapshot example
 examples/snapshot/data/*
 !examples/snapshot/data/.keep
+
+# Exclude PSQL data from master-standby example
+examples/master-standby/master/*
+examples/master-standby/standby-1/*
+examples/master-standby/standby-2/*
+!examples/master-standby/master/.keep
+!examples/master-standby/standby-1/.keep
+!examples/master-standby/standby-2/.keep
+
 
 examples/.env
 tmp/

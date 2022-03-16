@@ -16,35 +16,35 @@ declare -a PARAMS=()
 PARAMS+=(--no-password)
 
 # Xlog Transaction Mode
-PARAMS+=(--xlog-method=fetch)
+PARAMS+=(--xlog-method=stream)
 
 # Configure backup directory
 PARAMS+=(--pgdata="${PG_DATA_DIR}")
 
 # Configure wal directory
-if [[ -n ${PG_SNAPSHOT_WAL_DIR} ]]; then
+if [[ -n ${PG_STANDBY_WAL_DIR} ]]; then
   # shellcheck disable=SC2206
-  PARAMS+=(--waldir=${PG_SNAPSHOT_WAL_DIR})
+  PARAMS+=(--waldir=${PG_STANDBY_WAL_DIR})
 fi
 
 # Configure backup rate
-if [[ -n ${PG_SNAPSHOT_RATE} ]]; then
+if [[ -n ${PG_STANDBY_RATE} ]]; then
   # shellcheck disable=SC2206
-  PARAMS+=(--max-rate=${PG_SNAPSHOT_RATE})
+  PARAMS+=(--max-rate=${PG_STANDBY_RATE})
 fi
 
 # Configure checkpoint
-PARAMS+=(--checkpoint="${PG_SNAPSHOT_CHECKPOINT}")
+PARAMS+=(--checkpoint="${PG_STANDBY_CHECKPOINT}")
 
 # Show progress; unable to turn off by envvars
 PARAMS+=(--progress)
 
 # Status interval
 # shellcheck disable=SC2206
-PARAMS+=(--status-interval=${PG_SNAPSHOT_STATUS_INTERVAL})
+PARAMS+=(--status-interval=${PG_STANDBY_STATUS_INTERVAL})
 
 # Verbose logging
-if is_enabled "${PG_SNAPSHOT_VERBOSE}"; then
+if is_enabled "${PG_STANDBY_VERBOSE}"; then
   PARAMS+=(--verbose)
 fi
 
@@ -58,7 +58,6 @@ else
   PARAMS+=(--username="${REPLICATION_USER}")
 fi
 
-log-init "generating snapshot of $REPLICATION_HOST..."
+log-init "replicating data of $REPLICATION_HOST..."
 s6-setuidgid abc exec env PGPASSWORD="${REPLICATION_PASS}" pg_basebackup "${PARAMS[@]}" || exit 61
-log-init "snapshot of ${REPLICATION_HOST} completed"
-log-init "use credentials from ${REPLICATION_HOST} to login to the snapshot database"
+log-init "repliation of ${REPLICATION_HOST} completed"

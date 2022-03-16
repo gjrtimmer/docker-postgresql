@@ -1,0 +1,28 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash disable=SC1008
+set -e
+
+# shellcheck source=../postgresql/functions
+source /etc/postgresql/functions
+
+# Configure Replication/standby mode
+if [[ ${REPLICATION_MODE,,} == standby ]]; then
+	log-init "configuring standby..."
+
+	if [[ ! -f ${PG_STANDBY_SIGNAL} ]]; then
+		# initialize standby.signal
+		s6-setuidgid abc touch "${PG_STANDBY_SIGNAL}"
+	fi
+
+	# configure standby connection
+		set_postgresql_param "primary_conninfo" "host=${REPLICATION_HOST} port=${REPLICATION_PORT} user=${REPLICATION_USER} password=${REPLICATION_PASS} sslmode=${REPLICATION_SSLMODE}"
+		set_postgresql_param "hot_standby" "${PG_STANDBY_HOT}"
+		set_postgresql_param "max_standby_archive_delay" "${PG_STANDBY_MAX_ARCHIVE_DELAY}"
+		set_postgresql_param "max_standby_streaming_delay" "${PG_STANDBY_MAX_STREAMING_DELAY}"
+
+else
+	# recovery.conf can only exist on a standby node, its existence otherwise causes problems
+	rm -rf "${PG_STANDBY_SIGNAL}"
+fi
+
+# EOF

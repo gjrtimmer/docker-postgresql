@@ -42,30 +42,6 @@ set_postgresql_param() {
 	fi
 }
 
-## Set recovery database parameter
-# $1 key
-# $2 value
-# $3 hide value 'true/false'
-set_recovery_param() {
-	local key=${1}
-	local value=${2}
-	local hide=${3}
-
-	if [[ -n ${value} ]]; then
-		local current
-		current=$(s6-setuidgid abc sed -n -e "s/^\(.*\)\(${key}=\)\([^ ']*\)\(.*\)$/\3/p" "${PG_RECOVERY_CONF}")
-
-		if [[ "${current}" != "${value}" ]]; then
-			case ${hide} in
-				true)  	log-init "setting primary_conninfo parameter: ${key}" ;;
-				*) 			log-init "setting primary_conninfo parameter: ${key} = '${value}'" ;;
-			esac
-
-			s6-setuidgid abc sed -i "s|${key}=[^ ']*|${key}=${value}|" "${PG_RECOVERY_CONF}"
-		fi
-	fi
-}
-
 ## Set HBA Parameter
 # $1 value to set in hba config
 set_hba_param() {

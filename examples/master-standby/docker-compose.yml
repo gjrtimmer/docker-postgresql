@@ -1,0 +1,82 @@
+version: '3.9'
+
+networks:
+  psql-playground:
+    external: true
+
+services:
+  psql-master:
+    image: gjrtimmer/postgresql:latest
+    container_name: psql-master
+    hostname: master
+    restart: unless-stopped
+    environment:
+      TZ: Europe/Amsterdam
+      PUID: ${PUID}
+      PGID: ${PGID}
+      DB_USER: postgres
+      DB_PASS: postgres
+      DB_NAME: test
+      PL_PERL: "ENABLED"
+      PL_PYTHON: "ENABLED"
+      PL_TCL: "ENABLED"
+      PG_CRON: "ENABLED"
+      REPLICATION_USER: replicator
+      REPLICATION_PASS: replicator
+      REPLICATION_MODE: master
+      PG_JOURNAL_MAX_SENDERS: 10
+    networks:
+      psql-playground:
+        ipv4_address: 172.50.0.25
+    ports:
+      - 5432:5432
+    volumes:
+      - ${PWD}/master:/config
+
+  psql-standby-1:
+    image: gjrtimmer/postgresql:latest
+    container_name: psql-standby-1
+    hostname: standby-1
+    restart: unless-stopped
+    depends_on:
+      - psql-master
+    environment:
+      TZ: Europe/Amsterdam
+      PUID: ${PUID}
+      PGID: ${PGID}
+      REPLICATION_USER: replicator
+      REPLICATION_PASS: replicator
+      REPLICATION_HOST: master
+      REPLICATION_PORT: 5432
+      REPLICATION_MODE: standby
+    networks:
+      psql-playground:
+        ipv4_address: 172.50.0.31
+    ports:
+      - 15432:5432
+    volumes:
+      - ${PWD}/standby-1:/config
+
+  psql-standby-2:
+    image: gjrtimmer/postgresql:latest
+    container_name: psql-standby-2
+    hostname: standby-2
+    restart: unless-stopped
+    depends_on:
+      - psql-master
+    environment:
+      TZ: Europe/Amsterdam
+      PUID: ${PUID}
+      PGID: ${PGID}
+      REPLICATION_USER: replicator
+      REPLICATION_PASS: replicator
+      REPLICATION_HOST: master
+      REPLICATION_PORT: 5432
+      REPLICATION_MODE: standby
+    networks:
+      psql-playground:
+        ipv4_address: 172.50.0.32
+    ports:
+      - 25432:5432
+    volumes:
+      - ${PWD}/standby-2:/config
