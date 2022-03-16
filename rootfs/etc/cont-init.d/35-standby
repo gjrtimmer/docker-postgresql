@@ -20,7 +20,7 @@ if [[ ${REPLICATION_MODE,,} == standby ]]; then
 		set_postgresql_param "max_standby_streaming_delay" "${PG_STANDBY_MAX_STREAMING_DELAY}"
 
 		if is_enabled "${PG_STANDBY_HOT}"; then
-			set_postgresql_param "hot_standby" "${PG_STANDBY_HOT}"
+			set_postgresql_param "hot_standby" "on"
 		fi
 
 else
