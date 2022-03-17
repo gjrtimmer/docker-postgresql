@@ -13,7 +13,6 @@ PG_HOME="${HOME}/data"
 PG_DATA_DIR="${PG_HOME}/$(${PG_COMMAND} --version | awk '{print $3}' | grep -o -E '[0-9]{1,2}\.[0-9]{1,2}')/main"
 PG_INIT_DB="${HOME}/init.db.d"
 PG_CERTS_DIR="${HOME}/certs"
-PG_LOG_DIR="${HOME}/logs"
 PG_RUN_DIR=/var/run/postgresql
 PG_TIMEOUT_STARTUP=${PG_TIMEOUT_STARTUP:-60}
 PG_TIMEOUT_SHUTDOWN=${PG_TIMEOUT_SHUTDOWN:-60}
@@ -24,9 +23,15 @@ PG_CONF=${PG_DATA_DIR}/postgresql.conf
 PG_HBA_CONF=${PG_DATA_DIR}/pg_hba.conf
 PG_IDENT_CONF=${PG_DATA_DIR}/pg_ident.conf
 
+# Configure logging
+PG_LOG_DIR="${HOME}/logs"
+PG_LOG_COLLECTOR=${PG_LOG_COLLECTOR:-on}
+PG_LOG_FILE_MODE=${PG_LOG_FILE_MODE:-0640}
+PG_LOG_FILE_ROTATION=${PG_LOG_FILE_ROTATION:-1d}
+
 # SSL/TLS
 # Off by default; please not even if the certificates are found in the PG_CERTS_DIR
-# SSL/TLS will only be activated wit
+# SSL/TLS will only be activated is this is set to on
 PG_SSL=${PG_SSL:-off}
 
 # Replication
