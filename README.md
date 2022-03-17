@@ -20,6 +20,7 @@ Including examples to get you started quickly.
 - [Environment Variables](#environment-variables)
   - [Container Configuration](#container-configuration)
   - [PostgreSQL Global](#postgresql-global)
+  - [PostgreSQL Performance Configuration](#postgresql-performance-configuration)
   - [PostgreSQL Logging](#postgresql-logging)
   - [PostgreSQL Journal Configuration](#postgresql-journal-configuration)
   - [PostgreSQL Replication Configuration](#postgresql-replication-configuration)
@@ -332,6 +333,13 @@ Complete overview of all supported environment variables. The environment variab
 | PG_SSL                          | off (BOOL)                     | Enable SSL/TLS                                                                     |
 | PG_USER                         | postgres                       | Root user                                                                          |
 | PG_PASS                         | postgres                       | Root password                                                                      |
+
+### PostgreSQL Performance Configuration
+
+| ENVVAR             | Default | Description                                                                                              |
+| ------------------ | ------- | -------------------------------------------------------------------------------------------------------- |
+| PG_MAX_CONNECTIONS | AUTO    | Max Connections, if set to auto max connection will be calculated by GREATEST(4 x CORES, 100)            |
+| PG_SHARED_BUFFERS  | 128MB   | Set shared buffers, default: 128MB; if set to `AUTO` it will be calculated based upon LEAST(RAM/2, 10GB) |
 
 ### PostgreSQL Logging
 

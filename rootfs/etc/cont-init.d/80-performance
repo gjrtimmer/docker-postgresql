@@ -1,0 +1,38 @@
+#!/usr/bin/with-contenv bash
+set -e
+
+# shellcheck source=../postgresql/functions
+source /etc/postgresql/functions
+
+# Performance tuning
+#
+# Max Connections
+if [ "${PG_MAX_CONNECTIONS,,}" == "auto" ]; then
+	CORES=$(nproc)
+	MAXCONN=$(is_greatest $((CORES*4)) 100)
+
+	# shellcheck disable=SC2086
+	set_postgresql_param "max_connections" ${MAXCONN}
+else
+	# shellcheck disable=SC2086
+	set_postgresql_param "max_connections" ${PG_MAX_CONNECTIONS}
+fi
+
+# Shared Buffers
+if [ "${PG_SHARED_BUFFERS,,}" == "auto" ]; then
+	MEM_TOTAL_KB=$(grep -i MemTotal < /proc/meminfo |awk '{print $2}')
+	MEM_TOTAL_MB=$((MEM_TOTAL_KB/1024))
+	MEM_LEAST=$(is_least $((MEM_TOTAL_MB/2)) 10240)
+	if [ "${MEM_LEAST}" -gt "1024" ]; then
+		# Value is in GB
+		SHARED_BUFFERS=$((MEM_LEAST/1024))
+		# shellcheck disable=SC2086
+		set_postgresql_param "shared_buffers" "${SHARED_BUFFERS}GB"
+	else
+		# shellcheck disable=SC2086
+		set_postgresql_param "shared_buffers" "${PG_SHARED_BUFFERS}MB"
+	fi
+else
+	# shellcheck disable=SC2086
+	set_postgresql_param "shared_buffers" ${PG_SHARED_BUFFERS}
+fi

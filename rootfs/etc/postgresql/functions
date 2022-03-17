@@ -125,6 +125,34 @@ is_enabled() {
     return 1
 }
 
+is_greatest() {
+	#shellcheck disable=SC2124
+	local ARGS=$@
+	local ELM="$1"
+
+	for ARG in $ARGS; do
+		if [ "$ARG" -gt "${ELM}" ]; then
+			ELM="${ARG}"
+		fi
+	done
+
+	echo "${ELM}"
+}
+
+is_least() {
+	#shellcheck disable=SC2124
+	local ARGS=$@
+	local ELM="$1"
+
+	for ARG in $ARGS; do
+		if [ "$ARG" -lt "${ELM}" ]; then
+			ELM="${ARG}"
+		fi
+	done
+
+	echo "${ELM}"
+}
+
 ## Set container timezone
 # $1 Timezone
 container_set_timezone() {
