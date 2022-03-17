@@ -21,7 +21,7 @@ if [[ -n ${DB_NAME} ]]; then
 				# PL/Perl
 				if is_enabled "${PL_PERL}"; then
 					log-init "[${DATABASE}] loading language extension PL/Perl"
-					psql -U "${PG_USER}" -d "${DATABASE}" -c "CREATE EXTENSION IF NOT EXISTS plperl;" >/dev/null 2>&1
+					psql -U "${PG_USER}" -d "${DATABASE}" -c "CREATE EXTENSION IF NOT EXISTS plperlu;" >/dev/null 2>&1
 				fi
 
 				# PL/Python
@@ -33,7 +33,7 @@ if [[ -n ${DB_NAME} ]]; then
 				# PL/Tcl
 				if is_enabled "${PL_TCL}"; then
 					log-init "[${DATABASE}] loading language extension PL/Tcl"
-					psql -U "${PG_USER}" -d "${DATABASE}" -c "CREATE EXTENSION IF NOT EXISTS pltcl;" >/dev/null 2>&1
+					psql -U "${PG_USER}" -d "${DATABASE}" -c "CREATE EXTENSION IF NOT EXISTS pltclu;" >/dev/null 2>&1
 				fi
 
 			done
