@@ -40,8 +40,8 @@ docker run --detach -p 5432:5432 gjrtimmer/postgresql:latest
 
 Currently this image supports the following PostgreSQL versions:
 
-- 13
-- 14 (latest)
+- 13 (gjrtimmer/postgresql:13)
+- 14 (gjrtimmer/postgresql:14) (latest)
 
 The container is build upon alpine linux from linuxserver.
 
