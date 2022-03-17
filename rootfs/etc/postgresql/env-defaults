@@ -11,7 +11,7 @@ PG_VERSION_SLUG=$(${PG_COMMAND} --version | awk '{print $3}' | grep -o -E '[0-9]
 
 PG_HOME="${HOME}/data"
 PG_DATA_DIR="${PG_HOME}/$(${PG_COMMAND} --version | awk '{print $3}' | grep -o -E '[0-9]{1,2}\.[0-9]{1,2}')/main"
-PG_INIT_DB="${HOME}/init.db.d"
+PG_INIT_DB_DIR="${HOME}/init.db.d"
 PG_CERTS_DIR="${HOME}/certs"
 PG_RUN_DIR=/var/run/postgresql
 PG_TIMEOUT_STARTUP=${PG_TIMEOUT_STARTUP:-60}

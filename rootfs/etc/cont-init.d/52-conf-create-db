@@ -35,9 +35,9 @@ if [[ -n ${DB_NAME} ]]; then
 			# The format of the init.db.d directory must have its sql files
 			# seperated per database name
 			# init.db.d format: ${HOME}/init.db.d/<DATABASE>/*.sql
-			find "${PG_INIT_DB}/" -maxdepth 1 -type d -print0 | while read -r -d $'\0' DIR; do
+			find "${PG_INIT_DB_DIR}/" -maxdepth 1 -type d -print0 | while read -r -d $'\0' DIR; do
 				DATABASE=$(basename "${DIR}")
-				for SQL in "${PG_INIT_DB}/${DB}"/*.sql; do
+				for SQL in "${PG_INIT_DB_DIR}/${DB}"/*.sql; do
 					if [ -f "${SQL}" ]; then
 						BASENAME=$(basename "${SQL}")
 						QRY_DB_EXISTS="$(printf "SELECT 1 FROM pg_catalog.pg_database WHERE datname = '%s';" "${DATABASE}")"

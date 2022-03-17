@@ -196,14 +196,14 @@ psql_configure_certs_dir() {
 }
 
 psql_configure_initdb_dir() {
-	if [ ! -d "${PG_INIT_DB}" ]; then
-		log-init "creating directory::init.db.d [${PG_INIT_DB}]"
-		mkdir -p "${PG_INIT_DB}"
+	if [ ! -d "${PG_INIT_DB_DIR}" ]; then
+		log-init "creating directory::init.db.d [${PG_INIT_DB_DIR}]"
+		mkdir -p "${PG_INIT_DB_DIR}"
 	fi
 
-	# Set permissions on PG_INIT_DB
+	# Set permissions on PG_INIT_DB_DIR
 	log-init "setting permissions::init.db.d"
-	chown -R abc:abc "${PG_INIT_DB}"
+	chown -R abc:abc "${PG_INIT_DB_DIR}"
 }
 
 psql_configure_net_security() {
