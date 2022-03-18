@@ -336,10 +336,17 @@ Complete overview of all supported environment variables. The environment variab
 
 ### PostgreSQL Performance Configuration
 
-| ENVVAR             | Default | Description                                                                                              |
-| ------------------ | ------- | -------------------------------------------------------------------------------------------------------- |
-| PG_MAX_CONNECTIONS | AUTO    | Max Connections, if set to auto max connection will be calculated by GREATEST(4 x CORES, 100)            |
-| PG_SHARED_BUFFERS  | 128MB   | Set shared buffers, default: 128MB; if set to `AUTO` it will be calculated based upon LEAST(RAM/2, 10GB) |
+| ENVVAR                      | Default | Description                                                                                                    |
+| --------------------------- | ------- | -------------------------------------------------------------------------------------------------------------- |
+| PG_MAX_CONNECTIONS          | AUTO    | Max Connections, if set to auto max connection will be calculated by GREATEST(4 x CORES, 100)                  |
+| PG_SHARED_BUFFERS           | 128MB   | Set shared buffers, default: 128MB; if set to `AUTO` it will be calculated based upon LEAST(RAM/2, 10GB)       |
+| PG_WORK_MEM                 | 4MB     | Work Memory, if set to `AUTO` it will be calculated based upon ((Total RAM - shared_buffers)/(16 x CPU cores)) |
+| PG_MAINTENANCE_WORK_MEM     | 64MB    | Maintenance Work Memory                                                                                        |
+| PG_EFFECTIVE_IO_CONCURRENCY | 1       | Effective IO Concurrency. Also accepts `SSD` as value, which it will then automatically set to `200`           |
+| PG_JOURNAL_WAL_COMPRESSION  | on      | Enabled, because on most servers IO is a greater bottleneck then CPU                                           |
+| PG_JOURNAL_WAL_LOG_HINTS    | on      | Enabled to allow `pg_rewind`                                                                                   |
+| PG_JOURNAL_WAL_BUFFERS      | 64MB    | PostgreSQL own default is 16MB, with `AUTO` it is based upon shared buffers, with 64MB it recommended          |
+| PG_ARCHIVE_MODE             | on      | Enable WAL archiving by default, only disable if you are never going to use WAL archiving                      |
 
 ### PostgreSQL Logging
 
@@ -352,12 +359,15 @@ Complete overview of all supported environment variables. The environment variab
 
 ### PostgreSQL Journal Configuration
 
-| ENVVAR                         | Default | Description                                                     |
-| ------------------------------ | ------- | --------------------------------------------------------------- |
-| PG_JOURNAL_WAL_LEVEL           | replica | WAL level configuration. Value: `replica`, `minimal`, `logical` |
-| PG_JOURNAL_WAL_KEEP_SEGMENTS   | 32      | Amount of WAL segments to keep                                  |
-| PG_JOURNAL_MAX_SENDERS         | 10      | Max WAL senders                                                 |
-| PG_JOURNAL_CHECKPOINT_SEGMENTS | 8       | WAL Checkpoints                                                 |
+| ENVVAR                         | Default | Description                                                                                           |
+| ------------------------------ | ------- | ----------------------------------------------------------------------------------------------------- |
+| PG_JOURNAL_WAL_LEVEL           | replica | WAL level configuration. Value: `replica`, `minimal`, `logical`                                       |
+| PG_JOURNAL_WAL_KEEP_SEGMENTS   | 32      | Amount of WAL segments to keep                                                                        |
+| PG_JOURNAL_WAL_COMPRESSION     | on      | Enabled, because on most servers IO is a greater bottleneck then CPU                                  |
+| PG_JOURNAL_WAL_LOG_HINTS       | on      | Enabled to allow `pg_rewind`                                                                          |
+| PG_JOURNAL_WAL_BUFFERS         | 64MB    | PostgreSQL own default is 16MB, with `AUTO` it is based upon shared buffers, with 64MB it recommended |
+| PG_JOURNAL_MAX_SENDERS         | 10      | Max WAL senders                                                                                       |
+| PG_JOURNAL_CHECKPOINT_SEGMENTS | 8       | WAL Checkpoints                                                                                       |
 
 ### PostgreSQL Replication Configuration
 
