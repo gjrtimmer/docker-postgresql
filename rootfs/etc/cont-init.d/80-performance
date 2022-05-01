@@ -54,5 +54,5 @@ fi
 if is_enabled "${PG_ARCHIVE_MODE}"; then
 	set_postgresql_param "archive_mode" on
 else
-	set_postgresql_param "archive_mode" on
+	set_postgresql_param "archive_mode" off
 fi
