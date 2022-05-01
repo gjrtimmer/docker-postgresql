@@ -115,10 +115,10 @@ is_master_ready() {
 #
 # usage: if is_enabled "${VAR}"; then
 is_enabled() {
-    local BOOL=${1}
+    local BOOL="${1}"
 
     # shellcheck disable=2086
-    if (( BOOL == 1 )) || [ ${BOOL} == true ] || [ ${BOOL,,} == "true" ] || [ ${BOOL,,} == "enable" ] || [ ${BOOL,,} == "enabled" ] || [ ${BOOL,,} == "on" ]; then
+    if (( BOOL == 1 )) || [ "${BOOL}" == true ] || [ "${BOOL,,}" = "true" ] || [ "${BOOL,,}" = "enable" ] || [ "${BOOL,,}" = "enabled" ] || [ "${BOOL,,}" = "on" ]; then
         return 0
     fi
 
