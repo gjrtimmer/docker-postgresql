@@ -1,5 +1,5 @@
 #!/usr/bin/with-contenv bash
-# shellcheck disable=SC2034
+# shellcheck shell=bash disable=SC2034
 
 # Global
 TZ=${TZ:-UTC}

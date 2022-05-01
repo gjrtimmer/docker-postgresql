@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck shell=bash
 
 # shellcheck disable=SC2011
 if [[ "$(ls /var/run/s6/container_environment/ | xargs)" == *"FILE__"* ]]; then
