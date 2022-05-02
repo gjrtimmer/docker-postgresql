@@ -21,6 +21,7 @@ Including examples to get you started quickly.
   - [Container Configuration](#container-configuration)
   - [PostgreSQL Global](#postgresql-global)
   - [PostgreSQL Performance Configuration](#postgresql-performance-configuration)
+  - [PostgreSQL Archive Configuration](#postgresql-archive-configuration)
   - [PostgreSQL Logging](#postgresql-logging)
   - [PostgreSQL Journal Configuration](#postgresql-journal-configuration)
   - [PostgreSQL Replication Configuration](#postgresql-replication-configuration)
@@ -323,6 +324,7 @@ Complete overview of all supported environment variables. The environment variab
 | PG_HOME                         | /config/data                   | PostgreSQL home                                                                    |
 | PG_DATA_DIR                     | /config/data/{VERSION}/main    | PostgreSQL data directory                                                          |
 | PG_CERTS_DIR                    | /config/certs                  | Certificate directory                                                              |
+| PG_ARCHIVE_DIR                  | /config/archive                | Archive Directory (Volume Mount)                                                   |
 | PG_CONF                         | ${PG_DATA_DIR}/postgresql.conf | PostgreSQL configuration file                                                      |
 | PG_HBA_CONF                     | ${PG_DATA_DIR}/pg_hba.conf     | PostgreSQL HBA configuration file                                                  |
 | PG_IDENT_CONF                   | ${PG_DATA_DIR}/pg_ident.conf   | PostgreSQL IDENT configuration file                                                |
@@ -346,7 +348,27 @@ Complete overview of all supported environment variables. The environment variab
 | PG_JOURNAL_WAL_COMPRESSION  | on      | Enabled, because on most servers IO is a greater bottleneck then CPU                                           |
 | PG_JOURNAL_WAL_LOG_HINTS    | on      | Enabled to allow `pg_rewind`                                                                                   |
 | PG_JOURNAL_WAL_BUFFERS      | 64MB    | PostgreSQL own default is 16MB, with `AUTO` it is based upon shared buffers, with 64MB it recommended          |
-| PG_ARCHIVE_MODE             | on      | Enable WAL archiving by default, only disable if you are never going to use WAL archiving                      |
+
+### PostgreSQL Archive Configuration
+
+| ENVVAR                      | Default                    | Description                                                                               |
+| --------------------------- | -------------------------- | ----------------------------------------------------------------------------------------- |
+| PG_ARCHIVE_MODE             | on                         | Enable WAL archiving by default, only disable if you are never going to use WAL archiving |
+| PG_ARCHIVE_DIR              | /config/archive            | Archive Directory (Volume Mount)                                                          |
+| PG_ARCHIVE_COMMAND          | cp %p ${PG_ARCHIVE_DIR}/%f | Archive Command. By default will copy archive to $PG_ARCHIVE_DIR                          |
+| PG_ARCHIVE_COMPRESS         | off                        | Compress archive                                                                          |
+| PG_ARCHIVE_COMPRESS_COMMAND | gzip                       | Compress command; Values: `gzip`, `xz`                                                    |
+| PG_ARCHIVE_RESTORE_COMMAND  | cp ${PG_ARCHIVE_DIR}/%f %p | Archive restore command                                                                   |
+
+> **Important**
+>
+> The archive compress variable works under the premise that the default archive and restore commands are used.
+> If you are providing your own custom command for archiving and restore, turn archive compress off and
+> include compression in your own command if so desired.
+>
+> If archive compression is enabled the archive command is transformed into `gzip|xz < %p > ${PG_ARCHIVE_DIR}/%f`>
+>
+> If archive compression is enabled the restore command is transformed into `gunzip < ${PG_ARCHIVE_DIR}/%f > %p`
 
 ### PostgreSQL Logging
 

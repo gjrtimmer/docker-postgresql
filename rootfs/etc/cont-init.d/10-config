@@ -13,6 +13,7 @@ psql_configure_data_dir
 psql_configure_log_dir
 psql_configure_run_dir
 psql_configure_certs_dir
+psql_configure_archive_dir
 
 # Validate Configuration
 psql_validate_certs

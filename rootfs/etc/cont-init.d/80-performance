@@ -49,10 +49,3 @@ else
 	# shellcheck disable=SC2086
 	set_postgresql_param "effective_io_concurrency" ${PG_EFFECTIVE_IO_CONCURRENCY}
 fi
-
-# Archive Mode
-if is_enabled "${PG_ARCHIVE_MODE}"; then
-	set_postgresql_param "archive_mode" on
-else
-	set_postgresql_param "archive_mode" off
-fi

@@ -51,7 +51,7 @@ HEALTHCHECK --interval=10s --timeout=5s --start-period=60s --retries=3 CMD [ "pg
 EXPOSE 5432/tcp
 
 WORKDIR ${HOME}
-VOLUME [ "${HOME}" ]
+VOLUME [ "${HOME}", "${HOME}/archive" ]
 
 COPY rootfs/ /
 

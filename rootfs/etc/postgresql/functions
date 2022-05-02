@@ -234,6 +234,19 @@ psql_configure_initdb_dir() {
 	chown -R abc:abc "${PG_INIT_DB_DIR}"
 }
 
+psql_configure_archive_dir() {
+	if [ ! -d "${PG_ARCHIVE_DIR}" ]; then
+		log-init "creating directory::archive [${PG_ARCHIVE_DIR}]"
+		mkdir -p "${PG_ARCHIVE_DIR}"
+	else
+		log-init "directory::archive exists [${PG_ARCHIVE_DIR}]"
+	fi
+
+	# Set permissions on PG_INIT_DB_DIR
+	log-init "setting permissions::archive"
+	chown -R abc:abc "${PG_ARCHIVE_DIR}"
+}
+
 psql_configure_net_security() {
 	log-init "trusting connections from the local network..."
 	set_hba_param "host	all				all				samenet					trust"

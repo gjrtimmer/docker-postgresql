@@ -1,0 +1,60 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+set -e
+
+# shellcheck source=../postgresql/functions
+source /etc/postgresql/functions
+
+# Archive Mode
+if is_enabled "${PG_ARCHIVE_MODE}"; then
+	set_postgresql_param "archive_mode" on
+else
+	set_postgresql_param "archive_mode" off
+fi
+
+if [[ -n ${PG_ARCHIVE_COMMAND} ]]; then
+  if is_enabled "${PG_ARCHIVE_COMPRESS}"; then
+    log-init "archive compression: enabled"
+    case ${PG_ARCHIVE_COMPRESS_COMMAND,,} in
+      gzip)
+        PG_ARCHIVE_COMMAND="gzip < %p > ${PG_ARCHIVE_DIR}/%f"
+      ;;
+
+      xz)
+        PG_ARCHIVE_COMMAND="xz -z < %p > ${PG_ARCHIVE_DIR}/%f"
+      ;;
+
+      *)
+        log-init "unsupported compression command; supported: gzip|xz"
+      ;;
+    esac
+  else
+    log-init "archive compression: disabled"
+  fi
+
+  set_postgresql_param "archive_command" "${PG_ARCHIVE_COMMAND}"
+
+fi
+
+if [[ -n ${PG_ARCHIVE_RESTORE_COMMAND} ]]; then
+  if is_enabled "${PG_ARCHIVE_COMPRESS}"; then
+    log-init "archive decompression: enabled"
+    case ${PG_ARCHIVE_COMPRESS_COMMAND,,} in
+      gzip)
+        PG_ARCHIVE_RESTORE_COMMAND="gunzip < ${PG_ARCHIVE_DIR}/%f > %p"
+      ;;
+
+      xz)
+        PG_ARCHIVE_RESTORE_COMMAND="xz -d < ${PG_ARCHIVE_DIR}/%f > %p"
+      ;;
+
+      *)
+        log-init "unsupported decompression command; supported: gzip|xz"
+      ;;
+    esac
+  else
+    log-init "archive decompression disabled"
+  fi
+
+  set_postgresql_param "restore_command" "${PG_ARCHIVE_RESTORE_COMMAND}"
+fi
