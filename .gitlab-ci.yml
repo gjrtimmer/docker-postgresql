@@ -45,6 +45,20 @@ workflow:
 ################################################################################
 # Job Configuration
 ################################################################################
+psql:11:
+  extends: .build
+  variables:
+    ALPINE_VERSION: "3.10"
+    DOCKER_FILE: Dockerfile.11
+    DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:11
+    DOCKER_IMAGE_HUB: ${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${CI_PROJECT_NAME}:11
+  only:
+    - master
+    - schedules
+  after_script:
+    - docker tag ${DOCKER_IMAGE} ${DOCKER_IMAGE_HUB}
+    - docker push ${DOCKER_IMAGE_HUB}
+
 psql:12:
   extends: .build
   variables:
