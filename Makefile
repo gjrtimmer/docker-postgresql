@@ -84,4 +84,4 @@ shell: ## Container Shell
 
 # Clean data directory
 clean: ## Clean
-	@rm -rf ${PWD}/data
+	@rm -rf ${PWD}/data/*
