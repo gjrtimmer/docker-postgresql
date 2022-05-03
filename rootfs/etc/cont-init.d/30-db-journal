@@ -46,7 +46,17 @@ else
   set_postgresql_param "wal_compression" off
 fi
 
-set_postgresql_param "wal_keep_segments" "${PG_JOURNAL_WAL_KEEP_SEGMENTS}"
+if (( "${PG_VERSION_MAJOR}" >= 13 )); then
+
+  if [ "${PG_JOURNAL_WAL_KEEP_SIZE,,}" == "auto" ]; then
+    PG_JOURNAL_WAL_KEEP_SIZE=$(( PG_JOURNAL_WAL_KEEP_SEGMENTS * PG_JOURNAL_WAL_SEGMENT_SIZE ))
+  fi
+
+  set_postgresql_param "wal_keep_size" "${PG_JOURNAL_WAL_KEEP_SIZE}"
+else
+  set_postgresql_param "wal_keep_segments" "${PG_JOURNAL_WAL_KEEP_SEGMENTS}"
+fi
+
 set_postgresql_param "max_wal_senders" "${PG_JOURNAL_MAX_SENDERS}"
 set_postgresql_param "checkpoint_segments" "${PG_JOURNAL_CHECKPOINT_SEGMENTS}"
 

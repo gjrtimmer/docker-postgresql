@@ -63,6 +63,7 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 				--username="${PG_USER}" \
 				--locale="${LANG}" \
 				--encoding=unicode \
+				--wal-segsize="${PG_JOURNAL_WAL_SEGMENT_SIZE}" \
 				--auth=trust ${PG_PASS:+--pwfile=/tmp/pwfile} >/dev/null
 
 			if [[ -n ${PG_OLD_VERSION} ]]; then

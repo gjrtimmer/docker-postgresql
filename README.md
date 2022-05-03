@@ -385,19 +385,21 @@ Complete overview of all supported environment variables. The environment variab
 
 ### PostgreSQL Journal Configuration
 
-| ENVVAR                            | Default   | Description                                                                                           |
-| --------------------------------- | --------- | ----------------------------------------------------------------------------------------------------- |
-| PG_JOURNAL_WAL_LEVEL              | logical   | WAL level configuration. Value: `replica`, `minimal`, `logical`                                       |
-| PG_JOURNAL_WAL_FSYNC              | on        | WAL fsync                                                                                             |
-| PG_JOURNAL_WAL_SYNC_METHOD        | fdatasync | WAL sync method                                                                                       |
-| PG_JOURNAL_WAL_SYNCHRONOUS_COMMIT | on        | Synchronous commit: on, off, local, remote_write, remote_apply                                        |
-| PG_JOURNAL_WAL_FULL_PAGE_WRITES   | on        | Full page writes                                                                                      |
-| PG_JOURNAL_WAL_COMPRESSION        | on        | Enabled, because on most servers IO is a greater bottleneck then CPU                                  |
-| PG_JOURNAL_WAL_KEEP_SEGMENTS      | 32        | Amount of WAL segments to keep                                                                        |
-| PG_JOURNAL_WAL_LOG_HINTS          | on        | Enabled to allow `pg_rewind`                                                                          |
-| PG_JOURNAL_WAL_BUFFERS            | 64MB      | PostgreSQL own default is 16MB, with `AUTO` it is based upon shared buffers, with 64MB it recommended |
-| PG_JOURNAL_MAX_SENDERS            | 10        | Max WAL senders                                                                                       |
-| PG_JOURNAL_CHECKPOINT_SEGMENTS    | 8         | WAL Checkpoints                                                                                       |
+| ENVVAR                            | Default   | Description                                                                                                                                                                  |
+| --------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PG_JOURNAL_WAL_LEVEL              | logical   | WAL level configuration. Value: `replica`, `minimal`, `logical`                                                                                                              |
+| PG_JOURNAL_WAL_FSYNC              | on        | WAL fsync                                                                                                                                                                    |
+| PG_JOURNAL_WAL_SYNC_METHOD        | fdatasync | WAL sync method                                                                                                                                                              |
+| PG_JOURNAL_WAL_SYNCHRONOUS_COMMIT | on        | Synchronous commit: on, off, local, remote_write, remote_apply                                                                                                               |
+| PG_JOURNAL_WAL_FULL_PAGE_WRITES   | on        | Full page writes                                                                                                                                                             |
+| PG_JOURNAL_WAL_COMPRESSION        | on        | Enabled, because on most servers IO is a greater bottleneck then CPU                                                                                                         |
+| PG_JOURNAL_WAL_KEEP_SEGMENTS      | 32        | Amount of WAL segments to keep                                                                                                                                               |
+| PG_JOUNRAL_WAL_KEEP_SIZE          | 0         | Wal keep size (v13+) When set to `AUTO` it will calculate the correct value based upon the previous setting `PG_JOURNAL_WAL_KEEP_SEGMENTS` and `PG_JOURNAL_WAL_SEGMENT_SIZE` |
+| PG_JOURNAL_WAL_SEGMENT_SIZE       | 16        | WAL Segment size in MB, acn only be changed when initializing database, also must be the same for standby servers                                                            |
+| PG_JOURNAL_WAL_LOG_HINTS          | on        | Enabled to allow `pg_rewind`                                                                                                                                                 |
+| PG_JOURNAL_WAL_BUFFERS            | 64MB      | PostgreSQL own default is 16MB, with `AUTO` it is based upon shared buffers, with 64MB it recommended                                                                        |
+| PG_JOURNAL_MAX_SENDERS            | 10        | Max WAL senders                                                                                                                                                              |
+| PG_JOURNAL_CHECKPOINT_SEGMENTS    | 8         | WAL Checkpoints                                                                                                                                                              |
 
 > **wal_level**
 >
