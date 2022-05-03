@@ -387,7 +387,7 @@ Complete overview of all supported environment variables. The environment variab
 
 | ENVVAR                            | Default   | Description                                                                                           |
 | --------------------------------- | --------- | ----------------------------------------------------------------------------------------------------- |
-| PG_JOURNAL_WAL_LEVEL              | replica   | WAL level configuration. Value: `replica`, `minimal`, `logical`                                       |
+| PG_JOURNAL_WAL_LEVEL              | logical   | WAL level configuration. Value: `replica`, `minimal`, `logical`                                       |
 | PG_JOURNAL_WAL_FSYNC              | on        | WAL fsync                                                                                             |
 | PG_JOURNAL_WAL_SYNC_METHOD        | fdatasync | WAL sync method                                                                                       |
 | PG_JOURNAL_WAL_SYNCHRONOUS_COMMIT | on        | Synchronous commit: on, off, local, remote_write, remote_apply                                        |
@@ -398,6 +398,13 @@ Complete overview of all supported environment variables. The environment variab
 | PG_JOURNAL_WAL_BUFFERS            | 64MB      | PostgreSQL own default is 16MB, with `AUTO` it is based upon shared buffers, with 64MB it recommended |
 | PG_JOURNAL_MAX_SENDERS            | 10        | Max WAL senders                                                                                       |
 | PG_JOURNAL_CHECKPOINT_SEGMENTS    | 8         | WAL Checkpoints                                                                                       |
+
+> **wal_level**
+>
+> Default WAL level is set to `logical` for this container. PostgreSQL defaults normally to `replica`.
+>
+> Reason: The default is set to `logical` to allow easy migration through 'logical replication'. This will allow adding standby upgrade replication nodes to a existing master.
+> It was deemed more beneficial to change this parameter because the overhead does not outweigh the need to easy production database upgrades between versions.
 
 ### PostgreSQL Replication Configuration
 
