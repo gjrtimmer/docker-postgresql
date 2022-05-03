@@ -58,7 +58,6 @@ else
 fi
 
 set_postgresql_param "max_wal_senders" "${PG_JOURNAL_MAX_SENDERS}"
-set_postgresql_param "checkpoint_segments" "${PG_JOURNAL_CHECKPOINT_SEGMENTS}"
 
 if is_enabled "${PG_JOURNAL_WAL_LOG_HINTS}"; then
   set_postgresql_param "wal_log_hints" on

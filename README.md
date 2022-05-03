@@ -399,7 +399,6 @@ Complete overview of all supported environment variables. The environment variab
 | PG_JOURNAL_WAL_LOG_HINTS          | on        | Enabled to allow `pg_rewind`                                                                                                                                                 |
 | PG_JOURNAL_WAL_BUFFERS            | 64MB      | PostgreSQL own default is 16MB, with `AUTO` it is based upon shared buffers, with 64MB it recommended                                                                        |
 | PG_JOURNAL_MAX_SENDERS            | 10        | Max WAL senders                                                                                                                                                              |
-| PG_JOURNAL_CHECKPOINT_SEGMENTS    | 8         | WAL Checkpoints                                                                                                                                                              |
 
 > **wal_level**
 >
