@@ -39,15 +39,16 @@ case "${PG_JOURNAL_WAL_SYNCHRONOUS_COMMIT,,}" in
 esac
 
 set_postgresql_param "full_page_writes" "${PG_JOURNAL_WAL_FULL_PAGE_WRITES}"
-set_postgresql_param "wal_keep_segments" "${PG_JOURNAL_WAL_KEEP_SEGMENTS}"
-set_postgresql_param "max_wal_senders" "${PG_JOURNAL_MAX_SENDERS}"
-set_postgresql_param "checkpoint_segments" "${PG_JOURNAL_CHECKPOINT_SEGMENTS}"
 
 if is_enabled "${PG_JOURNAL_WAL_COMPRESSION}"; then
   set_postgresql_param "wal_compression" on
 else
   set_postgresql_param "wal_compression" off
 fi
+
+set_postgresql_param "wal_keep_segments" "${PG_JOURNAL_WAL_KEEP_SEGMENTS}"
+set_postgresql_param "max_wal_senders" "${PG_JOURNAL_MAX_SENDERS}"
+set_postgresql_param "checkpoint_segments" "${PG_JOURNAL_CHECKPOINT_SEGMENTS}"
 
 if is_enabled "${PG_JOURNAL_WAL_LOG_HINTS}"; then
   set_postgresql_param "wal_log_hints" on
