@@ -387,6 +387,7 @@ Complete overview of all supported environment variables. The environment variab
 | PG_JOURNAL_WAL_FSYNC              | on        | WAL fsync                                                                                             |
 | PG_JOURNAL_WAL_SYNC_METHOD        | fdatasync | WAL sync method                                                                                       |
 | PG_JOURNAL_WAL_SYNCHRONOUS_COMMIT | on        | Synchronous commit: on, off, remote_write, remote_apply                                               |
+| PG_JOURNAL_WAL_FULL_PAGE_WRITES   | on        | Full page writes                                                                                      |
 | PG_JOURNAL_WAL_KEEP_SEGMENTS      | 32        | Amount of WAL segments to keep                                                                        |
 | PG_JOURNAL_WAL_COMPRESSION        | on        | Enabled, because on most servers IO is a greater bottleneck then CPU                                  |
 | PG_JOURNAL_WAL_LOG_HINTS          | on        | Enabled to allow `pg_rewind`                                                                          |
