@@ -17,7 +17,16 @@ case "${PG_JOURNAL_WAL_LEVEL,,}" in
 esac
 
 set_postgresql_param "fsync" "${PG_JOURNAL_WAL_FSYNC,,}"
-set_postgresql_param "wal_sync_method" "${PG_JOURNAL_WAL_SYNC_METHOD}"
+
+case "${PG_JOURNAL_WAL_SYNC_METHOD}" in
+  open_datasync|fdatasync|fsync|fsync_writethrough|open_sync)
+    set_postgresql_param "wal_sync_method" "${PG_JOURNAL_WAL_SYNC_METHOD}"
+  ;;
+
+  *)
+    log-init "unsupported value for wal_sync_method: ${PG_JOURNAL_WAL_SYNC_METHOD}"
+  ;;
+esac
 
 case "${PG_JOURNAL_WAL_SYNCHRONOUS_COMMIT,,}" in
   on|off|true|false|0|1|local|remote_write|remote_apply)
