@@ -9,6 +9,7 @@ source /etc/postgresql/functions
 set_postgresql_param "wal_level" "${PG_JOURNAL_WAL_LEVEL,,}"
 set_postgresql_param "fsync" "${PG_JOURNAL_WAL_FSYNC,,}"
 set_postgresql_param "wal_sync_method" "${PG_JOURNAL_WAL_SYNC_METHOD}"
+set_postgresql_param "synchronous_commit" "${PG_JOURNAL_WAL_SYNCHRONOUS_COMMIT,,}"
 set_postgresql_param "wal_keep_segments" "${PG_JOURNAL_WAL_KEEP_SEGMENTS}"
 set_postgresql_param "max_wal_senders" "${PG_JOURNAL_MAX_SENDERS}"
 set_postgresql_param "checkpoint_segments" "${PG_JOURNAL_CHECKPOINT_SEGMENTS}"
