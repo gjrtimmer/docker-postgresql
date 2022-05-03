@@ -55,7 +55,7 @@ build-inspect: ## Inspect build
 
 # Run the container
 run: ## Run the container
-	$(eval PUID ?= 1034)
+	$(eval PUID ?= 1000)
 	$(eval PGID ?= 100)
 	@mkdir -p ${PWD}/data
 	@docker run \
