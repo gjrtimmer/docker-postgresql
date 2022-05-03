@@ -12,17 +12,20 @@ case ${REPLICATION_MODE,,} in
 	;;
 
 	*)
-		# Check is database is ready to accept operations
-		is_db_ready_socket
+		# Check if supported version
+		if (( "${PG_VERSION_MAJOR}" >= 13 )); then
+			# Check is database is ready to accept operations
+			is_db_ready_socket
 
-		if is_enabled "${PG_CRON}"; then
-			log-init "loading cron scheduler extension"
-			psql -U "${PG_USER}" -c "CREATE EXTENSION IF NOT EXISTS pg_cron;" >/dev/null 2>&1
+			if is_enabled "${PG_CRON}"; then
+				log-init "loading cron scheduler extension"
+				psql -U "${PG_USER}" -c "CREATE EXTENSION IF NOT EXISTS pg_cron;" >/dev/null 2>&1
 
-			if [[ -n ${DB_USER} ]]; then
-				log-init "granting cron access to ${DB_USER} user..."
-				QRY_GRANT_ACCESS="$(printf "GRANT USAGE ON SCHEMA cron TO %s;" "${DB_USER}")"
-				psql -U "${PG_USER}" -c "${QRY_GRANT_ACCESS}" >/dev/null
+				if [[ -n ${DB_USER} ]]; then
+					log-init "granting cron access to ${DB_USER} user..."
+					QRY_GRANT_ACCESS="$(printf "GRANT USAGE ON SCHEMA cron TO %s;" "${DB_USER}")"
+					psql -U "${PG_USER}" -c "${QRY_GRANT_ACCESS}" >/dev/null
+				fi
 			fi
 		fi
 	;;
