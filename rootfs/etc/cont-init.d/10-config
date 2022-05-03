@@ -42,3 +42,5 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
     ;;
   esac
 fi
+
+# EOF

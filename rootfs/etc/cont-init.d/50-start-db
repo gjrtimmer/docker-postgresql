@@ -21,3 +21,5 @@ case ${REPLICATION_MODE,,} in
     s6-setuidgid abc pg_ctl start -D "${PG_DATA_DIR}" -w -t ${PG_TIMEOUT_STARTUP} > /dev/null &
   ;;
 esac
+
+# EOF

@@ -61,3 +61,5 @@ fi
 log-init "replicating data of $REPLICATION_HOST..."
 s6-setuidgid abc exec env PGPASSWORD="${REPLICATION_PASS}" pg_basebackup "${PARAMS[@]}" || exit 61
 log-init "repliation of ${REPLICATION_HOST} completed"
+
+# EOF

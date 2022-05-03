@@ -49,3 +49,5 @@ else
 	# shellcheck disable=SC2086
 	set_postgresql_param "effective_io_concurrency" ${PG_EFFECTIVE_IO_CONCURRENCY}
 fi
+
+# EOF

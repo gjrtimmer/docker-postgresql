@@ -62,3 +62,5 @@ if (( "${PG_VERSION_MAJOR}" >= 12 )); then
 else
   log-init "'restore_command' not supported for postgres version (${PG_VERSION_MAJOR})"
 fi
+
+# EOF
