@@ -58,13 +58,20 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 				echo "${PG_PASS}" > /tmp/pwfile
 			fi
 
-			s6-setuidgid abc initdb \
-				--pgdata="${PG_DATA_DIR}" \
-				--username="${PG_USER}" \
-				--locale="${LANG}" \
-				--encoding=unicode \
-				--wal-segsize="${PG_JOURNAL_WAL_SEGMENT_SIZE}" \
-				--auth=trust ${PG_PASS:+--pwfile=/tmp/pwfile} >/dev/null
+			# build initdb command params
+			declare -a INITDB_PARAMS=()
+			INITDB_PARAMS+=(--pgdata="${PG_DATA_DIR}")
+			INITDB_PARAMS+=(--username="${PG_USER}")
+			INITDB_PARAMS+=(--locale="${LANG}")
+			INITDB_PARAMS+=(--encoding=unicode)
+			INITDB_PARAMS+=(--auth=trust ${PG_PASS:+--pwfile=/tmp/pwfile})
+
+			# Configuration of wal segment size if only available from version 11+
+			if (( "${PG_VERSION_MAJOR}" >= 11 )); then
+				INITDB_PARAMS+=(--wal-segsize="${PG_JOURNAL_WAL_SEGMENT_SIZE}")
+			fi
+
+			s6-setuidgid abc initdb "${INITDB_PARAMS[@]}" >/dev/null
 
 			if [[ -n ${PG_OLD_VERSION} ]]; then
 				PG_OLD_DATADIR=${PG_HOME}/${PG_OLD_VERSION}/main
@@ -72,13 +79,16 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 				PG_OLD_HBA_CONF=${PG_OLD_DATADIR}/pg_hba.conf
 				PG_OLD_IDENT_CONF=${PG_OLD_DATADIR}/pg_ident.conf
 
+				# Build pg_upgrade command params
+				declare -a PG_UPGRADE_PARAMS=()
+				PG_UPGRADE_PARAMS+=(--username="${PG_USER}")
+				PG_UPGRADE_PARAMS+=(--old-datadir="${PG_OLD_DATADIR}")
+				PG_UPGRADE_PARAMS+=(--new-datadir="${PG_DATA_DIR}")
+				PG_UPGRADE_PARAMS+=(--old-options="-c config_file=${PG_OLD_CONF} --hba_file=${PG_OLD_HBA_CONF} --ident_file=${PG_OLD_IDENT_CONF}")
+				PG_UPGRADE_PARAMS+=(--new-options="-c config_file=${PG_CONF} --hba_file=${PG_HBA_CONF} --ident_file=${PG_IDENT_CONF}")
+
 				echo -n "  migration in progress. Please be patient..."
-				s6-setuidgid abc pg_upgrade \
-					--username="${PG_USER}" \
-					--old-datadir="${PG_OLD_DATADIR}" \
-					--new-datadir="${PG_DATA_DIR}" \
-					--old-options="-c config_file=${PG_OLD_CONF} --hba_file=${PG_OLD_HBA_CONF} --ident_file=${PG_OLD_IDENT_CONF}" \
-					--new-options="-c config_file=${PG_CONF} --hba_file=${PG_HBA_CONF} --ident_file=${PG_IDENT_CONF}" >/dev/null
+				s6-setuidgid abc pg_upgrade "${PG_UPGRADE_PARAMS[@]}" >/dev/null
 				echo " [DONE]"
 			fi
 		;;
