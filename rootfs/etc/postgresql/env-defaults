@@ -8,6 +8,7 @@ TZ=${TZ:-UTC}
 PG_COMMAND=${PG_COMMAND:-/usr/bin/postgres}
 PG_VERSION=$(${PG_COMMAND} --version | awk '{print $3}')
 PG_VERSION_SLUG=$(${PG_COMMAND} --version | awk '{print $3}' | grep -o -E '[0-9]{1,2}\.[0-9]{1,2}')
+PG_VERSION_MAJOR=$(echo "${PG_VERSION_SLUG}" | cut -d '.' -f 1)
 
 PG_HOME="${HOME}/data"
 PG_DATA_DIR_DEFAULT="${PG_HOME}/$(${PG_COMMAND} --version | awk '{print $3}' | grep -o -E '[0-9]{1,2}\.[0-9]{1,2}')/main"

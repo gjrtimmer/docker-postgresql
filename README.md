@@ -360,6 +360,10 @@ Complete overview of all supported environment variables. The environment variab
 | PG_ARCHIVE_COMPRESS_COMMAND | gzip                       | Compress command; Values: `gzip`, `xz`                                                    |
 | PG_ARCHIVE_RESTORE_COMMAND  | cp ${PG_ARCHIVE_DIR}/%f %p | Archive restore command                                                                   |
 
+> **Restore Command**
+>
+> The `restore_command` parameter is only supported from version 12+
+
 > **Important**
 >
 > The archive compress variable works under the premise that the default archive and restore commands are used.

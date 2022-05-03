@@ -36,25 +36,33 @@ if [[ -n ${PG_ARCHIVE_COMMAND} ]]; then
 
 fi
 
-if [[ -n ${PG_ARCHIVE_RESTORE_COMMAND} ]]; then
-  if is_enabled "${PG_ARCHIVE_COMPRESS}"; then
-    log-init "archive decompression: enabled"
-    case ${PG_ARCHIVE_COMPRESS_COMMAND,,} in
-      gzip)
-        PG_ARCHIVE_RESTORE_COMMAND="gunzip < ${PG_ARCHIVE_DIR}/%f > %p"
-      ;;
+case "${PG_VERSION_MAJOR}" in
+  12|13|14)
+    if [[ -n ${PG_ARCHIVE_RESTORE_COMMAND} ]]; then
+      if is_enabled "${PG_ARCHIVE_COMPRESS}"; then
+        log-init "archive decompression: enabled"
+        case ${PG_ARCHIVE_COMPRESS_COMMAND,,} in
+          gzip)
+            PG_ARCHIVE_RESTORE_COMMAND="gunzip < ${PG_ARCHIVE_DIR}/%f > %p"
+          ;;
 
-      xz)
-        PG_ARCHIVE_RESTORE_COMMAND="xz -d < ${PG_ARCHIVE_DIR}/%f > %p"
-      ;;
+          xz)
+            PG_ARCHIVE_RESTORE_COMMAND="xz -d < ${PG_ARCHIVE_DIR}/%f > %p"
+          ;;
 
-      *)
-        log-init "unsupported decompression command; supported: gzip|xz"
-      ;;
-    esac
-  else
-    log-init "archive decompression disabled"
-  fi
+          *)
+            log-init "unsupported decompression command; supported: gzip|xz"
+          ;;
+        esac
+      else
+        log-init "archive decompression disabled"
+      fi
 
-  set_postgresql_param "restore_command" "${PG_ARCHIVE_RESTORE_COMMAND}"
-fi
+      set_postgresql_param "restore_command" "${PG_ARCHIVE_RESTORE_COMMAND}"
+    fi
+  ;;
+
+  *)
+    log-init "'restore_command' not supported for postgres version (${PG_VERSION_MAJOR})"
+  ;;
+esac
