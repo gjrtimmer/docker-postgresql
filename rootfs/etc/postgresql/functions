@@ -327,4 +327,24 @@ psql_validate_db_name() {
 	fi
 }
 
+psql_determine_migration_required() {
+	PG_OLD_VERSION=$(find "${PG_HOME}" -maxdepth 3 -name PG_VERSION_FULL -exec cat {} + 2>/dev/null | grep -o -E '[0-9]{1,2}\.[0-9]{1,2}' | grep -v "${PG_VERSION_SLUG}" | sort -n | head -n1)
+	if [[ -n ${PG_OLD_VERSION} ]]; then
+		# Migration is required
+		# Enable migration
+
+		log-init "entering migration mode"
+		printf "1" > /var/run/s6/container_environment/PG_MIGRATION
+		printf "%s" "${PG_OLD_VERSION}" > /var/run/s6/container_environment/PG_OLD_VERSION
+	fi
+}
+
+psql_is_migration() {
+	if is_enabled "${PG_MIGRATION}"; then
+		return 0
+	fi
+
+	return 1
+}
+
 # EOF

@@ -23,7 +23,8 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repos
     postgresql-contrib \
     postgresql-jit \
     postgresql-pg_cron \
-    pgtcl && \
+    pgtcl \
+    rsync && \
     echo "abc ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/abc && \
     chmod 600 /etc/sudoers.d/abc && \
     sync

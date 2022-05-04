@@ -28,30 +28,42 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 		;;
 
 		*)
-			log-init "initializing database..."
-			PG_OLD_VERSION=$(find "${PG_HOME}"/[0-9][0-9].[0-9]/main -maxdepth 1 -name PG_VERSION 2>/dev/null | grep -v "${PG_VERSION}" | sort -r | head -n1 | cut -d'/' -f5)
-			if [[ -n ${PG_OLD_VERSION} ]]; then
-				log-init "migrating PostgreSQL ${PG_OLD_VERSION} data to ${PG_VERSION}..."
+			if psql_is_migration; then
+				log-init "previous PostgreSQL version detected (${PG_OLD_VERSION})"
 
-				# TODO: Diskspace check
-
-				# protect the existing data from being altered by apt-get
-				mv "${PG_HOME}/${PG_OLD_VERSION}" "${PG_HOME}/${PG_OLD_VERSION}.migrating"
-
-				log-init "installing PostgreSQL ${PG_OLD_VERSION}..."
-				if ! ( apk add --update --no-cache postgresql="${PG_OLD_VERSION}" postgresql-client="${PG_OLD_VERSION}" ) >/dev/null; then
-					log-init "ERROR: Failed to install PostgreSQL ${PG_OLD_VERSION}. Restoring data..."
-
-					# First move the old data back
-					rm -rf "${PG_HOME}/${PG_OLD_VERSION:?}"
-					mv "${PG_HOME}/${PG_OLD_VERSION}.migrating" "${PG_HOME}/${PG_OLD_VERSION}"
-					log-init "data Restore Succesful. Exiting..."
-					exit 10
+				log-init "calculating disk space availability for migration"
+				DB_DISK_USAGE=$(du -Lsx "${PG_HOME}/${PG_OLD_VERSION}" | awk '{print $1}' | tr -d '\n')
+				DISK_SPACE_AVAILABLE=$(df --sync "${PG_HOME}/${PG_OLD_VERSION}" | awk 'NR>1 {print $4}')
+				DISK_USE=$(( DISK_SPACE_AVAILABLE - (DB_DISK_USAGE + (1024*1024)) ))
+				if (( DISK_USE <= 0 )); then
+					log-init "insufficient free disk space available"
+					exit 11
 				fi
 
-				# we're ready to migrate, move back the old data and remove the trap
-				rm -rf "${PG_HOME}/${PG_OLD_VERSION:?}"
-				mv "${PG_HOME}/${PG_OLD_VERSION}.migrating" "${PG_HOME}/${PG_OLD_VERSION}"
+				if is_enabled "${PG_MIGRATE_DATA_BACKUP}"; then
+					# user requested a copy of the data in case it all goes wrong
+					# First check if we have enough space for the data backup
+					# data backup requires 2 twice the size of migration
+					# 1x for backup copy
+					# 1x for migration
+					log-init "calculating disk space availability for migration + backup"
+					DISK_USE=$(( DISK_SPACE_AVAILABLE - ((DB_DISK_USAGE * 2) + (1024*1024)) ))
+					if (( DISK_USE <= 0 )); then
+						log-init "insufficient free disk space available"
+						exit 12
+					fi
+
+					# Create backup
+					BACKUP_DIR="${PG_HOME}/${PG_OLD_VERSION}.backup"
+					if [ ! -d "${BACKUP_DIR}" ]; then
+						log-init "creating backup"
+						mkdir -p "${BACKUP_DIR}"
+						rsync -ah --progress "${PG_HOME}/${PG_OLD_VERSION}" "${BACKUP_DIR}"
+					else
+						log-init "backup directory already exists"
+						exit 13
+					fi
+				fi
 			fi
 
 			if [[ -n ${PG_PASS} ]]; then
@@ -71,24 +83,78 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 				INITDB_PARAMS+=(--wal-segsize="${PG_JOURNAL_WAL_SEGMENT_SIZE}")
 			fi
 
-			s6-setuidgid abc initdb "${INITDB_PARAMS[@]}" >/dev/null
+			log-init "initializing database..."
+			s6-setuidgid abc initdb "${INITDB_PARAMS[@]}" > "${PG_LOG_DIR}/initdb-${PG_VERSION_SLUG}.log"
 
-			if [[ -n ${PG_OLD_VERSION} ]]; then
+			log-init "storing postgresql version"
+			echo "${PG_VERSION_SLUG}" | s6-setuidgid abc tee "${PG_DATA_DIR}/PG_VERSION_FULL" > /dev/null 2>&1
+
+			# Save the current PostgreSQL to the data mount
+			# The bin and lib directory are copied to the data mount.
+			# This is done so we have the old PostgreSQL binaries and libraries
+			# available for future upgrade.
+			#
+			# This only applies to the older version of PostgreSQL, newer versions of
+			# PostgreSQL can be installed next to each other in alpine.
+			if (( "${PG_VERSION_MAJOR}" <= 12 )); then
+				PG_ROOTFS="${PG_HOME}/${PG_VERSION_SLUG}/.rootfs"
+				if [ ! -d "${PG_ROOTFS}" ]; then
+					log-init "saving postgres for future upgrade"
+					mkdir -p "${PG_ROOTFS}"/{lib,usr/{bin,lib}}
+
+					cp -raP /lib/* "${PG_ROOTFS}/lib"
+					cp -raP /usr/bin/pg_* "${PG_ROOTFS}/usr/bin"
+					cp -raP "${PG_COMMAND}" "${PG_ROOTFS}/usr/bin"
+					cp -raP /usr/lib/* "${PG_ROOTFS}/usr/lib"
+
+					if (( "${PG_VERSION_MAJOR}" == 9 )); then
+						mkdir -p "${PG_ROOTFS}/usr/share/postgresql"
+						cp -ravP /usr/share/postgresql/{timezone,timezonesets} "${PG_ROOTFS}/usr/share/postgresql"
+					fi
+				fi
+			fi
+
+			if psql_is_migration; then
+				log-init "migrating PostgreSQL ${PG_OLD_VERSION} data to ${PG_VERSION_SLUG}..."
+
+				PG_OLD_ROOTFS="${PG_HOME}/${PG_OLD_VERSION}/.rootfs"
+				PG_OLD_LIB=${PG_OLD_ROOTFS}/lib
+				PG_OLD_USRLIB=${PG_OLD_ROOTFS}/usr/lib
+				PG_OLD_BINDIR=${PG_OLD_ROOTFS}/usr/bin
 				PG_OLD_DATADIR=${PG_HOME}/${PG_OLD_VERSION}/main
 				PG_OLD_CONF=${PG_OLD_DATADIR}/postgresql.conf
 				PG_OLD_HBA_CONF=${PG_OLD_DATADIR}/pg_hba.conf
 				PG_OLD_IDENT_CONF=${PG_OLD_DATADIR}/pg_ident.conf
 
+				# Old version of PostgreSQL in alpine do not have to ability to be
+				# installed next to each other this was added later in alpine.
+				# To mitigate this issue for earlier versions of PostgreSQL
+				# we are storing the bin and lib path of the version of PostgreSQL
+				# in the data mount. This so we can use the 'old' bin directory.
+				# In order to make use of this 'old' bin directory we also saved the
+				# lib folder of the old version.
+				# We must now add this directory to the musl lib path in order for
+				# the binaries to be used by pg_upgrade.
+				#
+				# Default musl lib path: /lib:/usr/local/lib:/usr/lib
+				# if (( "${PG_VERSION_MAJOR}" <= 12 )); then
+				# 	PG_ROOTFS="${PG_HOME}/${PG_OLD_VERSION}/.rootfs"
+				# 	log-init "copying PostgreSQL ${PG_OLD_VERSION} libraries"
+				# fi
+
 				# Build pg_upgrade command params
 				declare -a PG_UPGRADE_PARAMS=()
+				PG_UPGRADE_PARAMS+=(--jobs="$(nproc)")
 				PG_UPGRADE_PARAMS+=(--username="${PG_USER}")
+				PG_UPGRADE_PARAMS+=(--old-bindir="${PG_OLD_BINDIR}")
+				PG_UPGRADE_PARAMS+=(--new-bindir="/usr/bin")
 				PG_UPGRADE_PARAMS+=(--old-datadir="${PG_OLD_DATADIR}")
 				PG_UPGRADE_PARAMS+=(--new-datadir="${PG_DATA_DIR}")
 				PG_UPGRADE_PARAMS+=(--old-options="-c config_file=${PG_OLD_CONF} --hba_file=${PG_OLD_HBA_CONF} --ident_file=${PG_OLD_IDENT_CONF}")
 				PG_UPGRADE_PARAMS+=(--new-options="-c config_file=${PG_CONF} --hba_file=${PG_HBA_CONF} --ident_file=${PG_IDENT_CONF}")
 
 				echo -n "  migration in progress. Please be patient..."
-				s6-setuidgid abc pg_upgrade "${PG_UPGRADE_PARAMS[@]}" >/dev/null
+				s6-setuidgid abc exec env LD_LIBRARY_PATH="${PG_OLD_LIB}:${PG_OLD_USRLIB}:/lib:/usr/local/lib:/usr/lib" pg_upgrade "${PG_UPGRADE_PARAMS[@]}" > "${PG_LOG_DIR}/pg_upgrade-v${PG_OLD_VERSION}-v${PG_VERSION_SLUG}.log"
 				echo " [DONE]"
 			fi
 		;;

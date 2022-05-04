@@ -30,6 +30,7 @@ Including examples to get you started quickly.
   - [Standby Configuration](#standby-configuration)
   - [Database configuration](#database-configuration)
   - [Extension Configuration](#extension-configuration)
+  - [Migration Configuration](#migration-configuration)
 - [Error Exit Codes](#error-exit-codes)
 
 ## Quick Start
@@ -478,23 +479,33 @@ Complete overview of all supported environment variables. The environment variab
 | PG_CRON_WORKERS_BACKGROUND | off (BOOL) | Enable pg_cron background workers                   |
 | PG_CRON_WORKERS_MAX        | 8          | Set maximum amount of pg_cron background workers    |
 
+### Migration Configuration
+
+| ENVVAR                 | Default | Description                                                                         |
+| ---------------------- | ------- | ----------------------------------------------------------------------------------- |
+| PG_MIGRATE_DATA_BACKUP | on      | Create backup of previous PostgreSQL data before migration                          |
+| PG_MIGRATE_ANALYSE     | on      | Post run statistics generation to make database usable. Values: `on`, `off`, `fast` |
+
 ## Error Exit Codes
 
-| Code | Description                                                                     | Resolution                                                       |
-| ---- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| 10   | Failed to install old PostgreSQL version for data migration                     | TODO                                                             |
-| 15   | Required variable `DB_USER` not set                                             | Add environment variable DB_USER to container                    |
-| 16   | Required variable `DB_PASS` not set                                             | Add environment variable DB_PASS to container                    |
-| 17   | Required variable `DB_NAME` not set                                             | Add environment variable DB_NAME to container                    |
-| 18   | Required variable `REPLICATION_HOST` not set while `REPLICATION_MODE` is active | Add environment variable `REPLICATION_HOST` to container         |
-| 19   | Required variable `REPLICATION_USER` not set while `REPLICATION_MODE` is active | Add environment variable `REPLICATION_USER` to container         |
-| 20   | Required variable `REPLICATION_PASS` not set while `REPLICATION_MODE` is active | Add environment variable `REPLICATION_PASS` to container         |
-| 30   | Timeout while connecting to REPLICATION_HOST                                    | Ensure network connection to Replication Host van be established |
-| 41   | Certificate not found `PG_CERTS_DIR/server.crt`                                 | Place certificate in correct path                                |
-| 42   | Invalid permissions for `PG_CERTS_DIR/server.crt`                               | File permissions for server.crt needs to be set to `644`         |
-| 43   | Certificate not found `PG_CERTS_DIR/server.key`                                 | Place certificate in correct path                                |
-| 44   | Invalid permissions for `PG_CERTS_DIR/server.key`                               | File permissions for server.key needs to be set to `640`         |
-| 50   | Backup completed succesfully                                                    | N.A.                                                             |
-| 51   | Backup failed                                                                   | Check log file                                                   |
-| 52   | Invalid option for PG_BACKUP_FORMAT                                             | Valid options: `p|plain` or `t|tar`                              |
-| 61   | Snapshot failed                                                                 | Check logfile                                                    |
+| Code | Description                                                                     | Resolution                                                              |
+| ---- | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| 10   | Failed to install old PostgreSQL version for data migration                     | TODO                                                                    |
+| 11   | Insufficient disk space available for migration                                 | Provide more disk space, it must have (db disk usage + 1Gb) available   |
+| 12   | Insufficient disk space available for migration and data backup                 | Provide more disk space, it must have ((db disk space usage * 2) + 1Gb) |
+| 13   | Backup directory already exists                                                 |                                                                         |
+| 15   | Required variable `DB_USER` not set                                             | Add environment variable DB_USER to container                           |
+| 16   | Required variable `DB_PASS` not set                                             | Add environment variable DB_PASS to container                           |
+| 17   | Required variable `DB_NAME` not set                                             | Add environment variable DB_NAME to container                           |
+| 18   | Required variable `REPLICATION_HOST` not set while `REPLICATION_MODE` is active | Add environment variable `REPLICATION_HOST` to container                |
+| 19   | Required variable `REPLICATION_USER` not set while `REPLICATION_MODE` is active | Add environment variable `REPLICATION_USER` to container                |
+| 20   | Required variable `REPLICATION_PASS` not set while `REPLICATION_MODE` is active | Add environment variable `REPLICATION_PASS` to container                |
+| 30   | Timeout while connecting to REPLICATION_HOST                                    | Ensure network connection to Replication Host van be established        |
+| 41   | Certificate not found `PG_CERTS_DIR/server.crt`                                 | Place certificate in correct path                                       |
+| 42   | Invalid permissions for `PG_CERTS_DIR/server.crt`                               | File permissions for server.crt needs to be set to `644`                |
+| 43   | Certificate not found `PG_CERTS_DIR/server.key`                                 | Place certificate in correct path                                       |
+| 44   | Invalid permissions for `PG_CERTS_DIR/server.key`                               | File permissions for server.key needs to be set to `640`                |
+| 50   | Backup completed succesfully                                                    | N.A.                                                                    |
+| 51   | Backup failed                                                                   | Check log file                                                          |
+| 52   | Invalid option for PG_BACKUP_FORMAT                                             | Valid options: `plain` or `tar`                                         |
+| 61   | Snapshot failed                                                                 | Check logfile                                                           |

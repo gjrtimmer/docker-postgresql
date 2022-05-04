@@ -1,0 +1,36 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+set -e
+
+# shellcheck source=../postgresql/functions
+source /etc/postgresql/functions
+
+if psql_is_migration; then
+  # Migration succesful
+
+  # Generate statistics to make database usable
+  if is_enabled "${PG_MIGRATE_ANALYSE}" || [ "${PG_MIGRATE_ANALYSE,,}" == "fast" ]; then
+    if is_enabled "${PG_MIGRATE_ANALYSE}"; then
+      # run analyse-in-stages
+      log-init "generating statistics (analyse-in-stages)"
+      s6-setuidgid abc exec env PGPASSWORD="${PG_PASS}" vacuumdb --all --no-password -U "${PG_USER}" --jobs="$(nproc)" --analyze-in-stages > "${PG_LOG_DIR}/analyse-v${PG_OLD_VERSION}-v${PG_VERSION_MAJOR}.log"
+    fi
+
+    if [ "${PG_MIGRATE_ANALYSE,,}" == "fast" ]; then
+      # run fast analyse
+      log-init "generating statistics (analyse-only)"
+      s6-setuidgid abc exec env PGPASSWORD="${PG_PASS}" vacuumdb --all --no-password -U "${PG_USER}" --jobs="$(nproc)" --analyze-only > "${PG_LOG_DIR}/analyse-v${PG_OLD_VERSION}-v${PG_VERSION_MAJOR}.log"
+    fi
+  fi
+
+  # Delete auto-generated scripts
+  rm -f "${HOME}/analyze_new_cluster.sh"
+  rm -f "${HOME}/delete_old_cluster.sh"
+
+  # exit migration mode
+  log-init "exiting migration mode"
+  rm /var/run/s6/container_environment/PG_MIGRATION
+  rm /var/run/s6/container_environment/PG_OLD_VERSION
+fi
+
+# EOF
