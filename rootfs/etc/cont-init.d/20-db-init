@@ -95,7 +95,7 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 			#
 			# This only applies to the older version of PostgreSQL, newer versions of
 			# PostgreSQL can be installed next to each other in alpine.
-			if (( "${PG_VERSION_MAJOR}" <= 12 )); then
+			if (( "${PG_VERSION_MAJOR}" < 12 )); then
 				PG_ROOTFS="${PG_HOME}/${PG_VERSION_SLUG}/.rootfs"
 				if [ ! -d "${PG_ROOTFS}" ]; then
 					log-init "saving postgres for future upgrade"
@@ -112,7 +112,7 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 							cp -raP /usr/share/postgresql/{timezone,timezonesets} "${PG_ROOTFS}/usr/share/postgresql"
 						;;
 
-						10)
+						10|11)
 							mkdir -p "${PG_ROOTFS}/usr/share/postgresql"
 							cp -raP /usr/share/postgresql/timezonesets "${PG_ROOTFS}/usr/share/postgresql"
 						;;
@@ -123,30 +123,23 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 			if psql_is_migration; then
 				log-init "migrating PostgreSQL ${PG_OLD_VERSION} data to ${PG_VERSION_SLUG}..."
 
-				PG_OLD_ROOTFS="${PG_HOME}/${PG_OLD_VERSION}/.rootfs"
-				PG_OLD_LIB=${PG_OLD_ROOTFS}/lib
-				PG_OLD_USRLIB=${PG_OLD_ROOTFS}/usr/lib
-				PG_OLD_BINDIR=${PG_OLD_ROOTFS}/usr/bin
+				if (( "${PG_OLD_VERSION_MAJOR}" < 12 )); then
+					PG_OLD_ROOTFS="${PG_HOME}/${PG_OLD_VERSION}/.rootfs"
+					PG_OLD_LIB=${PG_OLD_ROOTFS}/lib
+					PG_OLD_USRLIB=${PG_OLD_ROOTFS}/usr/lib
+					PG_OLD_BINDIR=${PG_OLD_ROOTFS}/usr/bin
+				else
+					log-init "installing previous PostgreSQL ${PG_OLD_VERSION_MAJOR}"
+					apk add --update --no-cache "postgresql${PG_OLD_VERSION_MAJOR}" "postgresql${PG_OLD_VERSION_MAJOR}-client"
+
+					PG_OLD_USRLIB="/usr/lib/postgresql${PG_OLD_VERSION_MAJOR}"
+					PG_OLD_BINDIR="/usr/libexec/postgresql${PG_OLD_VERSION_MAJOR}"
+				fi
+
 				PG_OLD_DATADIR=${PG_HOME}/${PG_OLD_VERSION}/main
 				PG_OLD_CONF=${PG_OLD_DATADIR}/postgresql.conf
 				PG_OLD_HBA_CONF=${PG_OLD_DATADIR}/pg_hba.conf
 				PG_OLD_IDENT_CONF=${PG_OLD_DATADIR}/pg_ident.conf
-
-				# Old version of PostgreSQL in alpine do not have to ability to be
-				# installed next to each other this was added later in alpine.
-				# To mitigate this issue for earlier versions of PostgreSQL
-				# we are storing the bin and lib path of the version of PostgreSQL
-				# in the data mount. This so we can use the 'old' bin directory.
-				# In order to make use of this 'old' bin directory we also saved the
-				# lib folder of the old version.
-				# We must now add this directory to the musl lib path in order for
-				# the binaries to be used by pg_upgrade.
-				#
-				# Default musl lib path: /lib:/usr/local/lib:/usr/lib
-				# if (( "${PG_VERSION_MAJOR}" <= 12 )); then
-				# 	PG_ROOTFS="${PG_HOME}/${PG_OLD_VERSION}/.rootfs"
-				# 	log-init "copying PostgreSQL ${PG_OLD_VERSION} libraries"
-				# fi
 
 				# Build pg_upgrade command params
 				declare -a PG_UPGRADE_PARAMS=()
@@ -160,7 +153,12 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 				PG_UPGRADE_PARAMS+=(--new-options="-c config_file=${PG_CONF} --hba_file=${PG_HBA_CONF} --ident_file=${PG_IDENT_CONF}")
 
 				echo -n "  migration in progress. Please be patient..."
-				s6-setuidgid abc exec env LD_LIBRARY_PATH="${PG_OLD_LIB}:${PG_OLD_USRLIB}:/lib:/usr/local/lib:/usr/lib" pg_upgrade "${PG_UPGRADE_PARAMS[@]}" > "${PG_LOG_DIR}/pg_upgrade-v${PG_OLD_VERSION}-v${PG_VERSION_SLUG}.log"
+				if (( "${PG_OLD_VERSION_MAJOR}" < 12 )); then
+					PG_LIB_PATH="${PG_OLD_LIB}:${PG_OLD_USRLIB}:/lib:/usr/local/lib:/usr/lib"
+				else
+					PG_LIB_PATH="${PG_OLD_USRLIB}:/lib:/usr/local/lib:/usr/lib"
+				fi
+				s6-setuidgid abc exec env LD_LIBRARY_PATH="${PG_LIB_PATH}" pg_upgrade "${PG_UPGRADE_PARAMS[@]}" > "${PG_LOG_DIR}/pg_upgrade-v${PG_OLD_VERSION}-v${PG_VERSION_SLUG}.log"
 				echo " [DONE]"
 			fi
 		;;
