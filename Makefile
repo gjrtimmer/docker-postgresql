@@ -219,3 +219,12 @@ clean-10: ## Clean PostgreSQL:10
 
 clean-11: ## Clean PostgreSQL:11
 	@sudo rm -rf $(CURDIR)/data/11.*
+
+clean-12: ## Clean PostgreSQL:12
+	@sudo rm -rf $(CURDIR)/data/12.*
+
+clean-13: ## Clean PostgreSQL:13
+	@sudo rm -rf $(CURDIR)/data/13.*
+
+clean-14: ## Clean PostgreSQL:14
+	@sudo rm -rf $(CURDIR)/data/14.*
