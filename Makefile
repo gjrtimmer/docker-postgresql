@@ -210,3 +210,12 @@ shell-14: ## Container Shell PostgreSQL:14
 # Clean data directory
 clean: ## Clean
 	@sudo rm -rf $(CURDIR)/data/*
+
+clean-9: ## Clean PostgreSQL:9
+	@sudo rm -rf $(CURDIR)/data/9.*
+
+clean-10: ## Clean PostgreSQL:10
+	@sudo rm -rf $(CURDIR)/data/10.*
+
+clean-11: ## Clean PostgreSQL:11
+	@sudo rm -rf $(CURDIR)/data/11.*
