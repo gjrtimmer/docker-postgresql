@@ -48,6 +48,18 @@ if psql_is_migration; then
   rm /var/run/s6/container_environment/PG_MIGRATION
   rm /var/run/s6/container_environment/PG_OLD_VERSION
   rm /var/run/s6/container_environment/PG_OLD_VERSION_MAJOR
+else
+  # No migration
+  #
+  # However we are going to do a double check here.
+  # There might be a scenario where a user wants to move their existing data
+  # to this container to benefit from the functionality of this container.
+  #
+  # To support such a scenario we must ensure that when the user creates a
+  # volume mount for the data we ensure that we will be creating the .rootfs
+  # directory if required. This is to ensure a user can migrate easily from
+  # on other install to this container.
+  psql_create_old_rootfs
 fi
 
 # EOF

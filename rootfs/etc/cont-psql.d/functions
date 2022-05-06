@@ -350,4 +350,34 @@ psql_is_migration() {
 	return 1
 }
 
+psql_create_old_rootfs() {
+	if (( "${PG_VERSION_MAJOR}" < 12 )); then
+		log-init "storing postgresql version"
+		echo "${PG_VERSION_SLUG}" | s6-setuidgid abc tee "${PG_DATA_DIR}/PG_VERSION_FULL" > /dev/null 2>&1
+
+		PG_ROOTFS="${PG_HOME}/${PG_VERSION_SLUG}/.rootfs"
+		if [ ! -d "${PG_ROOTFS}" ]; then
+			log-init "saving postgres for future upgrade"
+			mkdir -p "${PG_ROOTFS}"/{lib,usr/{bin,lib}}
+
+			cp -raP /lib/* "${PG_ROOTFS}/lib"
+			cp -raP /usr/bin/pg_* "${PG_ROOTFS}/usr/bin"
+			cp -raP "${PG_COMMAND}" "${PG_ROOTFS}/usr/bin"
+			cp -raP /usr/lib/* "${PG_ROOTFS}/usr/lib"
+
+			case "${PG_VERSION_MAJOR}" in
+				9)
+					mkdir -p "${PG_ROOTFS}/usr/share/postgresql"
+					cp -raP /usr/share/postgresql/{timezone,timezonesets} "${PG_ROOTFS}/usr/share/postgresql"
+				;;
+
+				10|11)
+					mkdir -p "${PG_ROOTFS}/usr/share/postgresql"
+					cp -raP /usr/share/postgresql/timezonesets "${PG_ROOTFS}/usr/share/postgresql"
+				;;
+			esac
+		fi
+	fi
+}
+
 # EOF

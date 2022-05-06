@@ -85,9 +85,6 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 			log-init "initializing database..."
 			s6-setuidgid abc initdb "${INITDB_PARAMS[@]}" > "${PG_LOG_DIR}/initdb-${PG_VERSION_SLUG}.log"
 
-			log-init "storing postgresql version"
-			echo "${PG_VERSION_SLUG}" | s6-setuidgid abc tee "${PG_DATA_DIR}/PG_VERSION_FULL" > /dev/null 2>&1
-
 			# Save the current PostgreSQL to the data mount
 			# The bin and lib directory are copied to the data mount.
 			# This is done so we have the old PostgreSQL binaries and libraries
@@ -95,30 +92,7 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 			#
 			# This only applies to the older version of PostgreSQL, newer versions of
 			# PostgreSQL can be installed next to each other in alpine.
-			if (( "${PG_VERSION_MAJOR}" < 12 )); then
-				PG_ROOTFS="${PG_HOME}/${PG_VERSION_SLUG}/.rootfs"
-				if [ ! -d "${PG_ROOTFS}" ]; then
-					log-init "saving postgres for future upgrade"
-					mkdir -p "${PG_ROOTFS}"/{lib,usr/{bin,lib}}
-
-					cp -raP /lib/* "${PG_ROOTFS}/lib"
-					cp -raP /usr/bin/pg_* "${PG_ROOTFS}/usr/bin"
-					cp -raP "${PG_COMMAND}" "${PG_ROOTFS}/usr/bin"
-					cp -raP /usr/lib/* "${PG_ROOTFS}/usr/lib"
-
-					case "${PG_VERSION_MAJOR}" in
-						9)
-							mkdir -p "${PG_ROOTFS}/usr/share/postgresql"
-							cp -raP /usr/share/postgresql/{timezone,timezonesets} "${PG_ROOTFS}/usr/share/postgresql"
-						;;
-
-						10|11)
-							mkdir -p "${PG_ROOTFS}/usr/share/postgresql"
-							cp -raP /usr/share/postgresql/timezonesets "${PG_ROOTFS}/usr/share/postgresql"
-						;;
-					esac
-				fi
-			fi
+			psql_create_old_rootfs
 
 			if psql_is_migration; then
 				log-init "migrating PostgreSQL ${PG_OLD_VERSION} data to ${PG_VERSION_SLUG}..."
