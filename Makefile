@@ -128,6 +128,7 @@ run: run-vars ## Run the container
 		-e PL_PERL=true \
 		-e PL_PYTHON=true \
 		-e PL_TCL=true \
+		-e PG_MIGRATE_OLD_DATA_REMOVE=true \
 		-v $(DATA_DIR):/config \
 		--interactive \
 		--tty \
