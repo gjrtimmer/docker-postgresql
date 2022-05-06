@@ -106,10 +106,17 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 					cp -raP "${PG_COMMAND}" "${PG_ROOTFS}/usr/bin"
 					cp -raP /usr/lib/* "${PG_ROOTFS}/usr/lib"
 
-					if (( "${PG_VERSION_MAJOR}" == 9 )); then
-						mkdir -p "${PG_ROOTFS}/usr/share/postgresql"
-						cp -raP /usr/share/postgresql/{timezone,timezonesets} "${PG_ROOTFS}/usr/share/postgresql"
-					fi
+					case "${PG_VERSION_MAJOR}" in
+						9)
+							mkdir -p "${PG_ROOTFS}/usr/share/postgresql"
+							cp -raP /usr/share/postgresql/{timezone,timezonesets} "${PG_ROOTFS}/usr/share/postgresql"
+						;;
+
+						10)
+							mkdir -p "${PG_ROOTFS}/usr/share/postgresql"
+							cp -raP /usr/share/postgresql/timezonesets "${PG_ROOTFS}/usr/share/postgresql"
+						;;
+					esac
 				fi
 			fi
 
