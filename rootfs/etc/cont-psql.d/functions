@@ -333,9 +333,12 @@ psql_determine_migration_required() {
 		# Migration is required
 		# Enable migration
 
+		PG_OLD_VERSION_MAJOR=$(echo "${PG_OLD_VERSION}" | cut -d '.' -f 1)
+
 		log-init "entering migration mode"
 		printf "1" > /var/run/s6/container_environment/PG_MIGRATION
 		printf "%s" "${PG_OLD_VERSION}" > /var/run/s6/container_environment/PG_OLD_VERSION
+		printf "%s" "${PG_OLD_VERSION_MAJOR}" > /var/run/s6/container_environment/PG_OLD_VERSION_MAJOR
 	fi
 }
 
