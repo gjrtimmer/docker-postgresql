@@ -31,6 +31,22 @@ if psql_is_migration; then
   log-init "exiting migration mode"
   rm /var/run/s6/container_environment/PG_MIGRATION
   rm /var/run/s6/container_environment/PG_OLD_VERSION
+
+  # Cleanup backup if enabled
+  if is_enabled "${PG_MIGRATE_DATA_BACKUP_CLEANUP}"; then
+    BACKUP_DIR="${PG_HOME}/${PG_OLD_VERSION}.backup"
+
+    log-init "Removing backup directory: ${BACKUP_DIR}"
+    rm -rf "${BACKUP_DIR}"
+  fi
+
+  # Cleanup old data if enabled
+  if is_enabled "${PG_MIGRATE_OLD_DATA_REMOVE}"; then
+    PG_OLD_DATADIR="${PG_HOME}/${PG_OLD_VERSION}"
+
+    log-init "Removing old data directory: ${PG_OLD_DATADIR}"
+    rm -rf "${PG_OLD_DATADIR}"
+  fi
 fi
 
 # EOF

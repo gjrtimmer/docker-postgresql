@@ -481,10 +481,12 @@ Complete overview of all supported environment variables. The environment variab
 
 ### Migration Configuration
 
-| ENVVAR                 | Default | Description                                                                         |
-| ---------------------- | ------- | ----------------------------------------------------------------------------------- |
-| PG_MIGRATE_DATA_BACKUP | on      | Create backup of previous PostgreSQL data before migration                          |
-| PG_MIGRATE_ANALYSE     | on      | Post run statistics generation to make database usable. Values: `on`, `off`, `fast` |
+| ENVVAR                        | Default | Description                                                                         |
+| ----------------------------- | ------- | ----------------------------------------------------------------------------------- |
+| PG_MIGRATE_DATA_BACKUP        | off     | Create backup of previous PostgreSQL data before migration                          |
+| PG_MIGRATE_DATA_BACKUP_REMOVE | off     | Auto remove created additional backup                                               |
+| PG_MIGRATE_OLD_DATA_REMOVE    | off     | Auto remove old PostgreSQL data on succesfull migration                             |
+| PG_MIGRATE_ANALYSE            | on      | Post run statistics generation to make database usable. Values: `on`, `off`, `fast` |
 
 ## Error Exit Codes
 
