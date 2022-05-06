@@ -2,13 +2,13 @@
 # shellcheck shell=bash
 set -e
 
-# shellcheck source=../postgresql/functions
-source /etc/postgresql/functions
+# shellcheck source=../cont-psql.d/functions
+source /etc/cont-psql.d/functions
 
 # Load Environment Variables
 set -o allexport
-# shellcheck source=../postgresql/env-defaults
-. /etc/postgresql/env-defaults
+# shellcheck source=../cont-psql.d/env-defaults
+. /etc/cont-psql.d/env-defaults
 set +o allexport
 
 # Print Environment

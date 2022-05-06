@@ -14,7 +14,7 @@ exec_as_postgres() {
 }
 
 # shellcheck source=env-defaults
-source /etc/postgresql/env-defaults
+source /etc/cont-psql.d/env-defaults
 
 ## Set postgresql parameter
 # $1 key

@@ -13,18 +13,24 @@ RUN apk upgrade --update --no-cache && \
     shadow \
     sudo \
     tzdata \
-    postgresql \
-    postgresql-plperl \
-    postgresql-plperl-contrib \
-    postgresql-plpython3 \
-    postgresql-plpython3-contrib \
-    postgresql-pltcl \
-    postgresql-contrib \
-    pgtcl \
     rsync && \
     echo "abc ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/abc && \
     chmod 600 /etc/sudoers.d/abc && \
     sync
+
+RUN apk add --update --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/v3.10/main \
+    postgresql=11.12-r0 \
+    postgresql-client=11.12-r0 \
+    perl=5.28.3-r0 \
+    postgresql-plperl=11.12-r0 \
+    postgresql-plperl-contrib=11.12-r0 \
+    python3=3.7.10-r0 \
+    postgresql-plpython3=11.12-r0 \
+    postgresql-plpython3-contrib=11.12-r0 \
+    tcl=8.6.9-r0 \
+    postgresql-pltcl=11.12-r0 \
+    postgresql-contrib=11.12-r0 \
+    pgtcl
 
 
 # Runtime container

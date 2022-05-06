@@ -2,8 +2,8 @@
 # shellcheck shell=bash disable=SC1008
 set -e
 
-# shellcheck source=../postgresql/functions
-source /etc/postgresql/functions
+# shellcheck source=../cont-psql.d/functions
+source /etc/cont-psql.d/functions
 
 
 if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
@@ -109,7 +109,7 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 
 					if (( "${PG_VERSION_MAJOR}" == 9 )); then
 						mkdir -p "${PG_ROOTFS}/usr/share/postgresql"
-						cp -ravP /usr/share/postgresql/{timezone,timezonesets} "${PG_ROOTFS}/usr/share/postgresql"
+						cp -raP /usr/share/postgresql/{timezone,timezonesets} "${PG_ROOTFS}/usr/share/postgresql"
 					fi
 				fi
 			fi

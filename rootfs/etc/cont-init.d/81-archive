@@ -2,8 +2,8 @@
 # shellcheck shell=bash
 set -e
 
-# shellcheck source=../postgresql/functions
-source /etc/postgresql/functions
+# shellcheck source=../cont-psql.d/functions
+source /etc/cont-psql.d/functions
 
 # Archive Mode
 if is_enabled "${PG_ARCHIVE_MODE}"; then

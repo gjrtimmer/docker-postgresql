@@ -2,8 +2,8 @@
 # shellcheck shell=bash disable=SC1008
 set -e
 
-# shellcheck source=../postgresql/functions
-source /etc/postgresql/functions
+# shellcheck source=../cont-psql.d/functions
+source /etc/cont-psql.d/functions
 
 # Configure net-security
 case ${REPLICATION_MODE,,} in

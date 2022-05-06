@@ -2,8 +2,8 @@
 # shellcheck shell=bash disable=SC1008
 set -e
 
-# shellcheck source=../postgresql/functions
-source /etc/postgresql/functions
+# shellcheck source=../cont-psql.d/functions
+source /etc/cont-psql.d/functions
 
 # Check is migration is required
 psql_determine_migration_required

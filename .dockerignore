@@ -1,9 +1,16 @@
+.vscode
 data/
 examples/
 tmp/
+.git
+.gitaliases
 .gitattributes
 .gitignore
 .gitlab-ci.yml
+.shellcheckrc
+CONTRIBUTING.md
 CHANGELOG.md
 LICENSE
 README.md
+Makefile
+Makefile.help

@@ -4,8 +4,8 @@ set -e
 
 
 ################################################################################
-# shellcheck source=../../etc/postgresql/functions
-source /etc/postgresql/functions
+# shellcheck source=../../etc/cont-psql.d/functions
+source /etc/cont-psql.d/functions
 
 
 # Backup parameters

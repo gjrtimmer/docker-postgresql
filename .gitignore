@@ -26,6 +26,6 @@ examples/master-standby/standby-2/*
 !examples/master-standby/standby-1/.keep
 !examples/master-standby/standby-2/.keep
 
-
+.vscode/*.log
 examples/.env
 tmp/

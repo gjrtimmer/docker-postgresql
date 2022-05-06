@@ -18,7 +18,7 @@ RUN apk upgrade --update --no-cache && \
     chmod 600 /etc/sudoers.d/abc && \
     sync
 
-RUN apk add --repository=http://dl-cdn.alpinelinux.org/alpine/v3.6/main \
+RUN apk add --update --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/v3.6/main \
     postgresql=9.6.13-r0 \
     postgresql-client=9.6.13-r0 \
     perl=5.24.4-r2 \

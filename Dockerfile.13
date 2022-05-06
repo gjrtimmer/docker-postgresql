@@ -14,6 +14,12 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repos
     shadow \
     sudo \
     tzdata \
+    rsync && \
+    echo "abc ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/abc && \
+    chmod 600 /etc/sudoers.d/abc && \
+    sync
+
+RUN apk add --update --no-cache \
     postgresql13 \
     postgresql13-plperl \
     postgresql13-plperl-contrib \
@@ -22,11 +28,7 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repos
     postgresql13-pltcl \
     postgresql13-contrib \
     postgresql13-jit \
-    pgtcl \
-    rsync && \
-    echo "abc ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/abc && \
-    chmod 600 /etc/sudoers.d/abc && \
-    sync
+    pgtcl
 
 
 # Runtime container
