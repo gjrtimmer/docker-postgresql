@@ -117,7 +117,7 @@ run: run-vars ## Run the container
 	@mkdir -p ${PWD}/data
 	@docker run \
 		--rm \
-		--name psql-test-9$(PSQL_VERSION) \
+		--name psql-test-$(PSQL_VERSION) \
 		--hostname psql \
 		-e TZ=Europe/Amsterdam \
 		-e PUID=$(PUID) \
