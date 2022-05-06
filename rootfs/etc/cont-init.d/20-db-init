@@ -57,8 +57,7 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 					BACKUP_DIR="${PG_HOME}/${PG_OLD_VERSION}.backup"
 					if [ ! -d "${BACKUP_DIR}" ]; then
 						log-init "creating backup"
-						mkdir -p "${BACKUP_DIR}"
-						rsync -ah --progress "${PG_HOME}/${PG_OLD_VERSION}" "${BACKUP_DIR}"
+						rsync -ah --progress "${PG_HOME}/${PG_OLD_VERSION}/" "${BACKUP_DIR}"
 					else
 						log-init "backup directory already exists"
 						exit 13
