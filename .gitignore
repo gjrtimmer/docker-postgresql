@@ -1,6 +1,7 @@
 # Exclude PSQL data
 data/*
 !data/.keep
+data.bak/*
 
 # Exclude PSQL data from single example
 examples/single/data/*
