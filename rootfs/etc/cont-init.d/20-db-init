@@ -132,8 +132,9 @@ if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
 				else
 					PG_LIB_PATH="${PG_OLD_USRLIB}:/lib:/usr/local/lib:/usr/lib"
 				fi
+				cd "${PG_HOME}"
+				# TODO: Handle error of pg_upgrade
 				s6-setuidgid abc exec env LD_LIBRARY_PATH="${PG_LIB_PATH}" pg_upgrade "${PG_UPGRADE_PARAMS[@]}" > "${PG_LOG_DIR}/pg_upgrade-v${PG_OLD_VERSION}-v${PG_VERSION_SLUG}.log"
-				echo " [DONE]"
 			fi
 		;;
 	esac
