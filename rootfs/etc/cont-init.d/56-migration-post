@@ -8,6 +8,9 @@ source /etc/cont-psql.d/functions
 if psql_is_migration; then
   # Migration succesful
 
+  # Update the version in PG_VERSION_FULL for future migrations
+  psql_store_version
+
   # Generate statistics to make database usable
   if is_enabled "${PG_MIGRATE_ANALYSE}" || [ "${PG_MIGRATE_ANALYSE,,}" == "fast" ]; then
     if is_enabled "${PG_MIGRATE_ANALYSE}"; then
@@ -59,6 +62,13 @@ else
   # volume mount for the data we ensure that we will be creating the .rootfs
   # directory if required. This is to ensure a user can migrate easily from
   # on other install to this container.
+  #
+  # In this scenario we must also ensure that the PG_VERSION_FULL file is created.
+  #
+  if [[ ! -f ${PG_DATA_DIR}/PG_VERSION_FULL ]]; then
+    psql_store_version
+  fi
+
   psql_create_old_rootfs
 fi
 

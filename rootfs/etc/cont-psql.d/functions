@@ -327,6 +327,11 @@ psql_validate_db_name() {
 	fi
 }
 
+psql_store_version() {
+	log-init "storing postgresql version"
+	echo "${PG_VERSION_SLUG}" | s6-setuidgid abc tee "${PG_DATA_DIR}/PG_VERSION_FULL" > /dev/null 2>&1
+}
+
 psql_determine_migration_required() {
 	PG_OLD_VERSION=$(find "${PG_HOME}" -maxdepth 3 -name PG_VERSION_FULL -exec cat {} + 2>/dev/null | grep -o -E '[0-9]{1,2}\.[0-9]{1,2}' | grep -v "${PG_VERSION_SLUG}" | sort -n | head -n1)
 	if [[ -n ${PG_OLD_VERSION} ]]; then
@@ -352,9 +357,6 @@ psql_is_migration() {
 
 psql_create_old_rootfs() {
 	if (( "${PG_VERSION_MAJOR}" < 12 )); then
-		log-init "storing postgresql version"
-		echo "${PG_VERSION_SLUG}" | s6-setuidgid abc tee "${PG_DATA_DIR}/PG_VERSION_FULL" > /dev/null 2>&1
-
 		PG_ROOTFS="${PG_HOME}/${PG_VERSION_SLUG}/.rootfs"
 		if [ ! -d "${PG_ROOTFS}" ]; then
 			log-init "saving postgres for future upgrade"
