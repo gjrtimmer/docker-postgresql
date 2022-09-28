@@ -5,7 +5,7 @@ set -e
 ## Logging
 # $1 message
 log-init() {
-	s6-echo -- "[cont-init.d] ${0##*/}: $1"
+	s6-echo -- "cont-init: info: $1"
 }
 
 ## Execute command as PG_USER
