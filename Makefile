@@ -131,7 +131,6 @@ run: run-vars ## Run the container
 		-e PG_MIGRATE_OLD_DATA_REMOVE=true \
 		-v $(DATA_DIR):/config \
 		--interactive \
-		--tty \
 		$(IMAGE_NAME)
 
 
