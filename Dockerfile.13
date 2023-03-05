@@ -12,7 +12,7 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositori
     ca-certificates \
     coreutils \
     findutils \
-    util-linux-login \
+    shadow-login \
     sudo \
     tzdata \
     rsync && \

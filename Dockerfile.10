@@ -10,7 +10,7 @@ RUN apk upgrade --update --no-cache && \
     ca-certificates \
     coreutils \
     findutils \
-    util-linux-login \
+    shadow \
     sudo \
     tzdata \
     rsync && \
