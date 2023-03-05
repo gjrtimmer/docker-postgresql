@@ -3,8 +3,8 @@ ARG ALPINE_VERSION
 
 FROM ghcr.io/linuxserver/baseimage-alpine:${ALPINE_VERSION} as postgresql
 
-RUN apk upgrade --update --no-cache && \
-    apk add --update --no-cache \
+RUN apk upgrade --update --force-overwrite --no-cache && \
+    apk add --update --force-overwrite --no-cache \
     acl \
     bash \
     ca-certificates \
@@ -18,7 +18,7 @@ RUN apk upgrade --update --no-cache && \
     chmod 600 /etc/sudoers.d/abc && \
     sync
 
-RUN apk add --update --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/v3.10/main \
+RUN apk add --update --force-overwrite --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/v3.10/main \
     postgresql=11.12-r0 \
     postgresql-client=11.12-r0 \
     perl=5.28.3-r0 \

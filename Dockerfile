@@ -5,8 +5,8 @@ FROM ghcr.io/linuxserver/baseimage-alpine:${ALPINE_VERSION} as postgresql
 
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories && \
     echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
-    apk upgrade --update --no-cache && \
-    apk add --update --no-cache \
+    apk upgrade --update --force-overwrite --no-cache && \
+    apk add --update --force-overwrite --no-cache \
     acl \
     bash \
     ca-certificates \
@@ -20,7 +20,7 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositori
     chmod 600 /etc/sudoers.d/abc && \
     sync
 
-RUN apk add --update --no-cache \
+RUN apk add --update --force-overwrite --no-cache \
     postgresql \
     postgresql-plperl \
     postgresql-plperl-contrib \
