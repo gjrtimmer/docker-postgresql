@@ -3,7 +3,8 @@ ARG ALPINE_VERSION
 
 FROM ghcr.io/linuxserver/baseimage-alpine:${ALPINE_VERSION} as postgresql
 
-RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories && \
+    echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
     apk upgrade --update --no-cache && \
     apk add --update --no-cache \
     acl \
