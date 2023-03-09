@@ -1,7 +1,8 @@
 # Alpine version will define the postgresql version to be used
 ARG ALPINE_VERSION
+ARG DOCKER_PROXY
 
-FROM ghcr.io/linuxserver/baseimage-alpine:${ALPINE_VERSION} as postgresql
+FROM ${DOCKER_PROXY}/linuxserver/baseimage-alpine:${ALPINE_VERSION} as postgresql
 
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories && \
     echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \

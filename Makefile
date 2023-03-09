@@ -16,6 +16,7 @@ include $(PROJECTDIR)/Makefile.help
 PSQL_VERSION	:= $(or ${PSQL_VERSION},latest)
 ALPINE_VERSION 	:= $(or ${ALPINE_VERSION},latest)
 DOCKER_FILE 	:= $(or ${DOCKER_FILE},Dockerfile)
+DOCKER_PROXY	:= $(or ${DOCKER_PROXY_HOST},ghcr.io)
 IMAGE_NAME 		:= $(or ${DOCKER_IMAGE},postgres:$(PSQL_VERSION))
 
 ifeq ($(ALPINE_VERSION),latest)
@@ -53,6 +54,7 @@ build: build-vars ## Build the container
 		--build-arg VCS_REF="$(CI_COMMIT_SHORT_SHA)" \
 		--build-arg CI_PROJECT_URL="$(CI_PROJECT_URL)" \
 		--build-arg CI_PROJECT_NAME="postgresql" \
+		--build-arg DOCKER_PROXY="$(DOCKER_PROXY)" \
 		--file=$(DOCKER_FILE) \
 		--tag $(IMAGE_NAME) .
 
