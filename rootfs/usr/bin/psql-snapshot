@@ -49,14 +49,9 @@ if is_enabled "${PG_SNAPSHOT_VERBOSE}"; then
 fi
 
 # Configure Connection
-if is_enabled "${PG_SSL}"; then
-  # SSL/TLS Enabled
-  PARAMS+=(--dbname=TODO)
-else
-  PARAMS+=(--host="${REPLICATION_HOST}")
-  PARAMS+=(--port="${REPLICATION_PORT}")
-  PARAMS+=(--username="${REPLICATION_USER}")
-fi
+PARAMS+=(--host="${REPLICATION_HOST}")
+PARAMS+=(--port="${REPLICATION_PORT}")
+PARAMS+=(--username="${REPLICATION_USER}")
 
 log-init "generating snapshot of $REPLICATION_HOST..."
 s6-setuidgid abc exec env PGPASSWORD="${REPLICATION_PASS}" pg_basebackup "${PARAMS[@]}" || exit 61

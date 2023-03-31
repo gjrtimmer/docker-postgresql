@@ -275,8 +275,8 @@ psql_validate_certs() {
 			log-init "ERROR: SSL/TLS is enabled certificate key not found [${PG_CERTS_DIR}/server.key]"
 			exit 43
 		else
-			if [ "$(stat -c "%a" "${PG_CERTS_DIR}/server.key")" != "640" ]; then
-				log-init "invalid permissions for ${PG_CERTS_DIR}/server.key; expect: 640"
+			if [ "$(stat -c "%a" "${PG_CERTS_DIR}/server.key")" != "600" ]; then
+				log-init "invalid permissions for ${PG_CERTS_DIR}/server.key; expect: 600"
 				exit 44
 			fi
 		fi
