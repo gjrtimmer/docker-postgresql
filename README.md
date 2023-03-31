@@ -305,8 +305,8 @@ Complete overview of all supported environment variables. The environment variab
 > When a variable is listed in the overview with a default value like `off (BOOL)` it means its a boolean value
 > for turning on or off a certain feature. All accepted values are case-insensitive.
 >
-> The following values are accepted:
-> ON: `1`, `true`, `TRUE` `enable`, `ENABLE`, `enabled`, `ENABLED`, `on`, `ON`
+> The following values are accepted:\
+> ON: `1`, `true`, `TRUE` `enable`, `ENABLE`, `enabled`, `ENABLED`, `on`, `ON`\
 > OFF: `0`, `false`, `FALSE`, `disable`, `DISABLE`, `disabled`, `DISABLED`, `off`, `OFF`
 
 ### Container Configuration
