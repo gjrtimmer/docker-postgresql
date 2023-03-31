@@ -61,32 +61,32 @@ build: build-vars ## Build the container
 
 ################################################################################
 build-9: ## Build PostgreSQL:9
-	@$(MAKE) -f $(THIS) build PSQL_VERSION=9 ALPINE_VERSION=3.15 DOCKER_FILE=Dockerfile.9
+	@$(MAKE) -f $(THIS) build PSQL_VERSION=9 ALPINE_VERSION=3.17 DOCKER_FILE=Dockerfile.9
 
 
 ################################################################################
 build-10: ## Build PostgreSQL:10
-	@$(MAKE) -f $(THIS) build PSQL_VERSION=10 ALPINE_VERSION=3.15 DOCKER_FILE=Dockerfile.10
+	@$(MAKE) -f $(THIS) build PSQL_VERSION=10 ALPINE_VERSION=3.17 DOCKER_FILE=Dockerfile.10
 
 
 ################################################################################
 build-11: ## Build PostgreSQL:11
-	@$(MAKE) -f $(THIS) build PSQL_VERSION=11 ALPINE_VERSION=3.15 DOCKER_FILE=Dockerfile.11
+	@$(MAKE) -f $(THIS) build PSQL_VERSION=11 ALPINE_VERSION=3.17 DOCKER_FILE=Dockerfile.11
 
 
 ################################################################################
 build-12: ## Build PostgreSQL:12
-	@$(MAKE) -f $(THIS) build PSQL_VERSION=12 ALPINE_VERSION=3.15 DOCKER_FILE=Dockerfile.12
+	@$(MAKE) -f $(THIS) build PSQL_VERSION=12 ALPINE_VERSION=3.17 DOCKER_FILE=Dockerfile.12
 
 
 ################################################################################
 build-13: ## Build PostgreSQL:13
-	@$(MAKE) -f $(THIS) build PSQL_VERSION=13 ALPINE_VERSION=3.15 DOCKER_FILE=Dockerfile.13
+	@$(MAKE) -f $(THIS) build PSQL_VERSION=13 ALPINE_VERSION=3.17 DOCKER_FILE=Dockerfile.13
 
 
 ################################################################################
 build-14: ## Build PostgreSQL:14
-	@$(MAKE) -f $(THIS) build PSQL_VERSION=14 ALPINE_VERSION=3.15 DOCKER_FILE=Dockerfile.14
+	@$(MAKE) -f $(THIS) build PSQL_VERSION=14 ALPINE_VERSION=3.17 DOCKER_FILE=Dockerfile.14
 
 
 ################################################################################
