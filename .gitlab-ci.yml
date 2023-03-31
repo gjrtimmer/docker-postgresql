@@ -212,6 +212,17 @@ psql:latest:dockerhub:
     - main
     - schedules
 
+dockerhub:description:
+  stage: dockerhub
+  image: peterevans/dockerhub-description:3
+  variables:
+    DOCKERHUB_USERNAME: $DOCKERHUB_USER
+    DOCKERHUB_PASSWORD: $DOCKERHUB_PASS
+    DOCKERHUB_REPOSITORY: ${DOCKERHUB_NAMESPACE}/${CI_PROJECT_NAME}
+    README_FILEPATH: $CI_PROJECT_DIR/README.md
+  script:
+    - echo "Uploading Description"
+
 branches:
   extends: .build
   variables:
