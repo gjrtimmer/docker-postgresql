@@ -55,6 +55,7 @@ build: build-vars ## Build the container
 		--build-arg CI_PROJECT_URL="$(CI_PROJECT_URL)" \
 		--build-arg CI_PROJECT_NAME="postgresql" \
 		--build-arg DOCKER_PROXY="$(DOCKER_PROXY)" \
+		--build-arg PSQL_VERSION="$(PSQL_VERSION)" \
 		--file=$(DOCKER_FILE) \
 		--tag $(IMAGE_NAME) .
 

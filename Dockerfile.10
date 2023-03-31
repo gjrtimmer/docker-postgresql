@@ -43,6 +43,7 @@ ARG CI_PROJECT_URL
 ARG VCS_REF
 ARG DOCKER_IMAGE
 ARG ALPINE_VERSION
+ARG PSQL_VERSION
 
 ENV LANG='C' \
     MUSL_LOCPATH='C' \
@@ -70,6 +71,7 @@ LABEL \
     org.label-schema.vcs-ref=${VCS_REF} \
     org.label-schema.docker.image="${DOCKER_IMAGE}" \
     org.label-schema.alpine-version="${ALPINE_VERSION}" \
+    org.label-schema.postgresql-version="${PSQL_VERSION}" \
     org.label-schema.license=MIT
 
 
