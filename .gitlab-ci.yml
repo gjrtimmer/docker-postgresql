@@ -52,7 +52,7 @@ psql:9:
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:9
     DOCKERHUB_IMAGE: ${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${CI_PROJECT_NAME}:9
   only:
-    - master
+    - main
     - schedules
 
 psql:9:dockerhub:
@@ -62,7 +62,7 @@ psql:9:dockerhub:
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:9
     DOCKERHUB_IMAGE: ${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${CI_PROJECT_NAME}:9
   only:
-    - master
+    - main
     - schedules
 
 psql:10:
@@ -73,7 +73,7 @@ psql:10:
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:10
     DOCKERHUB_IMAGE: ${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${CI_PROJECT_NAME}:10
   only:
-    - master
+    - main
     - schedules
 
 psql:10:dockerhub:
@@ -83,7 +83,7 @@ psql:10:dockerhub:
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:10
     DOCKERHUB_IMAGE: ${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${CI_PROJECT_NAME}:10
   only:
-    - master
+    - main
     - schedules
 
 psql:11:
@@ -94,7 +94,7 @@ psql:11:
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:11
     DOCKERHUB_IMAGE: ${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${CI_PROJECT_NAME}:11
   only:
-    - master
+    - main
     - schedules
 
 psql:11:dockerhub:
@@ -104,7 +104,7 @@ psql:11:dockerhub:
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:11
     DOCKERHUB_IMAGE: ${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${CI_PROJECT_NAME}:11
   only:
-    - master
+    - main
     - schedules
 
 psql:12:
@@ -115,7 +115,7 @@ psql:12:
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:12
     DOCKERHUB_IMAGE: ${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${CI_PROJECT_NAME}:12
   only:
-    - master
+    - main
     - schedules
 
 psql:12:dockerhub:
@@ -125,7 +125,7 @@ psql:12:dockerhub:
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:12
     DOCKERHUB_IMAGE: ${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${CI_PROJECT_NAME}:12
   only:
-    - master
+    - main
     - schedules
 
 psql:13:
@@ -136,7 +136,7 @@ psql:13:
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:13
     DOCKERHUB_IMAGE: ${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${CI_PROJECT_NAME}:13
   only:
-    - master
+    - main
     - schedules
 
 psql:13:dockerhub:
@@ -146,7 +146,7 @@ psql:13:dockerhub:
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:13
     DOCKERHUB_IMAGE: ${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${CI_PROJECT_NAME}:13
   only:
-    - master
+    - main
     - schedules
 
 psql:14:
@@ -157,7 +157,7 @@ psql:14:
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:14
     DOCKERHUB_IMAGE: ${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${CI_PROJECT_NAME}:14
   only:
-    - master
+    - main
     - schedules
 
 psql:14:dockerhub:
@@ -167,7 +167,7 @@ psql:14:dockerhub:
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:14
     DOCKERHUB_IMAGE: ${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${CI_PROJECT_NAME}:14
   only:
-    - master
+    - main
     - schedules
 
 psql:latest:
@@ -179,7 +179,7 @@ psql:latest:
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:latest
     DOCKERHUB_IMAGE: ${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${CI_PROJECT_NAME}:latest
   only:
-    - master
+    - main
     - schedules
 
 psql:latest:dockerhub:
@@ -188,7 +188,7 @@ psql:latest:dockerhub:
   variables:
     DOCKERHUB_IMAGE: ${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${CI_PROJECT_NAME}:latest
   only:
-    - master
+    - main
     - schedules
 
 branches:
@@ -198,4 +198,4 @@ branches:
   only:
     - branches
   except:
-    - master
+    - main
