@@ -41,8 +41,12 @@ docker run --detach -p 5432:5432 gjrtimmer/postgresql:latest
 
 ## PostgreSQL Versions
 
-Currently this image supports the following PostgreSQL versions:
+Currently this repository supports the following PostgreSQL versions:
 
+- 9 (gjrtimmer/postgresql:9)
+- 10 (gjrtimmer/postgresql:10)
+- 11 (gjrtimmer/postgresql:11)
+- 12 (gjrtimmer/postgresql:12)
 - 13 (gjrtimmer/postgresql:13)
 - 14 (gjrtimmer/postgresql:14) (latest)
 
