@@ -48,7 +48,8 @@ Currently this repository supports the following PostgreSQL versions:
 - 11 (gjrtimmer/postgresql:11)
 - 12 (gjrtimmer/postgresql:12)
 - 13 (gjrtimmer/postgresql:13)
-- 14 (gjrtimmer/postgresql:14) (latest)
+- 14 (gjrtimmer/postgresql:14)
+- 15 (gjrtimmer/postgresql:15) (latest)
 
 The container is build upon alpine linux from linuxserver.
 
@@ -178,9 +179,9 @@ You can even provide sql init files for the main `postgres` database by simply p
 
 Extensions can be enabled through the `DB_EXTENSION` environment variables. Multiple extensions can be provided by separating them with a `,` comma. Currently the extensions are enabled for every database created with the `DB_NAME` variable.
 
-This container is shipped with the [postgres contrib module](https://www.postgresql.org/docs/14/contrib.html) which includes the following extensions.
+This container is shipped with the [postgres contrib module](https://www.postgresql.org/docs/15/contrib.html) which includes the following extensions.
 
-[More information about each extension can be found here](https://www.postgresql.org/docs/14/contrib.html).
+[More information about each extension can be found here](https://www.postgresql.org/docs/15/contrib.html).
 
 - adminpack
 - amcheck

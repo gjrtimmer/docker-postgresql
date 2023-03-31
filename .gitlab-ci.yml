@@ -170,6 +170,27 @@ psql:14:dockerhub:
     - main
     - schedules
 
+psql:15:
+  extends: .build
+  variables:
+    ALPINE_VERSION: "3.15"
+    DOCKER_FILE: Dockerfile.15
+    DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:15
+    DOCKERHUB_IMAGE: ${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${CI_PROJECT_NAME}:15
+  only:
+    - main
+    - schedules
+
+psql:15:dockerhub:
+  extends: .dockerhub
+  stage: dockerhub
+  variables:
+    DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:15
+    DOCKERHUB_IMAGE: ${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${CI_PROJECT_NAME}:15
+  only:
+    - main
+    - schedules
+
 psql:latest:
   extends: .build
   stage: latest

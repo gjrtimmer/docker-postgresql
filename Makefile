@@ -91,7 +91,12 @@ build-14: ## Build PostgreSQL:14
 
 
 ################################################################################
-all: build-9 build-10 build-11 build-12 build-13 build-14 build
+build-15: ## Build PostgreSQL:15
+	@$(MAKE) -f $(THIS) build PSQL_VERSION=15 ALPINE_VERSION=3.15 DOCKER_FILE=Dockerfile.15
+
+
+################################################################################
+all: build-9 build-10 build-11 build-12 build-13 build-14 build-15 build
 
 
 ################################################################################
@@ -168,6 +173,11 @@ run-14: build-14 ## Run PostgreSQL:14
 
 
 ################################################################################
+run-15: build-15 ## Run PostgreSQL:15
+	@$(MAKE) -f $(THIS) run PSQL_VERSION=15
+
+
+################################################################################
 # Create shell in container
 shell: ## Container Shell PostgreSQL:latest
 	@docker exec -it psql-test bash
@@ -210,6 +220,12 @@ shell-14: ## Container Shell PostgreSQL:14
 
 
 ################################################################################
+# Create shell in container
+shell-15: ## Container Shell PostgreSQL:15
+	@docker exec -it psql-test-15 bash
+
+
+################################################################################
 # Clean data directory
 clean: ## Clean
 	@sudo rm -rf $(CURDIR)/data/*
@@ -231,3 +247,6 @@ clean-13: ## Clean PostgreSQL:13
 
 clean-14: ## Clean PostgreSQL:14
 	@sudo rm -rf $(CURDIR)/data/14.*
+
+clean-15: ## Clean PostgreSQL:15
+	@sudo rm -rf $(CURDIR)/data/15.*
