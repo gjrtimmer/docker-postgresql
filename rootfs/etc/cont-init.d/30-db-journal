@@ -57,8 +57,6 @@ else
   set_postgresql_param "wal_keep_segments" "${PG_JOURNAL_WAL_KEEP_SEGMENTS}"
 fi
 
-set_postgresql_param "max_wal_senders" "${PG_JOURNAL_MAX_SENDERS}"
-
 if is_enabled "${PG_JOURNAL_WAL_LOG_HINTS}"; then
   set_postgresql_param "wal_log_hints" on
 else

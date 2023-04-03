@@ -404,7 +404,7 @@ Complete overview of all supported environment variables. The environment variab
 | PG_JOURNAL_WAL_SEGMENT_SIZE       | 16        | WAL Segment size in MB, acn only be changed when initializing database, also must be the same for standby servers                                                            |
 | PG_JOURNAL_WAL_LOG_HINTS          | on        | Enabled to allow `pg_rewind`                                                                                                                                                 |
 | PG_JOURNAL_WAL_BUFFERS            | 64MB      | PostgreSQL own default is 16MB, with `AUTO` it is based upon shared buffers, with 64MB it recommended                                                                        |
-| PG_JOURNAL_MAX_SENDERS            | 10        | Max WAL senders                                                                                                                                                              |
+| PG_JOURNAL_MAX_SENDERS            | 10        | Renamed to `REPLICATION_MAX_SENDERS`                                                                                                                                         |
 
 > **wal_level**
 >
@@ -415,14 +415,16 @@ Complete overview of all supported environment variables. The environment variab
 
 ### PostgreSQL Replication Configuration
 
-| ENVVAR              | Default  | Description                                               |
-| ------------------- | -------- | --------------------------------------------------------- |
-| REPLICATION_MODE    | `null`   | Replication mode. Values: `backup`, `snapshot`, `standby` |
-| REPLICATION_USER    | `null`   | Replication user                                          |
-| REPLICATION_PASS    | `null`   | Replication password                                      |
-| REPLICATION_HOST    | `null`   | Replication hostname of master                            |
-| REPLICATION_PORT    | 5432     | Replication port                                          |
-| REPLICATION_SSLMODE | `prefer` | Replication ssl mode                                      |
+| ENVVAR                  | Default  | Description                                               |
+| ----------------------- | -------- | --------------------------------------------------------- |
+| REPLICATION_MODE        | `null`   | Replication mode. Values: `backup`, `snapshot`, `standby` |
+| REPLICATION_USER        | `null`   | Replication user                                          |
+| REPLICATION_PASS        | `null`   | Replication password                                      |
+| REPLICATION_HOST        | `null`   | Replication hostname of master                            |
+| REPLICATION_PORT        | 5432     | Replication port                                          |
+| REPLICATION_SSLMODE     | `prefer` | Replication ssl mode                                      |
+| REPLICATION_MAX_SENDERS | 10       | Max WAL senders                                           |
+| REPLICATION_MAX_SLOTS   | 10       | Max replication slots                                     |
 
 ### Backup Configuration
 
