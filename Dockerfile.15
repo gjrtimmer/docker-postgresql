@@ -31,7 +31,8 @@ RUN apk add --update --force-overwrite --no-cache \
     postgresql15-contrib \
     postgresql15-jit \
     postgresql-pg_cron \
-    pgtcl
+    pgtcl \
+    ncurses-terminfo-base=6.4_p20230401-r0
 
 
 # Runtime container
