@@ -23,7 +23,6 @@ source /etc/cont-psql.d/env-defaults
 set_postgresql_param() {
 	local key=${1}
 	local value=${2}
-	local verbosity=${3:-verbose}
 
 	if [[ -n ${value} ]]; then
 		local current
@@ -31,9 +30,7 @@ set_postgresql_param() {
 
 		if [[ "${current}" != "${value}" ]]; then
 
-			if [[ ${verbosity} == verbose ]]; then
-				log-init "setting postgresql.conf parameter: ${key} = '${value}'"
-			fi
+			log-init "setting postgresql.conf parameter: ${key} = '${value}'"
 
 			# shellcheck disable=SC2001
 			value="$(echo "${value}" | sed 's|[&]|\\&|g')"
