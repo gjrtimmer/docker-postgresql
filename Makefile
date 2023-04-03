@@ -182,7 +182,7 @@ run-15: build-15 ## Run PostgreSQL:15
 ################################################################################
 # Create shell in container
 shell: ## Container Shell PostgreSQL:latest
-	@docker exec -it psql-test bash
+	@docker exec -it psql-test-latest bash
 
 
 ################################################################################
