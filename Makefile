@@ -92,7 +92,7 @@ build-14: ## Build PostgreSQL:14
 
 ################################################################################
 build-15: ## Build PostgreSQL:15
-	@$(MAKE) -f $(THIS) build PSQL_VERSION=15 ALPINE_VERSION=3.15 DOCKER_FILE=Dockerfile.15
+	@$(MAKE) -f $(THIS) build PSQL_VERSION=15 ALPINE_VERSION=3.17 DOCKER_FILE=Dockerfile.15
 
 
 ################################################################################
