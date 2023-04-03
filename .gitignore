@@ -30,3 +30,4 @@ examples/master-standby/standby-2/*
 .vscode/*.log
 examples/.env
 tmp/
+test.conf
