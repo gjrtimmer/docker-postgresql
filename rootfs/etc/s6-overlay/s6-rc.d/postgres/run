@@ -4,7 +4,7 @@ set -e
 
 
 ################################################################################
-# shellcheck source=../../cont-psql.d/functions
+# shellcheck source=../../../cont-psql.d/functions
 source /etc/cont-psql.d/functions
 
 
