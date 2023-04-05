@@ -24,17 +24,42 @@ set_postgresql_param() {
 	local key=${1}
 	local value=${2}
 
+	if [ "$(grep -c "${key}" "${PG_CONF}")" -eq 0 ]; then
+		echo "${key} = '${value//[&]/\\&}'" >> "${PG_CONF}"
+	fi
+
 	if [[ -n ${value} ]]; then
 		local current
 		current=$(s6-setuidgid abc sed -n -e "s/^\(${key} = '\)\([^ ']*\)\(.*\)$/\2/p" "${PG_CONF}")
 
 		if [[ "${current}" != "${value}" ]]; then
-
 			log-init "setting postgresql.conf parameter: ${key} = '${value}'"
+			s6-setuidgid abc sed -i "s|^[#]*[ ]*${key} = .*|${key} = '${value//[&]/\\&}'|" "${PG_CONF}"
+		fi
+	fi
+}
 
-			# shellcheck disable=SC2001
-			value="$(echo "${value}" | sed 's|[&]|\\&|g')"
-			s6-setuidgid abc sed -i "s|^[#]*[ ]*${key} = .*|${key} = '${value}'|" "${PG_CONF}"
+set_shared_libraries() {
+	local value=${1}
+
+	if [[ -n ${value} ]]; then
+		local current
+		current=$(s6-setuidgid abc sed -n -e "s/^\(shared_preload_libraries = '\)\([^ ']*\)\(.*\)$/\2/p" "${PG_CONF}")
+
+		if [ -z "${current}" ]; then
+			lib_list=()
+		else
+			lib_list=("${current//,/}")
+		fi
+
+		# shellcheck disable=SC2076
+		if [[ ! " ${lib_list[*]} " =~ "${value}" ]]; then
+			log-init "setting postgresql.conf parameter: shared_preload_libraries = '${value}'"
+
+			lib_list+=("${value//[&]/\\&}")
+			value=$(join_array , "${lib_list[@]}")
+
+			s6-setuidgid abc sed -i "s|^[#]*[ ]*shared_preload_libraries = .*|shared_preload_libraries = '${value}'|" "${PG_CONF}"
 		fi
 	fi
 }
@@ -148,6 +173,14 @@ is_least() {
 	done
 
 	echo "${ELM}"
+}
+
+join_array() {
+  local DELIM=${1-} FIELDS=${2-}
+
+  if shift 2; then
+    printf %s "$FIELDS" "${@/#/$DELIM}"
+  fi
 }
 
 ## Set container timezone

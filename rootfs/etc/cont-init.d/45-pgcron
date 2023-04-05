@@ -11,7 +11,7 @@ case ${REPLICATION_MODE,,} in
 	*)
 		if is_enabled "${PG_CRON}"; then
 			# Preload pg_cron shared libraries
-			set_postgresql_param "shared_preload_libraries" "pg_cron"
+			set_shared_libraries "pg_cron"
 
 			# Set pg_cron database
 			set_postgresql_param "cron.database_name" "${PG_CRON_DB}"
