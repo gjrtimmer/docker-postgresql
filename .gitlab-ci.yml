@@ -11,6 +11,10 @@ include:
   - project: templates/ci
     file: docker-hub.yml
 
+variables:
+  PUSH: "true"
+  DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:latest
+
 ################################################################################
 # Workflow
 workflow:
@@ -25,9 +29,15 @@ workflow:
       variables:
         RELEASE: "${CI_COMMIT_TAG}"
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      variables:
+        PUSH: "false"
+        DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_REF_SLUG}
     - if: "$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS"
       when: never
-    - if: "$CI_COMMIT_BRANCH"
+    - if: '$CI_COMMIT_BRANCH != "main"'
+      variables:
+        PUSH: "false"
+        DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_REF_SLUG}
     - when: always
 
 ################################################################################
@@ -36,10 +46,12 @@ workflow:
 .build:
   stage: build
   interruptible: true
-  variables:
-    DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:latest
-  script:
-    - make build push
+  script: |
+    if [ "${PUSH}" == "true" ]; then
+      make build push
+    else
+      make build
+    fi
 
 ################################################################################
 # Job Configuration
@@ -51,9 +63,6 @@ psql:9:
     DOCKER_FILE: Dockerfile.9
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:9
     DOCKERHUB_IMAGE: ${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${CI_PROJECT_NAME}:9
-  only:
-    - main
-    - schedules
 
 psql:9:dockerhub:
   extends: .dockerhub
@@ -72,9 +81,6 @@ psql:10:
     DOCKER_FILE: Dockerfile.10
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:10
     DOCKERHUB_IMAGE: ${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${CI_PROJECT_NAME}:10
-  only:
-    - main
-    - schedules
 
 psql:10:dockerhub:
   extends: .dockerhub
@@ -93,9 +99,6 @@ psql:11:
     DOCKER_FILE: Dockerfile.11
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:11
     DOCKERHUB_IMAGE: ${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${CI_PROJECT_NAME}:11
-  only:
-    - main
-    - schedules
 
 psql:11:dockerhub:
   extends: .dockerhub
@@ -114,9 +117,6 @@ psql:12:
     DOCKER_FILE: Dockerfile.12
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:12
     DOCKERHUB_IMAGE: ${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${CI_PROJECT_NAME}:12
-  only:
-    - main
-    - schedules
 
 psql:12:dockerhub:
   extends: .dockerhub
@@ -135,9 +135,6 @@ psql:13:
     DOCKER_FILE: Dockerfile.13
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:13
     DOCKERHUB_IMAGE: ${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${CI_PROJECT_NAME}:13
-  only:
-    - main
-    - schedules
 
 psql:13:dockerhub:
   extends: .dockerhub
@@ -156,9 +153,6 @@ psql:14:
     DOCKER_FILE: Dockerfile.14
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:14
     DOCKERHUB_IMAGE: ${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${CI_PROJECT_NAME}:14
-  only:
-    - main
-    - schedules
 
 psql:14:dockerhub:
   extends: .dockerhub
@@ -177,9 +171,6 @@ psql:15:
     DOCKER_FILE: Dockerfile.15
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:15
     DOCKERHUB_IMAGE: ${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${CI_PROJECT_NAME}:15
-  only:
-    - main
-    - schedules
 
 psql:15:dockerhub:
   extends: .dockerhub
@@ -199,9 +190,6 @@ psql:latest:
     DOCKER_FILE: Dockerfile
     DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:latest
     DOCKERHUB_IMAGE: ${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${CI_PROJECT_NAME}:latest
-  only:
-    - main
-    - schedules
 
 psql:latest:dockerhub:
   extends: .dockerhub
@@ -220,14 +208,8 @@ dockerhub:description:
     DOCKERHUB_PASSWORD: $DOCKERHUB_PASS
     DOCKERHUB_REPOSITORY: ${DOCKERHUB_NAMESPACE}/${CI_PROJECT_NAME}
     README_FILEPATH: $CI_PROJECT_DIR/README.md
+  only:
+    - main
+    - schedules
   script:
     - echo "Uploading Description"
-
-branches:
-  extends: .build
-  variables:
-    DOCKER_IMAGE: ${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_REF_SLUG}
-  only:
-    - branches
-  except:
-    - main
