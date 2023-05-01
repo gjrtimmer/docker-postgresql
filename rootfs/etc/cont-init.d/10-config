@@ -2,34 +2,41 @@
 # shellcheck shell=bash
 set -e
 
-# shellcheck source=../cont-psql.d/functions
-source /etc/cont-psql.d/functions
+# shellcheck source=../cont-func.d/global
+source /etc/cont-func.d/global
 
 # Set container timezone
 container_set_timezone
 
-# Configure directories
+# Configure directories postgres
 psql_configure_data_dir
 psql_configure_log_dir
 psql_configure_run_dir
 psql_configure_certs_dir
 psql_configure_archive_dir
 
+# configure directories repmgr
+repmgr_configure_dir
+
 # Validate Configuration
 psql_validate_certs
 
-if [[ ! -f ${PG_DATA_DIR}/PG_VERSION ]]; then
-	case ${REPLICATION_MODE,,} in
-    standby)
+if ! psql_is_initialized; then
+  case ${REPLICATION_MODE,,} in
+    standby|repmgr-standby)
+      if repmgr_enabled; then
+        repmgr_validate_params
+      else
+        psql_validate_replicate_params
+      fi
+    ;;
+
+    snapshot|backup)
       psql_validate_replicate_params
     ;;
 
-    snapshot)
-      psql_validate_replicate_params
-    ;;
-
-    backup)
-      psql_validate_replicate_params
+    repmgr-witness)
+      # NO-OP
     ;;
 
     *)

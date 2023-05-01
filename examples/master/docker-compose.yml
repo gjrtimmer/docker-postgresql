@@ -24,7 +24,7 @@ services:
       REPLICATION_USER: replicator
       REPLICATION_PASS: replicator
       REPLICATION_MODE: master
-      PG_JOURNAL_MAX_SENDERS: 10
+      REPLICATION_MAX_SENDERS: 10
     networks:
       psql-playground:
         ipv4_address: 172.50.0.10

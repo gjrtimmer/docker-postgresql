@@ -1,17 +1,26 @@
 {
+    "editor.wordWrap": "off",
     "files.eol": "\n",
     "files.defaultLanguage": "shellscript",
     "files.associations": {
         "untitled-*": "shellscript",
-        "**/root/[!.]": "shellscript",
-        "**/hooks[!.]": "shellscript",
-        "config.env": "shellscript",
-        "deploy.env": "shellscript"
+        "**/rootfs[!.]": "shellscript"
     },
     "[shellscript]": {
         "files.eol": "\n",
         "editor.tabSize": 2,
         "editor.insertSpaces": true
+    },
+    "[markdown]": {
+        "editor.unicodeHighlight.ambiguousCharacters": false,
+        "editor.unicodeHighlight.invisibleCharacters": false,
+        "diffEditor.ignoreTrimWhitespace": false,
+        "editor.wordWrap": "off",
+        "editor.quickSuggestions": {
+            "comments": "off",
+            "strings": "off",
+            "other": "off"
+        }
     },
     "shellcheck.enable": true,
     "shellcheck.run": "onSave",
@@ -40,5 +49,18 @@
             "args": [],
             "icon": "terminal-ubuntu"
         }
-    }
+    },
+    "markdown.extension.toc.omittedFromToc": {
+        "README.md": [
+            "## Table of Contents"
+        ],
+        "docs/ENVIRONMENT.md": [
+            "## Table of Contents"
+        ],
+        "docs/DEVELOPMENT.md": [
+            "## Table of Contents"
+        ]
+    },
+    "markdown-mermaid.lightModeTheme": "default",
+    "markdown-mermaid.darkModeTheme": "dark"
 }

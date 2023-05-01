@@ -2,14 +2,16 @@
 # shellcheck shell=bash
 set -e
 
-# shellcheck source=../cont-psql.d/functions
-source /etc/cont-psql.d/functions
+# shellcheck source=../cont-func.d/global
+source /etc/cont-func.d/global
 
 # Archive Mode
-if is_enabled "${PG_ARCHIVE_MODE}"; then
-	set_postgresql_param "archive_mode" on
+if is_enabled "${PG_ARCHIVE_MODE}" || repmgr_enabled; then
+  log-init "archiving: enabled"
+  set_postgresql_param "archive_mode" on
 else
-	set_postgresql_param "archive_mode" off
+  log-init "archiving: disabled"
+  set_postgresql_param "archive_mode" off
 fi
 
 if [[ -n ${PG_ARCHIVE_COMMAND} ]]; then

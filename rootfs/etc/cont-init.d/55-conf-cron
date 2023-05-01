@@ -2,33 +2,35 @@
 # shellcheck shell=bash
 set -e
 
-# shellcheck source=../cont-psql.d/functions
-source /etc/cont-psql.d/functions
+# shellcheck source=../cont-func.d/global
+source /etc/cont-func.d/global
 
 # Create replication user on master
 case ${REPLICATION_MODE,,} in
-	standby|backup)
-		log-init "skipping due to replication mode = ${REPLICATION_MODE,,}"
-	;;
+  standby|backup|repmgr-witness|repmgr-standby)
+    log-init "skipping due to replication mode = ${REPLICATION_MODE,,}"
+  ;;
 
-	*)
-		# Check if supported version
-		if (( "${PG_VERSION_MAJOR}" >= 13 )); then
-			# Check is database is ready to accept operations
-			is_db_ready_socket
+  *)
+    if ! repmgr_enabled_standby; then
+      # Check if supported version
+      if (( "${PG_VERSION_MAJOR}" >= 13 )); then
+        # Check is database is ready to accept operations
+        is_db_ready_socket 0
 
-			if is_enabled "${PG_CRON}"; then
-				log-init "loading cron scheduler extension"
-				psql -U "${PG_USER}" -c "CREATE EXTENSION IF NOT EXISTS pg_cron;" >/dev/null 2>&1
+        if is_enabled "${PG_CRON}"; then
+          log-init "loading cron scheduler extension"
+          psql -U "${PG_USER}" -c "CREATE EXTENSION IF NOT EXISTS pg_cron;" >/dev/null 2>&1
 
-				if [[ -n ${DB_USER} ]]; then
-					log-init "granting cron access to ${DB_USER} user..."
-					QRY_GRANT_ACCESS="$(printf "GRANT USAGE ON SCHEMA cron TO %s;" "${DB_USER}")"
-					psql -U "${PG_USER}" -c "${QRY_GRANT_ACCESS}" >/dev/null
-				fi
-			fi
-		fi
-	;;
+          if [[ -n ${DB_USER} ]]; then
+            log-init "granting cron access to ${DB_USER} user..."
+            QRY_GRANT_ACCESS="$(printf "GRANT USAGE ON SCHEMA cron TO %s;" "${DB_USER}")"
+            psql -U "${PG_USER}" -c "${QRY_GRANT_ACCESS}" >/dev/null
+          fi
+        fi
+      fi
+    fi
+  ;;
 esac
 
 # EOF

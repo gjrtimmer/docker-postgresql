@@ -2,8 +2,8 @@
 # shellcheck shell=bash disable=SC1008
 set -e
 
-# shellcheck source=../cont-psql.d/functions
-source /etc/cont-psql.d/functions
+# shellcheck source=../cont-func.d/global
+source /etc/cont-func.d/global
 
 # start postgres server internally for the creation of users and databases
 rm -rf "${PG_DATA_DIR}/postmaster.pid"
@@ -11,7 +11,7 @@ chmod 0700 -R "${PG_DATA_DIR}"
 set_postgresql_param "listen_addresses" "127.0.0.1" quiet
 
 case ${REPLICATION_MODE,,} in
-  standby|backup)
+  standby|backup|repmgr-standby)
     log-init "skipping due to replication mode = ${REPLICATION_MODE,,}"
   ;;
 

@@ -2,44 +2,46 @@
 # shellcheck shell=bash
 set -e
 
-# shellcheck source=../cont-psql.d/functions
-source /etc/cont-psql.d/functions
+# shellcheck source=../cont-func.d/global
+source /etc/cont-func.d/global
 
 # Create extensions in database
 if [[ -n ${DB_NAME} ]]; then
-	case ${REPLICATION_MODE,,} in
-		standby|backup)
-			log-init "skipping due to replication mode = ${REPLICATION_MODE,,}"
-		;;
+  case ${REPLICATION_MODE,,} in
+    standby|backup|repmgr-witness|repmgr-standby)
+      log-init "skipping due to replication mode = ${REPLICATION_MODE,,}"
+    ;;
 
-		*)
-			# Check is database is ready to accept operations
-			is_db_ready_socket
+    *)
+      if ! repmgr_enabled_standby; then
+        # Check is database is ready to accept operations
+        is_db_ready_socket 0
 
-			# shellcheck disable=SC2013
-			for DATABASE in $(awk -F',' '{for (i = 1 ; i <= NF ; i++) print $i}' <<< "${DB_NAME}"); do
+        # shellcheck disable=SC2013
+        for DATABASE in $(awk -F',' '{for (i = 1 ; i <= NF ; i++) print $i}' <<< "${DB_NAME}"); do
 
-				# PL/Perl
-				if is_enabled "${PL_PERL}"; then
-					log-init "[${DATABASE}] loading language extension PL/Perl"
-					psql -U "${PG_USER}" -d "${DATABASE}" -c "CREATE EXTENSION IF NOT EXISTS plperlu;" >/dev/null 2>&1
-				fi
+          # PL/Perl
+          if is_enabled "${PL_PERL}"; then
+            log-init "[${DATABASE}] loading language extension PL/Perl"
+            psql -U "${PG_USER}" -d "${DATABASE}" -c "CREATE EXTENSION IF NOT EXISTS plperlu;" >/dev/null 2>&1
+          fi
 
-				# PL/Python
-				if is_enabled "${PL_PYTHON}"; then
-					log-init "[${DATABASE}] loading language extension PL/Python"
-					psql -U "${PG_USER}" -d "${DATABASE}" -c "CREATE EXTENSION IF NOT EXISTS plpython3u;" >/dev/null 2>&1
-				fi
+          # PL/Python
+          if is_enabled "${PL_PYTHON}"; then
+            log-init "[${DATABASE}] loading language extension PL/Python"
+            psql -U "${PG_USER}" -d "${DATABASE}" -c "CREATE EXTENSION IF NOT EXISTS plpython3u;" >/dev/null 2>&1
+          fi
 
-				# PL/Tcl
-				if is_enabled "${PL_TCL}"; then
-					log-init "[${DATABASE}] loading language extension PL/Tcl"
-					psql -U "${PG_USER}" -d "${DATABASE}" -c "CREATE EXTENSION IF NOT EXISTS pltclu;" >/dev/null 2>&1
-				fi
+          # PL/Tcl
+          if is_enabled "${PL_TCL}"; then
+            log-init "[${DATABASE}] loading language extension PL/Tcl"
+            psql -U "${PG_USER}" -d "${DATABASE}" -c "CREATE EXTENSION IF NOT EXISTS pltclu;" >/dev/null 2>&1
+          fi
 
-			done
-		;;
-	esac
+        done
+      fi
+    ;;
+  esac
 fi
 
 # EOF

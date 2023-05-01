@@ -2,35 +2,35 @@
 # shellcheck shell=bash disable=SC1008
 set -e
 
-# shellcheck source=../cont-psql.d/functions
-source /etc/cont-psql.d/functions
+# shellcheck source=../cont-func.d/global
+source /etc/cont-func.d/global
 
 # Configure SSL/TLS
 if is_enabled "${PG_SSL}"; then
-	log-init "configuring SSL/TLS"
-	if [[ -f ${PG_CERTS_DIR}/server.crt && -f ${PG_CERTS_DIR}/server.key ]]; then
-		set_postgresql_param "ssl_cert_file" "${PG_CERTS_DIR}/server.crt"
-		set_postgresql_param "ssl_key_file" "${PG_CERTS_DIR}/server.key"
+  log-init "configuring SSL/TLS"
+  if [[ -f ${PG_CERTS_DIR}/server.crt && -f ${PG_CERTS_DIR}/server.key ]]; then
+    set_postgresql_param "ssl_cert_file" "${PG_CERTS_DIR}/server.crt"
+    set_postgresql_param "ssl_key_file" "${PG_CERTS_DIR}/server.key"
 
-		# TODO: UPDATE with switch
-		# Check for CA
-		# Either file:
-		#  root.crt
-		#  cacert.pem
-		if [[ -f ${PG_CERTS_DIR}/ca.crt ]]; then
-			if [ "$(stat -c "%a" "${PG_CERTS_DIR}/ca.crt")" != "644" ]; then
-				log-init "invalid permissions for ${PG_CERTS_DIR}/ca.key; expect: 644"
-				exit 45
-			fi
-			set_postgresql_param "ssl_ca_file" "${PG_CERTS_DIR}/ca.crt"
-		fi
-	fi
+    # TODO: UPDATE with switch
+    # Check for CA
+    # Either file:
+    #  root.crt
+    #  cacert.pem
+    if [[ -f ${PG_CERTS_DIR}/ca.crt ]]; then
+      if [ "$(stat -c "%a" "${PG_CERTS_DIR}/ca.crt")" != "644" ]; then
+        log-init "invalid permissions for ${PG_CERTS_DIR}/ca.key; expect: 644"
+        exit 45
+      fi
+      set_postgresql_param "ssl_ca_file" "${PG_CERTS_DIR}/ca.crt"
+    fi
+  fi
 
-	# Enabled SSL/TLS
-	set_postgresql_param "ssl" "on"
+  # Enabled SSL/TLS
+  set_postgresql_param "ssl" "on"
 else
-	# Disable SSl/TLS
-	set_postgresql_param "ssl" "off"
+  # Disable SSl/TLS
+  set_postgresql_param "ssl" "off"
 fi
 
 # EOF

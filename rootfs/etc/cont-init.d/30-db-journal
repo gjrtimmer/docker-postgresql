@@ -2,14 +2,23 @@
 # shellcheck shell=bash disable=SC1008
 set -e
 
-# shellcheck source=../cont-psql.d/functions
-source /etc/cont-psql.d/functions
+# shellcheck source=../cont-func.d/global
+source /etc/cont-func.d/global
 
 # Configure journal
 case "${PG_JOURNAL_WAL_LEVEL,,}" in
-  replica|minimal|logical)
+  replica|logical)
     set_postgresql_param "wal_level" "${PG_JOURNAL_WAL_LEVEL,,}"
   ;;
+  minimal)
+    if repmgr_enabled; then
+      log-init "repmgr: enabled; wal_level of replica|logical is required; overriding minimal with logical"
+      PG_JOURNAL_WAL_LEVEL="logical"
+    fi
+
+    set_postgresql_param "wal_level" "${PG_JOURNAL_WAL_LEVEL,,}"
+  ;;
+
 
   *)
     log-init "unsupported value for wal_level: ${PG_JOURNAL_WAL_LEVEL,,}"
@@ -30,7 +39,7 @@ esac
 
 case "${PG_JOURNAL_WAL_SYNCHRONOUS_COMMIT,,}" in
   on|off|true|false|0|1|local|remote_write|remote_apply)
-    set_postgresql_param "synchronous_commit"
+    set_postgresql_param "synchronous_commit" "${PG_JOURNAL_WAL_SYNCHRONOUS_COMMIT}"
   ;;
 
   *)

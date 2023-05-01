@@ -2,32 +2,32 @@
 # shellcheck shell=bash
 set -e
 
-# shellcheck source=../cont-psql.d/functions
-source /etc/cont-psql.d/functions
+# shellcheck source=../cont-func.d/global
+source /etc/cont-func.d/global
 
 # Create extensions in database
 if [[ -n ${DB_NAME} ]]; then
-	case ${REPLICATION_MODE,,} in
-		standby|backup)
-			log-init "skipping due to replication mode = ${REPLICATION_MODE,,}"
-		;;
+  case ${REPLICATION_MODE,,} in
+    standby|backup|repmgr-witness|repmgr-standby)
+      log-init "skipping due to replication mode = ${REPLICATION_MODE,,}"
+    ;;
 
-		snapshot|*)
-			# Check is database is ready to accept operations
-			is_db_ready_socket
+    snapshot|*)
+      # Check is database is ready to accept operations
+      is_db_ready_socket 0
 
-			# shellcheck disable=SC2013
-			for DATABASE in $(awk -F',' '{for (i = 1 ; i <= NF ; i++) print $i}' <<< "${DB_NAME}"); do
+      # shellcheck disable=SC2013
+      for DATABASE in $(awk -F',' '{for (i = 1 ; i <= NF ; i++) print $i}' <<< "${DB_NAME}"); do
 
-				# shellcheck disable=SC2013
-				for EXTENSION in $(awk -F',' '{for (i = 1 ; i <= NF ; i++) print $i}' <<< "${DB_EXTENSION}"); do
-					log-init "[${DATABASE}] loading ${EXTENSION} extension"
-					psql -U "${PG_USER}" -d "${DATABASE}" -c "CREATE EXTENSION IF NOT EXISTS ${EXTENSION};" >/dev/null 2>&1
-				done
+        # shellcheck disable=SC2013
+        for EXTENSION in $(awk -F',' '{for (i = 1 ; i <= NF ; i++) print $i}' <<< "${DB_EXTENSION}"); do
+          log-init "[${DATABASE}] loading ${EXTENSION} extension"
+          psql -U "${PG_USER}" -d "${DATABASE}" -c "CREATE EXTENSION IF NOT EXISTS ${EXTENSION};" >/dev/null 2>&1
+        done
 
-			done
-		;;
-	esac
+      done
+    ;;
+  esac
 fi
 
 # EOF

@@ -1,0 +1,17 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+set -e
+
+if [ ! -f "${HOME}/.bashrc" ]; then
+  cp /etc/default/skel/.bashrc "${HOME}/.bashrc"
+fi
+
+if [ ! -L /root/.bashrc ]; then
+  ln -s "${HOME}/.bashrc" /root/.bashrc
+fi
+
+if [ ! -f "${HOME}/.bash_aliases" ]; then
+  cp /etc/default/skel/.bash_aliases "${HOME}/.bash_aliases"
+fi
+
+# EOF

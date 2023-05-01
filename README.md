@@ -3,9 +3,12 @@
 Configurable PostgreSQL server with backup,snapshot,standby,hot standby,ssl/tls and much more easy configuration through environment variables.
 Including examples to get you started quickly.
 
+## Table of Contents
+
 - [Quick Start](#quick-start)
 - [PostgreSQL Versions](#postgresql-versions)
 - [Features](#features)
+- [Environment variables](#environment-variables)
 - [Timezone Configuration](#timezone-configuration)
 - [File Permissions](#file-permissions)
 - [Persistent Storage](#persistent-storage)
@@ -17,21 +20,7 @@ Including examples to get you started quickly.
 - [Creating a Backup](#creating-a-backup)
 - [Creating a Snapshot](#creating-a-snapshot)
 - [Creating a Standby Server](#creating-a-standby-server)
-- [Environment Variables](#environment-variables)
-  - [Container Configuration](#container-configuration)
-  - [PostgreSQL Global](#postgresql-global)
-  - [PostgreSQL Performance Configuration](#postgresql-performance-configuration)
-  - [PostgreSQL Archive Configuration](#postgresql-archive-configuration)
-  - [PostgreSQL Logging](#postgresql-logging)
-  - [PostgreSQL Journal Configuration](#postgresql-journal-configuration)
-  - [PostgreSQL Replication Configuration](#postgresql-replication-configuration)
-  - [Backup Configuration](#backup-configuration)
-  - [Snapshot Configuration](#snapshot-configuration)
-  - [Standby Configuration](#standby-configuration)
-  - [Database configuration](#database-configuration)
-  - [Extension Configuration](#extension-configuration)
-  - [Migration Configuration](#migration-configuration)
-- [Error Exit Codes](#error-exit-codes)
+- [Automatic failover / cluster management](#automatic-failover--cluster-management)
 
 ## Quick Start
 
@@ -59,22 +48,27 @@ The following are the key features, read the full documentation to understand ev
 
 | Feature                      | Description                                                                                                                  |
 | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| host file permissions        | Set data file permissions                                                                                                    |
-| backup                       | Easy backup your live running master node with a script or docker-compose file                                               |
-| snapshot                     | Create a snapshot of a server and then run it, very handy for developers whom need a clone of a running server to work local |
-| standby                      | Add standby nodes to your master                                                                                             |
-| hot standby                  | Add hot standby nodes to your master to allow read-only queries to your standby nodes                                        |
-| ssl/tls                      | Easy configure SSL/TLS through environment variable                                                                          |
-| automatic upgrade/migration  | Automatic database upgrade with migration to new version                                                                     |
-| create databases on startup  | Create multiple new databases on container startup                                                                           |
-| database template definition | Configure the database template to be used for creating new databases                                                        |
+| Host file permissions        | Set data file permissions                                                                                                    |
+| Backup                       | Easy backup your live running master node with a script or docker-compose file                                               |
+| Snapshot                     | Create a snapshot of a server and then run it, very handy for developers whom need a clone of a running server to work local |
+| Standby                      | Add standby nodes to your master                                                                                             |
+| Hot Standby                  | Add hot standby nodes to your master to allow read-only queries to your standby nodes                                        |
+| TLS/SSL                      | Easy configure SSL/TLS through environment variable                                                                          |
+| Automatic upgrade/migration  | Automatic database upgrade with migration to new version                                                                     |
+| Create databases on startup  | Create multiple new databases on container startup                                                                           |
+| Database template definition | Configure the database template to be used for creating new databases                                                        |
 | Database initialization      | Initialize databases on startup with SQL, including support for different SQL files per database                             |
 | Extension support            | Load extensions into databases through environment variables                                                                 |
 | PL/Perl                      | PL/Perl Language support                                                                                                     |
 | PL/Python                    | PL/Python Language support                                                                                                   |
 | PL/TCL                       | PL/TCL Language support                                                                                                      |
 | pg_cron                      | Enable PG_CRON database scheduler for database cron jobs                                                                     |
-| performance configuration    | Performance configuration through environment variables                                                                      |
+| Performance configuration    | Performance configuration through environment variables                                                                      |
+| Automatic cluster management | Automatic cluster management with `repmgr`                                                                                   |
+
+## Environment variables
+
+For a full list of features / environment variables, please look here [Environment Variables](docs/ENVIRONMENT.md)
 
 ## Timezone Configuration
 
@@ -103,7 +97,7 @@ This container si based upon alpine linux from linuxserver. This means it comes 
 By default everything is stored in the mount point `/config`. In orer to configure persistent storage the `/config` mount point has to be
 mapped either to a volume or host directory.
 
-Some default storage locations can be configured with environment variables. For a complete list see [Environment Variables](#environment-variables).
+Some default storage locations can be configured with environment variables. For a complete list see [Environment Variables](docs/ENVIRONMENT.md).
 
 | ENVVAR         | Default                     | Description                     |
 | -------------- | --------------------------- | ------------------------------- |
@@ -126,7 +120,7 @@ This can be done by providing your own scripts in the `/config/custom-cont-init.
 Because this image is based upon the alpine linux base image from [linuxserver.io](https://linuxserver.io) its also possible to provide
 your own custom services within the container.
 
-Custom services can be placed in the `/config/custom-serviced.d` directory.
+Custom services can be placed in the `/config/custom-services.d` directory.
 
 ## Creating Databases
 
@@ -183,62 +177,7 @@ This container is shipped with the [postgres contrib module](https://www.postgre
 
 [More information about each extension can be found here](https://www.postgresql.org/docs/15/contrib.html).
 
-- adminpack
-- amcheck
-- autoinc
-- bloom
-- btree_gin
-- btree_gist
-- citext
-- cube
-- dblink
-- dict_int
-- dict_xsyn
-- earthdistance
-- file_fdw
-- fuzzystrmatch
-- hstore
-- hstore_plperl
-- hstore_plperlu
-- hstore_plpython3u
-- insert_username
-- intagg
-- intarray
-- isn
-- lo
-- ltree
-- ltree_plpython3u
-- moddatetime
-- old_snapshot
-- pageinspect
-- pg_buffercache
-- pg_cron (Enabled with: PG_CRON)
-- pg_freespacemap
-- pg_prewarm
-- pg_stat_statements
-- pg_surgery
-- pg_trgm
-- pg_visibility
-- pgcrypto
-- pgrowlocks
-- pgstattuple
-- plperl
-- plperlu (Enabled with: PL_PERL)
-- plpgsql
-- plpython3u (Enabled with: PL_PYTHON)
-- pltcl
-- pltclu (Enabled with: PL_TCL)
-- postgres_fdw
-- refint
-- seg
-- sslinfo
-- tablefunc
-- tcn
-- tsm_system_rows
-- tsm_system_time
-- unaccent
-- uuid-ossp
-- xml2
+A full list of the extensions can be found here [Extension Overview](docs/EXTENSIONS.md)
 
 ## Creating a Backup
 
@@ -257,8 +196,8 @@ The backup container must be provided with the `REPLICATION_*` variables in orde
 To configure a backup container the following variables can be used.
 
 - `REPLICATION_MODE` must be set to `backup`
-- [REPLICATION_*](#postgresql-replication-configuration) (Mandatory)
-- [PG_BACKUP_*](#backup-configuration) (Optional)
+- [REPLICATION_*](docs/ENVIRONMENT.md#postgresql-replication-configuration) (Mandatory)
+- [PG_BACKUP_*](docs/ENVIRONMENT.md#backup-configuration) (Optional)
 
 See [examples/backup](examples/backup/) on how to use it.
 
@@ -278,8 +217,8 @@ The snapshot container must be provided with the `REPLICATION_*` variables in or
 To configure a snapshot container the following variables can be used.
 
 - `REPLICATION_MODE` must be set to `snapshot`
-- [REPLICATION_*](#postgresql-replication-configuration) (Mandatory)
-- [PG_SNAPSHOT_*](#snapshot-configuration) (Optional)
+- [REPLICATION_*](docs/ENVIRONMENT.md#postgresql-replication-configuration) (Mandatory)
+- [PG_SNAPSHOT_*](docs/ENVIRONMENT.md#snapshot-configuration) (Optional)
 
 See [examples/snapshot](examples/snapshot/) on how to use it.
 
@@ -294,227 +233,24 @@ The standby container must be provided with the `REPLICATION_*` variables in ord
 To configure a standby container the following variables can be used.
 
 - `REPLICATION_MODE` must be set to `standby`
-- [REPLICATION_*](#postgresql-replication-configuration) (Mandatory)
-- [PG_STANDBY_*](#standby-configuration) (Optional)
+- [REPLICATION_*](docs/ENVIRONMENT.md#postgresql-replication-configuration) (Mandatory)
+- [PG_STANDBY_*](docs/ENVIRONMENT.md#standby-configuration) (Optional)
 
 > If you want a `hot` standby server `PG_STANDBY_HOT` variable can be used.
 
 See [examples/master-standby](examples/master-standby/) on how to use it.
 
-## Environment Variables
+## Automatic failover / cluster management
 
-Complete overview of all supported environment variables. The environment variables are categorized in order to make the overview easier to read.
+This image provides [repmgr](https://repmgr.org/) as cluster manager for automatic cluster orchestration and cluster failover/management.
 
-> **Boolean Values**
+> **IMPORTANT**
 >
-> When a variable is listed in the overview with a default value like `off (BOOL)` it means its a boolean value
-> for turning on or off a certain feature. All accepted values are case-insensitive.
+> Please note that while `repmgr` can be used in production, the implementation within the image has not been fully tested.
+> Several dependecies for using `repmgr` like `SSH` access etc is still being implemented.
 >
-> The following values are accepted:\
-> ON: `1`, `true`, `TRUE` `enable`, `ENABLE`, `enabled`, `ENABLED`, `on`, `ON`\
-> OFF: `0`, `false`, `FALSE`, `disable`, `DISABLE`, `disabled`, `DISABLED`, `off`, `OFF`
+> Use at your own risk
 
-### Container Configuration
+`repmgr` can be enabled with the variable `REPMGR=enabled`.
 
-| ENVVAR | Default | Description                                                             |
-| ------ | ------- | ----------------------------------------------------------------------- |
-| TZ     | UTC     | Timezone configuration, use format `Europa/Amsterdam` for configuration |
-| PUID   | 1000    | Map user ownership to provided value                                    |
-| PGID   | 1000    | Map group ownership to provided value                                   |
-| HOME   | /config | Default volume                                                          |
-
-### PostgreSQL Global
-
-| ENVVAR                          | Default                        | Description                                                                        |
-| ------------------------------- | ------------------------------ | ---------------------------------------------------------------------------------- |
-| PG_HOME                         | /config/data                   | PostgreSQL home                                                                    |
-| PG_DATA_DIR                     | /config/data/{VERSION}/main    | PostgreSQL data directory                                                          |
-| PG_CERTS_DIR                    | /config/certs                  | Certificate directory                                                              |
-| PG_ARCHIVE_DIR                  | /config/archive                | Archive Directory (Volume Mount)                                                   |
-| PG_CONF                         | ${PG_DATA_DIR}/postgresql.conf | PostgreSQL configuration file                                                      |
-| PG_HBA_CONF                     | ${PG_DATA_DIR}/pg_hba.conf     | PostgreSQL HBA configuration file                                                  |
-| PG_IDENT_CONF                   | ${PG_DATA_DIR}/pg_ident.conf   | PostgreSQL IDENT configuration file                                                |
-| PG_TIMEOUT_STARTUP              | 60                             | Timeout for starting the PostgreSQL server                                         |
-| PG_TIMEOUT_SHUTDOWN             | 60                             | Timeout for stopping the PostgreSQL server                                         |
-| PG_READY_CONNECT_TIMEOUT        | 120                            | Timeout waiting for PostgreSQL server to be ready for connection while configuring |
-| PG_READY_CONNECT_MASTER_TIMEOUT | 60                             | Timeout waiting for connecting to master node                                      |
-| PG_SSL                          | off (BOOL)                     | Enable SSL/TLS                                                                     |
-| PG_USER                         | postgres                       | Root user                                                                          |
-| PG_PASS                         | postgres                       | Root password                                                                      |
-
-### PostgreSQL Performance Configuration
-
-| ENVVAR                      | Default | Description                                                                                                    |
-| --------------------------- | ------- | -------------------------------------------------------------------------------------------------------------- |
-| PG_MAX_CONNECTIONS          | AUTO    | Max Connections, if set to auto max connection will be calculated by GREATEST(4 x CORES, 100)                  |
-| PG_SHARED_BUFFERS           | 128MB   | Set shared buffers, default: 128MB; if set to `AUTO` it will be calculated based upon LEAST(RAM/2, 10GB)       |
-| PG_WORK_MEM                 | 4MB     | Work Memory, if set to `AUTO` it will be calculated based upon ((Total RAM - shared_buffers)/(16 x CPU cores)) |
-| PG_MAINTENANCE_WORK_MEM     | 64MB    | Maintenance Work Memory                                                                                        |
-| PG_EFFECTIVE_IO_CONCURRENCY | 1       | Effective IO Concurrency. Also accepts `SSD` as value, which it will then automatically set to `200`           |
-| PG_JOURNAL_WAL_COMPRESSION  | on      | Enabled, because on most servers IO is a greater bottleneck then CPU                                           |
-| PG_JOURNAL_WAL_LOG_HINTS    | on      | Enabled to allow `pg_rewind`                                                                                   |
-| PG_JOURNAL_WAL_BUFFERS      | 64MB    | PostgreSQL own default is 16MB, with `AUTO` it is based upon shared buffers, with 64MB it recommended          |
-
-### PostgreSQL Archive Configuration
-
-| ENVVAR                      | Default                    | Description                                                                               |
-| --------------------------- | -------------------------- | ----------------------------------------------------------------------------------------- |
-| PG_ARCHIVE_MODE             | on                         | Enable WAL archiving by default, only disable if you are never going to use WAL archiving |
-| PG_ARCHIVE_DIR              | /config/archive            | Archive Directory (Volume Mount)                                                          |
-| PG_ARCHIVE_COMMAND          | cp %p ${PG_ARCHIVE_DIR}/%f | Archive Command. By default will copy archive to $PG_ARCHIVE_DIR                          |
-| PG_ARCHIVE_COMPRESS         | off                        | Compress archive                                                                          |
-| PG_ARCHIVE_COMPRESS_COMMAND | gzip                       | Compress command; Values: `gzip`, `xz`                                                    |
-| PG_ARCHIVE_RESTORE_COMMAND  | cp ${PG_ARCHIVE_DIR}/%f %p | Archive restore command                                                                   |
-
-> **Restore Command**
->
-> The `restore_command` parameter is only supported from version 12+
-
-> **Important**
->
-> The archive compress variable works under the premise that the default archive and restore commands are used.
-> If you are providing your own custom command for archiving and restore, turn archive compress off and
-> include compression in your own command if so desired.
->
-> If archive compression is enabled the archive command is transformed into `gzip|xz < %p > ${PG_ARCHIVE_DIR}/%f`>
->
-> If archive compression is enabled the restore command is transformed into `gunzip < ${PG_ARCHIVE_DIR}/%f > %p`
-
-### PostgreSQL Logging
-
-| ENVVAR               | Default      | Description                      |
-| -------------------- | ------------ | -------------------------------- |
-| PG_LOG_DIR           | /config/logs | Log directory                    |
-| PG_LOG_COLLECTOR     | on (BOOL)    | Enable log collector             |
-| PG_LOG_FILE_MODE     | 0640         | Set file permission for log file |
-| PG_LOG_FILE_ROTATION | 1d           | Set log file rotation            |
-
-### PostgreSQL Journal Configuration
-
-| ENVVAR                            | Default   | Description                                                                                                                                                                  |
-| --------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| PG_JOURNAL_WAL_LEVEL              | logical   | WAL level configuration. Value: `replica`, `minimal`, `logical`                                                                                                              |
-| PG_JOURNAL_WAL_FSYNC              | on        | WAL fsync                                                                                                                                                                    |
-| PG_JOURNAL_WAL_SYNC_METHOD        | fdatasync | WAL sync method                                                                                                                                                              |
-| PG_JOURNAL_WAL_SYNCHRONOUS_COMMIT | on        | Synchronous commit: on, off, local, remote_write, remote_apply                                                                                                               |
-| PG_JOURNAL_WAL_FULL_PAGE_WRITES   | on        | Full page writes                                                                                                                                                             |
-| PG_JOURNAL_WAL_COMPRESSION        | on        | Enabled, because on most servers IO is a greater bottleneck then CPU                                                                                                         |
-| PG_JOURNAL_WAL_KEEP_SEGMENTS      | 32        | Amount of WAL segments to keep                                                                                                                                               |
-| PG_JOUNRAL_WAL_KEEP_SIZE          | 0         | Wal keep size (v13+) When set to `AUTO` it will calculate the correct value based upon the previous setting `PG_JOURNAL_WAL_KEEP_SEGMENTS` and `PG_JOURNAL_WAL_SEGMENT_SIZE` |
-| PG_JOURNAL_WAL_SEGMENT_SIZE       | 16        | WAL Segment size in MB, acn only be changed when initializing database, also must be the same for standby servers                                                            |
-| PG_JOURNAL_WAL_LOG_HINTS          | on        | Enabled to allow `pg_rewind`                                                                                                                                                 |
-| PG_JOURNAL_WAL_BUFFERS            | 64MB      | PostgreSQL own default is 16MB, with `AUTO` it is based upon shared buffers, with 64MB it recommended                                                                        |
-| PG_JOURNAL_MAX_SENDERS            | 10        | Renamed to `REPLICATION_MAX_SENDERS`                                                                                                                                         |
-
-> **wal_level**
->
-> Default WAL level is set to `logical` for this container. PostgreSQL defaults normally to `replica`.
->
-> Reason: The default is set to `logical` to allow easy migration through 'logical replication'. This will allow adding standby upgrade replication nodes to a existing master.
-> It was deemed more beneficial to change this parameter because the overhead does not outweigh the need to easy production database upgrades between versions.
-
-### PostgreSQL Replication Configuration
-
-| ENVVAR                  | Default  | Description                                               |
-| ----------------------- | -------- | --------------------------------------------------------- |
-| REPLICATION_MODE        | `null`   | Replication mode. Values: `backup`, `snapshot`, `standby` |
-| REPLICATION_USER        | `null`   | Replication user                                          |
-| REPLICATION_PASS        | `null`   | Replication password                                      |
-| REPLICATION_HOST        | `null`   | Replication hostname of master                            |
-| REPLICATION_PORT        | 5432     | Replication port                                          |
-| REPLICATION_SSLMODE     | `prefer` | Replication ssl mode                                      |
-| REPLICATION_MAX_SENDERS | 10       | Max WAL senders                                           |
-| REPLICATION_MAX_SLOTS   | 10       | Max replication slots                                     |
-
-### Backup Configuration
-
-| ENVVAR                       | Default                   | Description                                                                                                                                                                                                                                                                                                                    |
-| ---------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| PG_BACKUP_FORMAT             | plain                     | Backup format. Values: `plain`, `tar`                                                                                                                                                                                                                                                                                          |
-| PG_BACKUP_WAL_DIR            | `null`                    | Location for the WAL files                                                                                                                                                                                                                                                                                                     |
-| PG_BACKUP_RATE               | `null`                    | Maximum transfer rate to pull data from the master in kilobytes. This is used to not overload the master node when performing a backup. Use suffix `M` for rate in megabytes. Accepted values are between 32 kilobytes per second and 1024 megabytes per second.<br><br> Example 10 megabytes per second means `10M` as value. |
-| PG_BACKUP_TAR_COMPRESS       | off (BOOL)                | Compress backup if format is `tar`                                                                                                                                                                                                                                                                                             |
-| PG_BACKUP_TAR_COMPRESS_LEVEL | `0`                       | Provide compression level for backup if format is `tar`. Values: 0-9                                                                                                                                                                                                                                                           |
-| PG_BACKUP_LABEL              | pg_basebackup base backup | Provide backup label                                                                                                                                                                                                                                                                                                           |
-| PG_BACKUP_CHECKPOINT         | fast                      | Set checkpoint mode. Values: `fast`, `spread`                                                                                                                                                                                                                                                                                  |
-| PG_BACKUP_STATUS_INTERVAL    | 10                        | Set status interval in seconds                                                                                                                                                                                                                                                                                                 |
-| PG_BACKUP_VERBOSE            | off (BOOL)                | Set verbose logging level                                                                                                                                                                                                                                                                                                      |
-
-### Snapshot Configuration
-
-| ENVVAR                      | Default    | Description                                                                                                                                                                                                                                                                                                                    |
-| --------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| PG_SNAPSHOT_WAL_DIR         | `null`     | Location for the WAL files                                                                                                                                                                                                                                                                                                     |
-| PG_SNAPSHOT_RATE            | `null`     | Maximum transfer rate to pull data from the master in kilobytes. This is used to not overload the master node when performing a backup. Use suffix `M` for rate in megabytes. Accepted values are between 32 kilobytes per second and 1024 megabytes per second.<br><br> Example 10 megabytes per second means `10M` as value. |
-| PG_SNAPSHOT_CHECKPOINT      | fast       | Set checkpoint mode. Values: `fast`, `spread`                                                                                                                                                                                                                                                                                  |
-| PG_SNAPSHOT_STATUS_INTERVAL | 10         | Set status interval in seconds                                                                                                                                                                                                                                                                                                 |
-| PG_SNAPSHOT_VERBOSE         | off (BOOL) | Set verbose logging level                                                                                                                                                                                                                                                                                                      |
-
-### Standby Configuration
-
-| ENVVAR                         | Default    | Description                                                                                                                                                                                                                                                                                                                    |
-| ------------------------------ | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| PG_STANDBY_WAL_DIR             | `null`     | Location for the WAL files                                                                                                                                                                                                                                                                                                     |
-| PG_STANDBY_RATE                | `null`     | Maximum transfer rate to pull data from the master in kilobytes. This is used to not overload the master node when performing a backup. Use suffix `M` for rate in megabytes. Accepted values are between 32 kilobytes per second and 1024 megabytes per second.<br><br> Example 10 megabytes per second means `10M` as value. |
-| PG_STANDBY_CHECKPOINT          | fast       | Set checkpoint mode. Values: `fast`, `spread`                                                                                                                                                                                                                                                                                  |
-| PG_STANDBY_STATUS_INTERVAL     | 10         | Set status interval in seconds                                                                                                                                                                                                                                                                                                 |
-| PG_STANDBY_VERBOSE             | off (BOOL) | Set verbose logging level                                                                                                                                                                                                                                                                                                      |
-| PG_STANDBY_HOT                 | off (BOOL) | Enable hot standby                                                                                                                                                                                                                                                                                                             |
-| PG_STANDBY_MAX_ARCHIVE_DELAY   | 30s        | Standby max archive delay                                                                                                                                                                                                                                                                                                      |
-| PG_STANDBY_MAX_STREAMING_DELAY | 30s        | Stnadby max streaming delay                                                                                                                                                                                                                                                                                                    |
-
-### Database configuration
-
-| ENVVAR         | Default          | Description                                                         |
-| -------------- | ---------------- | ------------------------------------------------------------------- |
-| PG_INIT_DB_DIR | /config/initdb.d | Database initialization scripts                                     |
-| DB_NAME        | `null`           | Databases to be created, `,` comma seperated for multiple databases |
-| DB_USER        | `null`           | Database user for all created databases                             |
-| DB_PASS        | `null`           | Database password for all created databases                         |
-| DB_TEMPLATE    | template1        | Default database template                                           |
-
-### Extension Configuration
-
-| ENVVAR                     | Default    | Description                                         |
-| -------------------------- | ---------- | --------------------------------------------------- |
-| DB_EXTENSION               | `null`     | Database extensions loaded in the created databases |
-| PL_PERL                    | off (BOOL) | Enable PL/Perl language extension                   |
-| PL_PYTHON                  | off (BOOL) | Enable PL/Python language extension                 |
-| PL_TCL                     | off (BOOL) | Enable PL/Tcl language extensions                   |
-| PG_CRON                    | off (BOOL) | Enable pg_cron scheduler extension                  |
-| PG_CRON_DB                 | postgres   | Database to load pg_cron into                       |
-| PG_CRON_WORKERS_BACKGROUND | off (BOOL) | Enable pg_cron background workers                   |
-| PG_CRON_WORKERS_MAX        | 8          | Set maximum amount of pg_cron background workers    |
-
-### Migration Configuration
-
-| ENVVAR                        | Default | Description                                                                         |
-| ----------------------------- | ------- | ----------------------------------------------------------------------------------- |
-| PG_MIGRATE_DATA_BACKUP        | off     | Create backup of previous PostgreSQL data before migration                          |
-| PG_MIGRATE_DATA_BACKUP_REMOVE | off     | Auto remove created additional backup                                               |
-| PG_MIGRATE_OLD_DATA_REMOVE    | off     | Auto remove old PostgreSQL data on succesfull migration                             |
-| PG_MIGRATE_ANALYSE            | on      | Post run statistics generation to make database usable. Values: `on`, `off`, `fast` |
-
-## Error Exit Codes
-
-| Code | Description                                                                     | Resolution                                                              |
-| ---- | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| 10   | Failed to install old PostgreSQL version for data migration                     | TODO                                                                    |
-| 11   | Insufficient disk space available for migration                                 | Provide more disk space, it must have (db disk usage + 1Gb) available   |
-| 12   | Insufficient disk space available for migration and data backup                 | Provide more disk space, it must have ((db disk space usage * 2) + 1Gb) |
-| 13   | Backup directory already exists                                                 |                                                                         |
-| 15   | Required variable `DB_USER` not set                                             | Add environment variable DB_USER to container                           |
-| 16   | Required variable `DB_PASS` not set                                             | Add environment variable DB_PASS to container                           |
-| 17   | Required variable `DB_NAME` not set                                             | Add environment variable DB_NAME to container                           |
-| 18   | Required variable `REPLICATION_HOST` not set while `REPLICATION_MODE` is active | Add environment variable `REPLICATION_HOST` to container                |
-| 19   | Required variable `REPLICATION_USER` not set while `REPLICATION_MODE` is active | Add environment variable `REPLICATION_USER` to container                |
-| 20   | Required variable `REPLICATION_PASS` not set while `REPLICATION_MODE` is active | Add environment variable `REPLICATION_PASS` to container                |
-| 30   | Timeout while connecting to REPLICATION_HOST                                    | Ensure network connection to Replication Host van be established        |
-| 41   | Certificate not found `PG_CERTS_DIR/server.crt`                                 | Place certificate in correct path                                       |
-| 42   | Invalid permissions for `PG_CERTS_DIR/server.crt`                               | File permissions for server.crt needs to be set to `644`                |
-| 43   | Certificate not found `PG_CERTS_DIR/server.key`                                 | Place certificate in correct path                                       |
-| 44   | Invalid permissions for `PG_CERTS_DIR/server.key`                               | File permissions for server.key needs to be set to `640`                |
-| 50   | Backup completed succesfully                                                    | N.A.                                                                    |
-| 51   | Backup failed                                                                   | Check log file                                                          |
-| 52   | Invalid option for PG_BACKUP_FORMAT                                             | Valid options: `plain` or `tar`                                         |
-| 61   | Snapshot failed                                                                 | Check logfile                                                           |
+For more configuration options for `repmgr` see the [REPMGR Configuration](docs/REPMGR.md#repmgr-configuration).

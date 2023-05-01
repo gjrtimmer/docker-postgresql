@@ -27,6 +27,17 @@ examples/master-standby/standby-2/*
 !examples/master-standby/standby-1/.keep
 !examples/master-standby/standby-2/.keep
 
+# Exclude PSQL data from repmgr example
+examples/repmgr/psql-1/*
+examples/repmgr/psql-2/*
+examples/repmgr/psql-3/*
+examples/repmgr/psql-4/*
+!examples/repmgr/psql-1/.keep
+!examples/repmgr/psql-2/.keep
+!examples/repmgr/psql-3/.keep
+!examples/repmgr/psql-4/.keep
+
+# Global Project settings
 .vscode/*.log
 examples/.env
 tmp/

@@ -2,41 +2,43 @@
 # shellcheck shell=bash
 set -e
 
-# shellcheck source=../cont-psql.d/functions
-source /etc/cont-psql.d/functions
+# shellcheck source=../cont-func.d/global
+source /etc/cont-func.d/global
 
 # Configure DB_USER
 if [[ -n ${DB_USER} ]]; then
-	case ${REPLICATION_MODE,,} in
-		standby|snapshot|backup)
-			log-init "skipping due to replication mode = ${REPLICATION_MODE,,}"
-		;;
+  case ${REPLICATION_MODE,,} in
+    standby|snapshot|backup|repmgr-standby)
+      log-init "skipping due to replication mode = ${REPLICATION_MODE,,}"
+    ;;
 
-		*)
-			# Check is database is ready to accept operations
-			is_db_ready_socket
+    *)
+      if ! repmgr_enabled_standby; then
+        # Check is database is ready to accept operations
+        is_db_ready_socket 0
 
-			# Create default database user
-			log-init "creating database user: ${DB_USER}"
-			QRY_CHECK_USER="$(printf "SELECT 1 FROM pg_catalog.pg_user WHERE usename = '%s';" "${DB_USER}")"
-			if [[ -z $(psql -U "${PG_USER}" -Atc "${QRY_CHECK_USER}") ]]; then
-				QRY_CREATE_USER="$(printf "CREATE ROLE %s with LOGIN CREATEDB PASSWORD '%s';" "${DB_USER}" "${DB_PASS}")"
-				psql -U "${PG_USER}" -c "${QRY_CREATE_USER}" >/dev/null
-			fi
+        # Create default database user
+        log-init "creating database user: ${DB_USER}"
+        QRY_CHECK_USER="$(printf "SELECT 1 FROM pg_catalog.pg_user WHERE usename = '%s';" "${DB_USER}")"
+        if [[ -z $(psql -U "${PG_USER}" -Atc "${QRY_CHECK_USER}") ]]; then
+          QRY_CREATE_USER="$(printf "CREATE ROLE %s with LOGIN CREATEDB PASSWORD '%s';" "${DB_USER}" "${DB_PASS}")"
+          psql -U "${PG_USER}" -c "${QRY_CREATE_USER}" >/dev/null
+        fi
 
-			if [[ -n ${REPLICATION_USER} ]]; then
-				log-init "creating replication user: ${REPLICATION_USER}"
-				QRY_CHECK_REPLICATION_USER="$(printf "SELECT 1 FROM pg_catalog.pg_user WHERE usename = '%s'" "${REPLICATION_USER}")"
-				if [[ -z $(psql -U "${PG_USER}" -Atc "${QRY_CHECK_REPLICATION_USER}";) ]]; then
-					QRY_CREATE_REPLICATION_USER=$(printf "CREATE ROLE %s WITH REPLICATION LOGIN ENCRYPTED PASSWORD '%s';" "${REPLICATION_USER}" "${REPLICATION_PASS}")
-					psql -U "${PG_USER}" -c "${QRY_CREATE_REPLICATION_USER}" >/dev/null
-				fi
+        if [[ -n ${REPLICATION_USER} ]]; then
+          log-init "creating replication user: ${REPLICATION_USER}"
+          QRY_CHECK_REPLICATION_USER="$(printf "SELECT 1 FROM pg_catalog.pg_user WHERE usename = '%s'" "${REPLICATION_USER}")"
+          if [[ -z $(psql -U "${PG_USER}" -Atc "${QRY_CHECK_REPLICATION_USER}";) ]]; then
+            QRY_CREATE_REPLICATION_USER=$(printf "CREATE ROLE %s WITH REPLICATION LOGIN ENCRYPTED PASSWORD '%s';" "${REPLICATION_USER}" "${REPLICATION_PASS}")
+            psql -U "${PG_USER}" -c "${QRY_CREATE_REPLICATION_USER}" >/dev/null
+          fi
 
-				# Authorize REPLICATION_USER for host replication
-				set_hba_param "host replication ${REPLICATION_USER} 0.0.0.0/0 md5"
-			fi
-		;;
-	esac
+          # Authorize REPLICATION_USER for host replication
+          set_hba_param "host replication ${REPLICATION_USER} 0.0.0.0/0 md5"
+        fi
+      fi
+    ;;
+  esac
 fi
 
 # EOF

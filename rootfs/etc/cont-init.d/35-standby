@@ -2,30 +2,36 @@
 # shellcheck shell=bash disable=SC1008
 set -e
 
-# shellcheck source=../cont-psql.d/functions
-source /etc/cont-psql.d/functions
+# shellcheck source=../cont-func.d/global
+source /etc/cont-func.d/global
 
 # Configure Replication/standby mode
-if [[ ${REPLICATION_MODE,,} == standby ]]; then
-	log-init "configuring standby..."
+case ${REPLICATION_MODE,,} in
+  standby|repmgr-standby)
+    log-init "configuring standby..."
 
-	if [[ ! -f ${PG_STANDBY_SIGNAL} ]]; then
-		# initialize standby.signal
-		s6-setuidgid abc touch "${PG_STANDBY_SIGNAL}"
-	fi
+    if [[ ! -f ${PG_STANDBY_SIGNAL} ]] && ! repmgr_is_initialized; then
+      # initialize standby.signal
+      s6-setuidgid abc touch "${PG_STANDBY_SIGNAL}"
+    fi
 
-	# configure standby connection
-		set_postgresql_param "primary_conninfo" "host=${REPLICATION_HOST} port=${REPLICATION_PORT} user=${REPLICATION_USER} password=${REPLICATION_PASS} sslmode=${REPLICATION_SSLMODE}"
-		set_postgresql_param "max_standby_archive_delay" "${PG_STANDBY_MAX_ARCHIVE_DELAY}"
-		set_postgresql_param "max_standby_streaming_delay" "${PG_STANDBY_MAX_STREAMING_DELAY}"
+      # configure standby connection
+      set_postgresql_param "primary_conninfo" "host=${REPLICATION_HOST} port=${REPLICATION_PORT} user=${REPLICATION_USER} password=${REPLICATION_PASS} sslmode=${REPLICATION_SSLMODE}"
+      set_postgresql_param "max_standby_archive_delay" "${PG_STANDBY_MAX_ARCHIVE_DELAY}"
+      set_postgresql_param "max_standby_streaming_delay" "${PG_STANDBY_MAX_STREAMING_DELAY}"
 
-		if is_enabled "${PG_STANDBY_HOT}"; then
-			set_postgresql_param "hot_standby" "on"
-		fi
-
-else
-	# recovery.conf can only exist on a standby node, its existence otherwise causes problems
-	rm -rf "${PG_STANDBY_SIGNAL}"
-fi
+      if is_enabled "${PG_STANDBY_HOT}" || repmgr_enabled; then
+        set_postgresql_param "hot_standby" "on"
+      fi
+  ;;
+  *)
+    # recovery.conf can only exist on a standby node, its existence otherwise causes problems
+    # we ar eonly allowed to remove the standby signal if its not managed by repmgr
+    if ! repmgr_enabled; then
+      log-init "removing ${PG_STANDBY_SIGNAL}"
+      rm -rf "${PG_STANDBY_SIGNAL}"
+    fi
+  ;;
+esac
 
 # EOF

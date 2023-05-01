@@ -31,7 +31,10 @@ RUN apk add --update --force-overwrite --no-cache \
     postgresql-contrib \
     postgresql-jit \
     postgresql-pg_cron \
-    pgtcl
+    pgtcl \
+    repmgr \
+    repmgr-daemon && \
+    rm -rf /etc/repmgr.conf
 
 
 # Runtime container
@@ -56,7 +59,7 @@ HEALTHCHECK --interval=10s --timeout=5s --start-period=60s --retries=3 CMD [ "pg
 EXPOSE 5432/tcp
 
 WORKDIR ${HOME}
-VOLUME [ "${HOME}", "${HOME}/archive" ]
+VOLUME [ "${HOME}" ]
 
 COPY rootfs/ /
 

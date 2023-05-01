@@ -2,11 +2,11 @@
 # shellcheck shell=bash
 set -e
 
-# shellcheck source=../cont-psql.d/functions
-source /etc/cont-psql.d/functions
+# shellcheck source=../cont-func.d/global
+source /etc/cont-func.d/global
 
 case ${REPLICATION_MODE,,} in
-  standby|backup)
+  standby|backup|repmgr-standby)
     log-init "skipping due to replication mode = ${REPLICATION_MODE,,}"
   ;;
 

@@ -2,8 +2,8 @@
 # shellcheck shell=bash
 set -e
 
-# shellcheck source=../cont-psql.d/functions
-source /etc/cont-psql.d/functions
+# shellcheck source=../cont-func.d/global
+source /etc/cont-func.d/global
 
 if psql_is_migration; then
   # Migration succesful
@@ -48,9 +48,9 @@ if psql_is_migration; then
 
   # exit migration mode
   log-init "exiting migration mode"
-  rm /var/run/s6/container_environment/PG_MIGRATION
-  rm /var/run/s6/container_environment/PG_OLD_VERSION
-  rm /var/run/s6/container_environment/PG_OLD_VERSION_MAJOR
+  env_del PG_MIGRATION
+  env_del PG_OLD_VERSION
+  env_del PG_OLD_VERSION_MAJOR
 else
   # No migration
   #

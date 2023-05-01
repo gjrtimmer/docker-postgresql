@@ -1,0 +1,60 @@
+# Extensions
+
+List of available extensions:
+
+- adminpack
+- amcheck
+- autoinc
+- bloom
+- btree_gin
+- btree_gist
+- citext
+- cube
+- dblink
+- dict_int
+- dict_xsyn
+- earthdistance
+- file_fdw
+- fuzzystrmatch
+- hstore
+- hstore_plperl
+- hstore_plperlu
+- hstore_plpython3u
+- insert_username
+- intagg
+- intarray
+- isn
+- lo
+- ltree
+- ltree_plpython3u
+- moddatetime
+- old_snapshot
+- pageinspect
+- pg_buffercache
+- pg_cron (Enabled with: PG_CRON)
+- pg_freespacemap
+- pg_prewarm
+- pg_stat_statements
+- pg_surgery
+- pg_trgm
+- pg_visibility
+- pgcrypto
+- pgrowlocks
+- pgstattuple
+- plperl
+- plperlu (Enabled with: PL_PERL)
+- plpgsql
+- plpython3u (Enabled with: PL_PYTHON)
+- pltcl
+- pltclu (Enabled with: PL_TCL)
+- postgres_fdw
+- refint
+- seg
+- sslinfo
+- tablefunc
+- tcn
+- tsm_system_rows
+- tsm_system_time
+- unaccent
+- uuid-ossp
+- xml2

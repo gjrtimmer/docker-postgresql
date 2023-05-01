@@ -2,57 +2,56 @@
 #shellcheck shell=bash
 set -e
 
-# shellcheck source=../cont-psql.d/functions
-source /etc/cont-psql.d/functions
+# shellcheck source=../cont-func.d/global
+source /etc/cont-func.d/global
 
 # Create database
 if [[ -n ${DB_NAME} ]]; then
-	case ${REPLICATION_MODE,,} in
-		standby|snapshot|backup)
-			log-init "skipping due to replication mode = ${REPLICATION_MODE,,}"
-		;;
+  case ${REPLICATION_MODE,,} in
+    standby|snapshot|backup|repmgr-witness|repmgr-standby)
+      log-init "skipping due to replication mode = ${REPLICATION_MODE,,}"
+    ;;
 
-		*)
-			# Check is database is ready to accept operations
-			is_db_ready_socket
+    *)
+      # Check is database is ready to accept operations
+      is_db_ready_socket 0
 
-			# shellcheck disable=SC2013
-			for DATABASE in $(awk -F',' '{for (i = 1 ; i <= NF ; i++) print $i}' <<< "${DB_NAME}"); do
-				log-init "creating database: ${DATABASE}..."
-				QRY_DB_EXISTS="$(printf "SELECT 1 FROM pg_catalog.pg_database WHERE datname = '%s';" "${DATABASE}")"
-				if [[ -z $(psql -U "${PG_USER}" -Atc "${QRY_DB_EXISTS}") ]]; then
-					QRY_DB_CREATE="$(printf "CREATE DATABASE \"%s\" WITH TEMPLATE = '%s';" "${DATABASE}" "${DB_TEMPLATE}")"
-					psql -U "${PG_USER}" -c "${QRY_DB_CREATE}" >/dev/null
-				fi
+      # shellcheck disable=SC2013
+      for DATABASE in $(awk -F',' '{for (i = 1 ; i <= NF ; i++) print $i}' <<< "${DB_NAME}"); do
+        log-init "creating database: ${DATABASE}..."
+        QRY_DB_EXISTS="$(printf "SELECT 1 FROM pg_catalog.pg_database WHERE datname = '%s';" "${DATABASE}")"
+        if [[ -z $(psql -U "${PG_USER}" -Atc "${QRY_DB_EXISTS}") ]]; then
+          QRY_DB_CREATE="$(printf "CREATE DATABASE \"%s\" WITH TEMPLATE = '%s';" "${DATABASE}" "${DB_TEMPLATE}")"
+          psql -U "${PG_USER}" -c "${QRY_DB_CREATE}" >/dev/null
+        fi
 
-				if [[ -n ${DB_USER} ]]; then
-					log-init "granting access to ${DB_USER} user..."
-					QRY_GRANT_ACCESS="$(printf "GRANT ALL PRIVILEGES ON DATABASE \"%s\" to %s;" "${DATABASE}" "${DB_USER}")"
-					psql -U "${PG_USER}" -c "${QRY_GRANT_ACCESS}" >/dev/null
-				fi
-			done
+        if [[ -n ${DB_USER} ]]; then
+          log-init "granting access to ${DB_USER} user..."
+          QRY_GRANT_ACCESS="$(printf "GRANT ALL PRIVILEGES ON DATABASE \"%s\" to %s;" "${DATABASE}" "${DB_USER}")"
+          psql -U "${PG_USER}" -c "${QRY_GRANT_ACCESS}" >/dev/null
+        fi
+      done
 
-			# Load Custom SQL files per database
-			# The format of the init.db.d directory must have its sql files
-			# seperated per database name
-			# init.db.d format: ${HOME}/init.db.d/<DATABASE>/*.sql
-			find "${PG_INIT_DB_DIR}/" -maxdepth 1 -type d -print0 | while read -r -d $'\0' DIR; do
-				DATABASE=$(basename "${DIR}")
-				for SQL in "${PG_INIT_DB_DIR}/${DB}"/*.sql; do
-					if [ -f "${SQL}" ]; then
-						BASENAME=$(basename "${SQL}")
-						QRY_DB_EXISTS="$(printf "SELECT 1 FROM pg_catalog.pg_database WHERE datname = '%s';" "${DATABASE}")"
+      # Load Custom SQL files per database
+      # The format of the init.db.d directory must have its sql files
+      # seperated per database name
+      # init.db.d format: ${HOME}/init.db.d/<DATABASE>/*.sql
+      find "${PG_INIT_DB_DIR}/" -maxdepth 1 -type d -print0 | while read -r -d $'\0' DIR; do
+        DATABASE=$(basename "${DIR}")
+        for SQL in "${PG_INIT_DB_DIR}/${DB}"/*.sql; do
+          if [ -f "${SQL}" ]; then
+            BASENAME=$(basename "${SQL}")
+            QRY_DB_EXISTS="$(printf "SELECT 1 FROM pg_catalog.pg_database WHERE datname = '%s';" "${DATABASE}")"
 
-						if [[ -n $(psql -U "${PG_USER}" -Atc "${QRY_DB_EXISTS}") ]]; then
-							log-init "executing [${BASENAME}] on database [${DATABASE}]"
-							psql --username "${PG_USER}" --dbname "${DATABASE}" --file "${SQL}"
-						fi
-					fi
-				done
-			done
-
-		;;
-	esac
+            if [[ -n $(psql -U "${PG_USER}" -Atc "${QRY_DB_EXISTS}") ]]; then
+              log-init "executing [${BASENAME}] on database [${DATABASE}]"
+              psql --username "${PG_USER}" --dbname "${DATABASE}" --file "${SQL}"
+            fi
+          fi
+        done
+      done
+    ;;
+  esac
 fi
 
 # EOF

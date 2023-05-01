@@ -1,0 +1,119 @@
+version: '3.9'
+
+networks:
+  psql-playground:
+    external: true
+
+services:
+  psql-1:
+    image: postgres:latest
+    container_name: psql-1
+    hostname: psql-1
+    restart: unless-stopped
+    environment:
+      TZ: Europe/Amsterdam
+      PUID: ${PUID}
+      PGID: ${PGID}
+      DB_USER: postgres
+      DB_PASS: postgres
+      DB_NAME: test
+      PG_CRON: enabled
+      REPLICATION_USER: replicator
+      REPLICATION_PASS: replicator
+      REPLICATION_MAX_SENDERS: 10
+      REPLICATION_MAX_SLOTS: 10
+      REPMGR: enabled
+      REPMGR_NODE_ID: 1
+      REPMGR_LOG_LEVEL: "INFO"
+      REPMGR_LOG_STATUS_INTERVAL: 300
+      REPMGR_USE_REPLICATION_SLOTS: enabled
+      REPMGR_NODE_NAME: psql-1
+    networks:
+      psql-playground:
+        ipv4_address: 172.50.0.31
+    ports:
+      - 5432:5432
+    volumes:
+      - ${PWD}/psql-1:/config
+
+  psql-2:
+    image: postgres:latest
+    container_name: psql-2
+    hostname: psql-2
+    restart: unless-stopped
+    environment:
+      TZ: Europe/Amsterdam
+      PUID: ${PUID}
+      PGID: ${PGID}
+      REPLICATION_USER: replicator
+      REPLICATION_PASS: replicator
+      REPLICATION_HOST: psql-1
+      REPLICATION_PORT: 5432
+      REPLICATION_MODE: repmgr-witness
+      REPMGR: enabled
+      REPMGR_NODE_ID: 2
+      REPMGR_LOG_LEVEL: "INFO"
+      REPMGR_LOG_STATUS_INTERVAL: 300
+      REPMGR_NODE_NAME: psql-2
+    networks:
+      psql-playground:
+        ipv4_address: 172.50.0.32
+    ports:
+      - 25432:5432
+    volumes:
+      - ${PWD}/psql-2:/config
+
+  psql-3:
+    image: postgres:latest
+    container_name: psql-3
+    hostname: psql-3
+    restart: unless-stopped
+    environment:
+      TZ: Europe/Amsterdam
+      PUID: ${PUID}
+      PGID: ${PGID}
+      REPLICATION_USER: replicator
+      REPLICATION_PASS: replicator
+      REPLICATION_HOST: psql-1
+      REPLICATION_PORT: 5432
+      REPLICATION_MODE: repmgr-standby
+      REPMGR: enabled
+      REPMGR_NODE_ID: 3
+      REPMGR_LOG_LEVEL: "INFO"
+      REPMGR_LOG_STATUS_INTERVAL: 300
+      REPMGR_NODE_NAME: psql-3
+      REPMGR_USE_REPLICATION_SLOTS: ENABLED
+    networks:
+      psql-playground:
+        ipv4_address: 172.50.0.33
+    ports:
+      - 35432:5432
+    volumes:
+      - ${PWD}/psql-3:/config
+
+  psql-4:
+    image: postgres:latest
+    container_name: psql-4
+    hostname: psql-4
+    restart: unless-stopped
+    environment:
+      TZ: Europe/Amsterdam
+      PUID: ${PUID}
+      PGID: ${PGID}
+      REPLICATION_USER: replicator
+      REPLICATION_PASS: replicator
+      REPLICATION_HOST: psql-1
+      REPLICATION_PORT: 5432
+      REPLICATION_MODE: repmgr-standby
+      REPMGR: enabled
+      REPMGR_NODE_ID: 4
+      REPMGR_LOG_LEVEL: "INFO"
+      REPMGR_LOG_STATUS_INTERVAL: 300
+      REPMGR_NODE_NAME: psql-4
+    networks:
+      psql-playground:
+        ipv4_address: 172.50.0.34
+    ports:
+      - 45432:5432
+    volumes:
+      - ${PWD}/psql-4:/config

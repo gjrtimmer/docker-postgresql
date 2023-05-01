@@ -4,13 +4,15 @@ set -e
 
 
 ################################################################################
-# shellcheck source=../../../cont-psql.d/functions
-source /etc/cont-psql.d/functions
+# shellcheck source=../../../cont-func.d/global
+source /etc/cont-func.d/global
 
+# Wait till database is ready
+is_db_ready 1
 
 ################################################################################
 # Start PostgreSQL
 # shellcheck disable=SC2086
-exec s6-setuidgid abc ${PG_COMMAND} -D "${PG_DATA_DIR}"
+exec s6-setuidgid abc repmgrd --verbose --daemonize=false --no-pid-file -f "${REPMGR_CONF}"
 
 # EOF

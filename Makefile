@@ -27,7 +27,7 @@ endif
 ################################################################################
 # Run variables
 PUID 			:= $(or ${PUID},1000)
-PGID 			:= $(or ${PGID},100)
+PGID 			:= $(or ${PGID},1000)
 DATA_DIR 		:= $(or ${DATA_DIR},$(CURDIR)/data)
 
 
@@ -138,6 +138,7 @@ run: run-vars ## Run the container
 		-e PL_TCL=true \
 		-e PG_CRON=true \
 		-e PG_MIGRATE_OLD_DATA_REMOVE=true \
+		-e REPMGR=true \
 		-p 5432:5432 \
 		-v $(DATA_DIR):/config \
 		--interactive \
@@ -252,3 +253,28 @@ clean-14: ## Clean PostgreSQL:14
 
 clean-15: ## Clean PostgreSQL:15
 	@sudo rm -rf $(CURDIR)/data/15.*
+
+clean-examples: clean-example-backup clean-example-master clean-example-master-standby clean-example-repmgr clean-example-single clean-example-snapshot ## Clean examples
+
+clean-example-backup: ## Clean example 'backup'
+	@sudo find $(CURDIR)/examples/backup/data ! -name .keep ! -name data -delete
+
+clean-example-master: ## Clean example 'master'
+	@sudo find $(CURDIR)/examples/master/data ! -name .keep ! -name data -delete
+
+clean-example-master-standby: ## Clean example 'master-standby'
+	@sudo find $(CURDIR)/examples/master-standby/master ! -name .keep ! -name 'master'-delete
+	@sudo find $(CURDIR)/examples/master-standby/standby-1 ! -name .keep ! -name 'standby-1' -delete
+	@sudo find $(CURDIR)/examples/master-standby/standby-2 ! -name .keep ! -name 'standby-2' -delete
+
+clean-example-repmgr: ## Clean example 'repmgr'
+	@sudo find $(CURDIR)/examples/repmgr/psql-1 ! -name .keep ! -name psql-1 -delete
+	@sudo find $(CURDIR)/examples/repmgr/psql-2 ! -name .keep ! -name psql-2 -delete
+	@sudo find $(CURDIR)/examples/repmgr/psql-3 ! -name .keep ! -name psql-3 -delete
+	@sudo find $(CURDIR)/examples/repmgr/psql-4 ! -name .keep ! -name psql-4 -delete
+
+clean-example-single: ## Clean example 'single'
+	@sudo find $(CURDIR)/examples/single/data ! -name .keep ! -name data -delete
+
+clean-example-snapshot: ## Clean example 'snapshot'
+	@sudo find $(CURDIR)/examples/snapshot/data ! -name .keep ! -name data -delete

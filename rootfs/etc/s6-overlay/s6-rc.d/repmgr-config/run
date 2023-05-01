@@ -1,0 +1,74 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash disable=SC1008
+set -e
+
+# shellcheck source=../../../cont-func.d/global
+source /etc/cont-func.d/global
+
+if is_enabled "${REPMGR}" && ! repmgr_is_initialized; then
+  # Check is database is ready to accept operations
+  case ${REPLICATION_MODE,,} in
+    standby|repmgr-witness|repmgr-standby)
+      # First we need to be able to connect to the master
+      is_master_ready 1
+
+      # Now we need to check that we have started up ourself
+      is_db_ready_socket 1
+    ;;
+
+    *)
+      is_db_ready_socket 1
+    ;;
+  esac
+
+  # Configure node id
+  REPMGR_IS_INSTALLED=$(repmgr_is_installed "${REPMGR_NODE_PRIMARY}")
+  if ! repmgr_is_initialized && (( REPMGR_IS_INSTALLED == 1 )); then
+    if [ -z "${REPMGR_NODE_ID}" ]; then
+      log-init "acquiring node id"
+      QRY_NODE_ID="SELECT MAX(node_id)+1 FROM repmgr.nodes;"
+      REPMGR_NODE_ID=$(psql -qAt -h "${REPMGR_NODE_PRIMARY}" -U "${REPMGR_USER}" -d "${REPMGR_DB_NAME}" -c "${QRY_NODE_ID}")
+      log-init "acquired node id: ${REPMGR_NODE_ID}"
+    fi
+
+    repmgr_set_param "node_id" "${REPMGR_NODE_ID}" true
+    s6-setuidgid abc echo "${REPMGR_NODE_ID}" > "${REPMGR_DATA_DIR}/.node_id"
+    chown abc:abc "${REPMGR_DATA_DIR}/.node_id"
+  fi
+
+  case ${REPLICATION_MODE,,} in
+    repmgr-witness)
+      log-init "registering as witness server"
+      s6-setuidgid abc repmgr -h "${REPMGR_NODE_PRIMARY}" -U "${REPMGR_USER}" -d "${REPMGR_DB_NAME}" -f "${REPMGR_CONF}" witness register
+      s6-setuidgid abc touch "${REPMGR_DATA_DIR}/.initialized"
+      exit 0
+    ;;
+
+    repmgr-standby)
+      # Register as standby node
+      CURRENT_NODE=$(grep node_id "${REPMGR_CONF}" | cut -d= -f 2)
+      IS_REGISTERED=$(repmgr_is_registered "${REPMGR_NODE_PRIMARY}" "${CURRENT_NODE}")
+      if [ "${IS_REGISTERED}" != 1 ] && [ "${CURRENT_NODE}" -gt 1 ]; then
+        log-init "registering as standby"
+        s6-setuidgid abc repmgr -h "${REPMGR_NODE_PRIMARY}" -U "${REPMGR_USER}" -d "${REPMGR_DB_NAME}" -f "${REPMGR_CONF}" standby register -F
+        s6-setuidgid abc touch "${REPMGR_DATA_DIR}/standby.follow"
+      fi
+    ;;
+
+    *)
+      if ! repmgr_is_initialized && (( REPMGR_IS_INSTALLED != 1 )); then
+        repmgr_set_param "node_id" 1 true
+        s6-setuidgid abc echo 1 > "${REPMGR_DATA_DIR}/.node_id"
+        chown abc:abc "${REPMGR_DATA_DIR}/.node_id"
+
+        log-init "registering as primary node"
+        s6-setuidgid abc repmgr -f "${REPMGR_CONF}" primary register
+        s6-setuidgid abc touch "${REPMGR_DATA_DIR}/.initialized"
+        exit 0
+      fi
+    ;;
+  esac
+
+fi
+
+# EOF

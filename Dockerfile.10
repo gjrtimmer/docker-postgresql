@@ -33,6 +33,11 @@ RUN apk add --update --force-overwrite --no-cache --repository=http://dl-cdn.alp
     postgresql-contrib=10.12-r0 \
     pgtcl
 
+RUN apk add --update --force-overwrite --no-cache --force-broken-world \
+    repmgr \
+    repmgr-daemon && \
+    rm -rf /etc/repmgr.conf
+
 
 # Runtime container
 FROM postgresql as runtime
@@ -57,7 +62,7 @@ HEALTHCHECK --interval=10s --timeout=5s --start-period=60s --retries=3 CMD [ "pg
 EXPOSE 5432/tcp
 
 WORKDIR ${HOME}
-VOLUME [ "${HOME}", "${HOME}/archive" ]
+VOLUME [ "${HOME}" ]
 
 COPY rootfs/ /
 

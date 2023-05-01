@@ -2,8 +2,8 @@
 # shellcheck shell=bash disable=SC1008
 set -e
 
-# shellcheck source=../cont-psql.d/functions
-source /etc/cont-psql.d/functions
+# shellcheck source=../cont-func.d/global
+source /etc/cont-func.d/global
 
 # configure logging
 set_postgresql_param "log_directory" "${PG_LOG_DIR}"

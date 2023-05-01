@@ -1,0 +1,34 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash disable=SC1008
+set -e
+
+
+################################################################################
+# shellcheck source=../../etc/cont-func.d/global
+source /etc/cont-func.d/global
+
+declare -a PARAMS=()
+
+PARAMS+=(node)
+PARAMS+=(rejoin)
+PARAMS+=(--force-rewind)
+
+printf '%s: ' 'Active Node Host'
+read -r ACTIVE_NODE_HOST
+
+printf '%s (%s): ' 'repmgr database' "${REPMGR_DB_NAME}"
+read -r ACTIVE_NODE_DB_NAME
+ACTIVE_NODE_DB_NAME="${ACTIVE_NODE_DB_NAME:-${REPMGR_DB_NAME}}"
+
+printf '%s (%s): ' 'repmgr user' "${REPMGR_USER}"
+read -r ACTIVE_NODE_USER
+ACTIVE_NODE_USER=${ACTIVE_NODE_USER:-${REPMGR_USER}}
+
+CONNINFO="host=${ACTIVE_NODE_HOST} user=${ACTIVE_NODE_USER} dbname=${ACTIVE_NODE_DB_NAME}"
+
+PARAMS+=(-d)
+PARAMS+=("${CONNINFO}")
+
+s6-setuidgid abc repmgr -f "${REPMGR_CONF}" "${PARAMS[@]}"
+
+# EOF
