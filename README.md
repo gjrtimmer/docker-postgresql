@@ -1,7 +1,7 @@
 # PostgreSQL
 
 Configurable PostgreSQL server with backup,snapshot,standby,hot standby,ssl/tls and much more easy configuration through environment variables.
-Including examples to get you started quickly.
+Including examples to get you started quickly. The source code for this repository can be found here on GitHub [gjrtimmer/docker-postgresql](https://github.com/gjrtimmer/docker-postgresql).
 
 ## Table of Contents
 
