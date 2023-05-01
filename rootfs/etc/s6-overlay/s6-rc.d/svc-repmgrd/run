@@ -7,6 +7,13 @@ set -e
 # shellcheck source=../../../cont-func.d/global
 source /etc/cont-func.d/global
 
+if ! repmgr_enabled; then
+  s6-svc -O .
+  exit 0
+fi
+
+log-init "starting repmgrd"
+
 # Wait till database is ready
 is_db_ready 1
 
