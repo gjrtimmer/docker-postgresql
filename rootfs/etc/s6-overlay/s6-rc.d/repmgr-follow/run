@@ -5,7 +5,7 @@ set -e
 # shellcheck source=../../../cont-func.d/global
 source /etc/cont-func.d/global
 
-if is_enabled "${REPMGR}"; then
+if repmgr_enabled; then
   if ! repmgr_is_initialized && [ -f "${REPMGR_DATA_DIR}/standby.follow" ]; then
     log-init "issuing standby follow"
 

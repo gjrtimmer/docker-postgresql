@@ -5,7 +5,7 @@ set -e
 # shellcheck source=../../../cont-func.d/global
 source /etc/cont-func.d/global
 
-if is_enabled "${REPMGR}" && ! repmgr_is_initialized; then
+if repmgr_enabled && ! repmgr_is_initialized; then
   # Check is database is ready to accept operations
   case ${REPLICATION_MODE,,} in
     standby|repmgr-witness|repmgr-standby)
