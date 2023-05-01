@@ -113,9 +113,10 @@ repmgr_configure_dir() {
   if repmgr_enabled; then
     # Create repmgr data directory
     mkdir -p "${REPMGR_DATA_DIR}"
-  fi
 
-  chown -R abc:abc "${REPMGR_DATA_DIR}"
+    # Fix permissions
+    chown -R abc:abc "${REPMGR_DATA_DIR}"
+  fi
 }
 
 # NAME
