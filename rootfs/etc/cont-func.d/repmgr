@@ -210,9 +210,9 @@ repmgr_is_registered() {
 #
 repmgr_service_enable() {
   log-init "enabling repmgrd service"
-  rm -f /etc/s6-overlay/s6-rc.d/user/contents.d/repmgr-config/down
-  rm -f /etc/s6-overlay/s6-rc.d/user/contents.d/repmgr-follow/down
-  rm -f /etc/s6-overlay/s6-rc.d/user/contents.d/svc-repmgrd/down
+  rm -f /etc/s6-overlay/s6-rc.d/repmgr-config/down
+  rm -f /etc/s6-overlay/s6-rc.d/repmgr-follow/down
+  rm -f /etc/s6-overlay/s6-rc.d/svc-repmgrd/down
 }
 
 # NAME
@@ -226,16 +226,16 @@ repmgr_service_enable() {
 #
 repmgr_service_disable() {
   log-init "disabling repmgrd service"
-  if [ ! -f /etc/s6-overlay/s6-rc.d/user/contents.d/repmgr-config/down ]; then
-    touch /etc/s6-overlay/s6-rc.d/user/contents.d/repmgr-config/down
+  if [ ! -f /etc/s6-overlay/s6-rc.d/repmgr-config/down ]; then
+    touch /etc/s6-overlay/s6-rc.d/repmgr-config/down
   fi
 
-  if [ ! -f /etc/s6-overlay/s6-rc.d/user/contents.d/repmgr-follow/down ]; then
-    touch /etc/s6-overlay/s6-rc.d/user/contents.d/repmgr-follow/down
+  if [ ! -f /etc/s6-overlay/s6-rc.d/repmgr-follow/down ]; then
+    touch /etc/s6-overlay/s6-rc.d/repmgr-follow/down
   fi
 
-  if [ ! -f /etc/s6-overlay/s6-rc.d/user/contents.d/svc-repmgrd/down ]; then
-    touch /etc/s6-overlay/s6-rc.d/user/contents.d/svc-repmgrd/down
+  if [ ! -f /etc/s6-overlay/s6-rc.d/svc-repmgrd/down ]; then
+    touch /etc/s6-overlay/s6-rc.d/svc-repmgrd/down
   fi
 }
 
