@@ -21,7 +21,6 @@ services:
       PL_PYTHON: "ENABLED"
       PL_TCL: "ENABLED"
       PG_CRON: "ENABLED"
-      PG_JOURNAL_WAL_LEVEL: minimal
       PG_JOURNAL_MAX_SENDERS: 0
     networks:
       psql-playground:
