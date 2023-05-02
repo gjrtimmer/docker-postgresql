@@ -5,6 +5,11 @@ set -e
 # shellcheck source=../../../cont-func.d/global
 source /etc/cont-func.d/global
 
+if ! repmgr_enabled; then
+  s6-svc -O .
+  exit 0
+fi
+
 if repmgr_enabled && ! repmgr_is_initialized; then
   # Check is database is ready to accept operations
   case ${REPLICATION_MODE,,} in

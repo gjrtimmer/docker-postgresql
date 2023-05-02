@@ -5,6 +5,11 @@ set -e
 # shellcheck source=../../../cont-func.d/global
 source /etc/cont-func.d/global
 
+if ! repmgr_enabled; then
+  s6-svc -O .
+  exit 0
+fi
+
 if repmgr_enabled; then
   if ! repmgr_is_initialized && [ -f "${REPMGR_DATA_DIR}/standby.follow" ]; then
     log-init "issuing standby follow"
