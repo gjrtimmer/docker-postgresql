@@ -2,6 +2,10 @@
 # shellcheck shell=bash disable=SC1008
 set -e
 
+# Load global environment
+# shellcheck source=../cont-env.d/global
+source /etc/cont-env.d/global
+
 # Load postgres environment
 # shellcheck source=../cont-env.d/postgres
 source /etc/cont-env.d/postgres
@@ -9,6 +13,10 @@ source /etc/cont-env.d/postgres
 # Load repmgr environment
 # shellcheck source=../cont-env.d/repmgr
 source /etc/cont-env.d/repmgr
+
+# Load cron environment
+# shellcheck source=../cont-env.d/cron
+source /etc/cont-env.d/cron
 
 # NAME
 #   log-init
@@ -213,5 +221,9 @@ source /etc/cont-func.d/postgres
 # Load repmgr functions
 # shellcheck source=../cont-func.d/repmgr
 source /etc/cont-func.d/repmgr
+
+# Load cron functions
+# shellcheck source=../cont-func.d/cron
+source /etc/cont-func.d/cron
 
 # EOF

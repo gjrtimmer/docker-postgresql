@@ -1,0 +1,13 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+set -e
+
+
+################################################################################
+# shellcheck source=../../../cont-func.d/global
+source /etc/cont-func.d/global
+
+
+################################################################################
+# Start cron
+exec /usr/sbin/crond -f -l 5 -L "${CRON_LOG_FILE}" -c "${CRON_CRONTAB_DIR}"

@@ -1,9 +1,6 @@
 #!/usr/bin/with-contenv bash
 # shellcheck shell=bash disable=SC2034
 
-# Global
-TZ=${TZ:-UTC}
-
 # Postgres
 PG_COMMAND=${PG_COMMAND:-/usr/bin/postgres}
 PG_VERSION=$(${PG_COMMAND} --version | awk '{print $3}')
@@ -33,10 +30,11 @@ PG_MIGRATE_OLD_DATA_REMOVE=${PG_MIGRATE_OLD_DATA_REMOVE:-off}
 PG_MIGRATE_ANALYSE=${PG_MIGRATE_ANALYSE:-on}
 
 # Configure logging
-PG_LOG_DIR="${PG_LOG_DIR:-${HOME}/logs}"
+PG_LOG_DIR="${PG_LOG_DIR:-${LOG_DIR}/postgres}"
 PG_LOG_COLLECTOR=${PG_LOG_COLLECTOR:-on}
 PG_LOG_FILE_MODE=${PG_LOG_FILE_MODE:-0640}
 PG_LOG_FILE_ROTATION=${PG_LOG_FILE_ROTATION:-1d}
+PG_LOG_RETENTION=${PG_LOG_RETENTION:-7}
 
 # Journal
 PG_JOURNAL_WAL_LEVEL=${PG_JOURNAL_WAL_LEVEL:-logical}

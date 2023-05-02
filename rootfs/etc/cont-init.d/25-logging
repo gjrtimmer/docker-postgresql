@@ -7,7 +7,7 @@ source /etc/cont-func.d/global
 
 # configure logging
 set_postgresql_param "log_directory" "${PG_LOG_DIR}"
-set_postgresql_param "log_filename" "psql-${PG_VERSION}-%Y%m%d.log"
+set_postgresql_param "log_filename" "psql-%Y%m%d.log"
 
 if is_enabled "${PG_LOG_COLLECTOR}"; then
   set_postgresql_param "logging_collector" "on"

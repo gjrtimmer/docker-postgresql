@@ -1,0 +1,8 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash disable=SC2034
+
+CRON_DATA_DIR="${HOME}/cron"
+CRON_TASK_DIR="${CRON_DATA_DIR}/tasks"
+CRON_CRONTAB_DIR="${CRON_DATA_DIR}/crontabs"
+CRON_LOG_DIR="${LOG_DIR}/cron"
+CRON_LOG_FILE="${CRON_LOG_DIR}/cron.log"

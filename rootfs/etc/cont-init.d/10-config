@@ -15,9 +15,6 @@ psql_configure_run_dir
 psql_configure_certs_dir
 psql_configure_archive_dir
 
-# configure directories repmgr
-repmgr_configure_dir
-
 # Validate Configuration
 psql_validate_certs
 
@@ -49,5 +46,17 @@ if ! psql_is_initialized; then
     ;;
   esac
 fi
+
+# configure directories repmgr
+repmgr_configure_dir
+repmgr_configure_Log_dir
+
+# configure cron
+cron_configure_data_dir
+cron_configure_task_dir
+cron_configure_crontab_dir
+cron_configure_log_dir
+cron_install_crontab
+cron_install_tasks
 
 # EOF

@@ -1,0 +1,94 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash disable=SC1008
+set -e
+
+# NAME
+#   cron_configure_data_dir
+#
+# DESCRIPTION
+#   Configure directory for crontab
+#
+cron_configure_data_dir() {
+  if [ ! -d "${CRON_DATA_DIR}" ]; then
+    log-init "creating directory::crontabs [${CRON_DATA_DIR}]"
+    mkdir -p "${CRON_DATA_DIR}"
+  else
+    log-init "directory::crontabs exists [${CRON_DATA_DIR}]"
+  fi
+
+  chown -R abc:abc "${CRON_DATA_DIR}"
+}
+
+# NAME
+#   cron_configure_task_dir
+#
+# DESCRIPTION
+#   Configure directory for cron tasks
+#
+cron_configure_task_dir() {
+  if [ ! -d "${CRON_TASK_DIR}" ]; then
+    log-init "creating directory::cron::tasks [${CRON_TASK_DIR}]"
+    mkdir -p "${CRON_TASK_DIR}"/{hourly,daily,weekly,monthly}
+  else
+    log-init "directory::cron::tasks exists [${CRON_TASK_DIR}]"
+  fi
+
+  chown -R abc:abc "${CRON_TASK_DIR}"
+}
+
+# NAME
+#   cron_configure_crontab_dir
+#
+# DESCRIPTION
+#   Configure directory for crontabs
+#
+cron_configure_crontab_dir() {
+  if [ ! -d "${CRON_CRONTAB_DIR}" ]; then
+    log-init "creating directory::crontabs [${CRON_CRONTAB_DIR}]"
+    mkdir -p "${CRON_CRONTAB_DIR}"
+  else
+    log-init "directory::crontabs exists [${CRON_CRONTAB_DIR}]"
+  fi
+
+  chown -R abc:abc "${CRON_CRONTAB_DIR}"
+}
+
+# NAME
+#   cron_configure_log_dir
+#
+# DESCRIPTION
+#   Configure directory for crontabs
+#
+cron_configure_log_dir() {
+  if [ ! -d "${CRON_LOG_DIR}" ]; then
+    log-init "creating directory::log::cron [${CRON_LOG_DIR}]"
+    mkdir -p "${CRON_LOG_DIR}"
+  else
+    log-init "directory::log::cron exists [${CRON_LOG_DIR}]"
+  fi
+
+  chown -R abc:abc "${CRON_LOG_DIR}"
+}
+
+# Name
+#   cron_install_crontab
+#
+# DESCRIPTION
+#   Install root crontab
+#
+cron_install_crontab() {
+  if [ ! -f "${CRON_CRONTAB_DIR}/root" ]; then
+    log-init "installing crontab::root"
+    cp /etc/default/cron/crontabs/root "${CRON_CRONTAB_DIR}/root"
+  fi
+}
+
+# Name
+#   cron_install_tasks
+#
+# DESCRIPTION
+#   Install tasks
+#
+cron_install_tasks() {
+  cp /etc/default/cron/tasks/psql-log-retention "${CRON_TASK_DIR}/daily"
+}

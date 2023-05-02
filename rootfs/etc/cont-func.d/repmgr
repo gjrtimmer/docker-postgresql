@@ -125,6 +125,27 @@ repmgr_configure_dir() {
 }
 
 # NAME
+#		repmgr_configure_dir
+#
+# DESCRIPTION
+#		Configure the repmgr configuration directory
+#
+repmgr_configure_Log_dir() {
+  if repmgr_enabled; then
+    if [ ! -d "${REPMGR_LOG_DIR}" ]; then
+      # Create repmgr data directory
+      log-init "creating directory::log::repmgr [${REPMGR_LOG_DIR}]"
+      mkdir -p "${REPMGR_LOG_DIR}"
+    else
+      log-init "directory::log::repmgr exists [${REPMGR_LOG_DIR}]"
+    fi
+
+    # Fix permissions
+    chown -R abc:abc "${REPMGR_LOG_DIR}"
+  fi
+}
+
+# NAME
 #		repmgr_configure_hba_security
 #
 # DESCRIPTION

@@ -1,0 +1,7 @@
+# shellcheck disable=all
+# do daily/weekly/monthly maintenance
+# min   hour    day     month   weekday command
+0       *       *       *       *       run-parts /config/cron/tasks/hourly
+0       2       *       *       *       run-parts /config/cron/tasks/daily
+0       3       *       *       6       run-parts /config/cron/tasks/weekly
+0       5       1       *       *       run-parts /config/cron/tasks/monthly
