@@ -556,6 +556,20 @@ psql_is_migration() {
 }
 
 # NAME
+#   psql_is_migration_success
+#
+# DESCRIPTION
+#   Check if migration went succesful
+#
+psql_is_migration_success() {
+  if is_enabled "${PG_MIGRATION_SUCCESS}"; then
+    return 0
+  fi
+
+  return 1
+}
+
+# NAME
 #		psql_create_old_rootfs
 #
 # DESCRIPTION
