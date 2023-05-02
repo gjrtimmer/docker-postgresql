@@ -111,8 +111,13 @@ repmgr_set_param() {
 #
 repmgr_configure_dir() {
   if repmgr_enabled; then
-    # Create repmgr data directory
-    mkdir -p "${REPMGR_DATA_DIR}"
+    if [ ! -d "${REPMGR_DATA_DIR}" ]; then
+      # Create repmgr data directory
+      log-init "creating directory::repmgr [${REPMGR_DATA_DIR}]"
+      mkdir -p "${REPMGR_DATA_DIR}"
+    else
+      log-init "directory::repmgr exists [${REPMGR_DATA_DIR}]"
+    fi
 
     # Fix permissions
     chown -R abc:abc "${REPMGR_DATA_DIR}"
