@@ -27,8 +27,8 @@ if psql_is_migration; then
   fi
 
   # Delete auto-generated scripts
-  rm -f "${HOME}/analyze_new_cluster.sh"
-  rm -f "${HOME}/delete_old_cluster.sh"
+  rm -f "${PG_HOME}/analyze_new_cluster.sh"
+  rm -f "${PG_HOME}/delete_old_cluster.sh"
 
   # Cleanup backup if enabled
   if is_enabled "${PG_MIGRATE_DATA_BACKUP_CLEANUP}"; then
