@@ -16,7 +16,8 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositori
     util-linux-login \
     sudo \
     tzdata \
-    rsync && \
+    rsync \
+    logrotate && \
     echo "abc ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/abc && \
     chmod 600 /etc/sudoers.d/abc && \
     sync
