@@ -20,7 +20,7 @@ source /etc/cont-env.d/repmgr
 #   $1  	string		Log message
 #
 log-init() {
-  local LEVEL="${2:4:-info}"
+  local LEVEL="${2:-info}"
   s6-echo -- "cont-init: ${LEVEL}: $1"
 }
 
