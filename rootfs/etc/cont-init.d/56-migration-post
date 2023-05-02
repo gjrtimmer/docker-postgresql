@@ -58,15 +58,17 @@ if psql_is_migration; then
   fi
 
   # Cleanup old data if enabled
+  PG_OLD_DATADIR="${PG_HOME}/${PG_OLD_VERSION}"
   if is_enabled "${PG_MIGRATE_OLD_DATA_REMOVE}"; then
     log-init "removing old data: enabled (PG_MIGRATE_OLD_DATA_REMOVE)"
-    PG_OLD_DATADIR="${PG_HOME}/${PG_OLD_VERSION}"
-
     log-init "removing old data directory: ${PG_OLD_DATADIR}"
     rm -rf "${PG_OLD_DATADIR}"
   else
     log-init "removing old data: disabled (PG_MIGRATE_OLD_DATA_REMOVE)"
     log-init "please do not forget to remove old data" "warn"
+
+    # Marking old data as succesful migrated
+    touch "${PG_OLD_DATADIR}/.migrated"
   fi
 
   # exit migration mode

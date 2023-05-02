@@ -528,15 +528,21 @@ psql_store_version() {
 psql_determine_migration_required() {
   PG_OLD_VERSION=$(find "${PG_HOME}" -maxdepth 3 -name PG_VERSION_FULL -exec cat {} + 2>/dev/null | grep -o -E '[0-9]{1,2}\.[0-9]{1,2}' | grep -v "${PG_VERSION_SLUG}" | sort -n | head -n1)
   if [[ -n ${PG_OLD_VERSION} ]]; then
-    # Migration is required
-    # Enable migration
 
-    PG_OLD_VERSION_MAJOR=$(echo "${PG_OLD_VERSION}" | cut -d '.' -f 1)
+    # Before we mark this for migration, we need to check if this data has
+    # already been migrated.
+    PG_OLD_DATADIR="${PG_HOME}/${PG_OLD_VERSION}"
+    if [ ! -f "${PG_OLD_DATADIR}/.migrated" ]; then
+      # Migration is required
+      # Enable migration
 
-    log-init "entering migration mode"
-    env_set PG_MIGRATION 1
-    env_set PG_OLD_VERSION "${PG_OLD_VERSION}"
-    env_set PG_OLD_VERSION_MAJOR "${PG_OLD_VERSION_MAJOR}"
+      PG_OLD_VERSION_MAJOR=$(echo "${PG_OLD_VERSION}" | cut -d '.' -f 1)
+
+      log-init "entering migration mode"
+      env_set PG_MIGRATION 1
+      env_set PG_OLD_VERSION "${PG_OLD_VERSION}"
+      env_set PG_OLD_VERSION_MAJOR "${PG_OLD_VERSION_MAJOR}"
+    fi
   fi
 }
 
