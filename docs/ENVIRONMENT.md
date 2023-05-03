@@ -45,7 +45,7 @@ Complete overview of all supported environment variables. The environment variab
 | PG_HOME                         | /config/data                   | PostgreSQL home                                                                    |
 | PG_DATA_DIR                     | /config/data/{VERSION}/main    | PostgreSQL data directory                                                          |
 | PG_CERTS_DIR                    | /config/certs                  | Certificate directory                                                              |
-| PG_ARCHIVE_DIR                  | /config/archive                | Archive Directory (Volume Mount)                                                   |
+| PG_ARCHIVE_DIR                  | /config/archive                | Archive Directory                                                                  |
 | PG_CONF                         | ${PG_DATA_DIR}/postgresql.conf | PostgreSQL configuration file                                                      |
 | PG_HBA_CONF                     | ${PG_DATA_DIR}/pg_hba.conf     | PostgreSQL HBA configuration file                                                  |
 | PG_IDENT_CONF                   | ${PG_DATA_DIR}/pg_ident.conf   | PostgreSQL IDENT configuration file                                                |
@@ -97,12 +97,12 @@ Complete overview of all supported environment variables. The environment variab
 
 ## PostgreSQL Logging
 
-| ENVVAR               | Default      | Description                      |
-| -------------------- | ------------ | -------------------------------- |
-| PG_LOG_DIR           | /config/logs | Log directory                    |
-| PG_LOG_COLLECTOR     | on (BOOL)    | Enable log collector             |
-| PG_LOG_FILE_MODE     | 0640         | Set file permission for log file |
-| PG_LOG_FILE_ROTATION | 1d           | Set log file rotation            |
+| ENVVAR               | Default               | Description                      |
+| -------------------- | --------------------- | -------------------------------- |
+| PG_LOG_DIR           | /config/logs/postgres | Log directory                    |
+| PG_LOG_COLLECTOR     | on (BOOL)             | Enable log collector             |
+| PG_LOG_FILE_MODE     | 0640                  | Set file permission for log file |
+| PG_LOG_FILE_ROTATION | 1d                    | Set log file rotation            |
 
 ## PostgreSQL Journal Configuration
 
