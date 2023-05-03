@@ -1,0 +1,12 @@
+/config/logs/repmgr/repmgr.log {
+    missingok
+    notifempty
+    nocompress
+    rotate 7
+    maxsize 100M
+    daily
+    create 0755 abc abc
+    dateext
+    dateformat -%Y%m%d.
+    dateyesterday
+}

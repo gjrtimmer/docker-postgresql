@@ -56,6 +56,8 @@ cron_configure_data_dir
 cron_configure_task_dir
 cron_configure_crontab_dir
 cron_configure_log_dir
+cron_configure_logrotate_dir
+cron_install_logrotate
 cron_install_crontab
 cron_install_tasks
 
