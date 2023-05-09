@@ -67,6 +67,9 @@ if repmgr_enabled; then
   # Configure replication user
   repmgr_set_param "replication_user" "${REPMGR_USER}"
 
+  # Configure Priority
+  repmgr_set_param "priority" "${REPMGR_PRIORITY}" true
+
   if ! repmgr_enabled_standby; then
     # Configure connection info
     repmgr_set_param "conninfo" "host=${REPMGR_NODE_HOST} user=${REPMGR_USER} dbname=${REPMGR_DB_NAME} connect_timeout=5"
