@@ -1,0 +1,93 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+set -o errexit
+
+# shellcheck source=../../etc/cont-func.d/global
+source /etc/cont-func.d/global
+
+# Query commands
+QRY_CHECK_PRIMARY="SHOW transaction_read_only;"
+QRY_CHECK_STANDBY="SELECT pg_is_in_recovery();"
+
+# Force fail
+FORCE_FAIL="/dev/shm/proxyoff"
+
+http_response() {
+  local TYPE="${1}"
+
+  case "${TYPE,,}" in
+    primary)
+      HTTP_CODE=200
+      HTTP_MSG="OK"
+      HTTP_LENGTH=7
+      PAYLOAD="PRIMARY"
+    ;;
+
+    standby)
+      HTTP_CODE=206
+      HTTP_MSG="OK"
+      HTTP_LENGTH=7
+      PAYLOAD="STANDBY"
+    ;;
+
+    init)
+      HTTP_CODE=503
+      HTTP_MSG="Service Unavailable"
+      HTTP_LENGTH=12
+      PAYLOAD="INITIALIZING"
+    ;;
+
+    *)
+      HTTP_CODE=503
+      HTTP_MSG="Service Unavailable"
+      HTTP_LENGTH=4
+      PAYLOAD="DOWN"
+    ;;
+  esac
+
+  printf 'HTTP/1.1 %s %s\r\n' "${HTTP_CODE}" "${HTTP_MSG}"
+  printf 'Content-Type: text/plain\r\n'
+  printf 'Content-Length: %s\r\n' "${HTTP_LENGTH}"
+  printf '\r\n'
+  printf '%s' "${PAYLOAD}"
+}
+
+psql_qry() {
+  local QRY="${1}"; readonly QRY
+
+  psql -h localhost -p 5432 -d postgres -U "${PG_USER}" -qAt -c "${QRY}" 2> /dev/null
+}
+
+# Register response on script error
+trap 'http_response UNAVAILABLE' ERR
+
+if [ -f "$FORCE_FAIL" ]; then
+    http_response 'UNAVAILABLE'
+    exit 1
+fi
+
+if is_enabled "${PG_IN_CONFIG_MODE}"; then
+  http_response 'INIT'
+  exit 1
+fi
+
+# # Check standby
+if ! RES=$(psql_qry "${QRY_CHECK_STANDBY}"); then
+  http_response 'UNAVAILABLE'
+  exit 1
+elif echo "${RES}" | grep -iE '(t|true|on|1)' 2>/dev/null >/dev/null; then
+  http_response "STANDBY"
+  exit 0
+fi
+
+# Check Primary
+if ! RES=$(psql_qry "${QRY_CHECK_PRIMARY}"); then
+  http_response 'UNAVAILABLE'
+  exit 1
+elif echo "${RES}" | grep -iE '(f|false|off|0)' 2>/dev/null >/dev/null; then
+  http_response "PRIMARY"
+  exit 0
+fi
+
+http_response 'UNAVAILABLE'
+exit 1

@@ -19,6 +19,7 @@ case ${REPLICATION_MODE,,} in
     log-init "starting postgres server for configuration"
     # shellcheck disable=SC2086
     s6-setuidgid abc pg_ctl start -D "${PG_DATA_DIR}" -w -t ${PG_TIMEOUT_STARTUP} > /dev/null &
+    env_set PG_IN_CONFIG_MODE 1
   ;;
 esac
 

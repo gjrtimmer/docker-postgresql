@@ -18,6 +18,9 @@ case ${REPLICATION_MODE,,} in
 
     # Remove postmaster PID file
     rm -rf "${PG_DATA_DIR}/postmaster.pid"
+
+    # Remove PG_IN_CONFIG_MODE
+    env_del PG_IN_CONFIG_MODE
   ;;
 esac
 
