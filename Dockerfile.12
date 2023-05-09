@@ -10,6 +10,7 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositori
     apk add --update --force-overwrite --no-cache \
     acl \
     bash \
+    busybox-extras \
     ca-certificates \
     coreutils \
     findutils \

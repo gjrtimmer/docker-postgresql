@@ -8,6 +8,7 @@ RUN apk upgrade --update --force-overwrite --no-cache && \
     apk add --update --force-overwrite --no-cache \
     acl \
     bash \
+    busybox-extras \
     ca-certificates \
     coreutils \
     findutils \

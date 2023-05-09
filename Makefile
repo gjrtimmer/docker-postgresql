@@ -140,6 +140,7 @@ run: run-vars ## Run the container
 		-e PG_MIGRATE_OLD_DATA_REMOVE=true \
 		-e REPMGR=true \
 		-p 5432:5432 \
+		-p 9001:9001 \
 		-v $(DATA_DIR):/config \
 		--interactive \
 		$(IMAGE_NAME)
