@@ -14,4 +14,9 @@ if [ ! -f "${HOME}/.bash_aliases" ]; then
   cp /etc/default/skel/.bash_aliases "${HOME}/.bash_aliases"
 fi
 
+if [ ! -f "${HOME}/.psql_history" ]; then
+  touch "${HOME}/.psql_history"
+  chown "${PG_USER}:${PG_USER}" "${HOME}/.psql_history"
+fi
+
 # EOF
