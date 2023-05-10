@@ -626,5 +626,3 @@ psql_configure_inetd_service() {
     echo 'psql-check	9001/tcp			# psql-check' >> /etc/services
   fi
 }
-
-# EOF
