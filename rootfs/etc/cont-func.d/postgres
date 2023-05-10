@@ -623,7 +623,7 @@ psql_create_old_rootfs() {
 psql_configure_inetd_service() {
   log-init "configure::psql-check"
   if ! grep -q psql-check /etc/services; then
-    echo 'psql-check      9001/tcp                        # psql-check' >> /etc/services
+    echo 'psql-check		9001/tcp			# psql-check' >> /etc/services
   fi
 }
 
