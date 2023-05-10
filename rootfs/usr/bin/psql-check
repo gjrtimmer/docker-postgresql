@@ -45,11 +45,12 @@ http_response() {
     ;;
   esac
 
-  printf 'HTTP/1.1 %s %s\r\n' "${HTTP_CODE}" "${HTTP_MSG}"
-  printf 'Content-Type: text/plain\r\n'
-  printf 'Content-Length: %s\r\n' "${HTTP_LENGTH}"
-  printf '\r\n'
-  printf '%s' "${PAYLOAD}"
+  printf "HTTP/1.1 %s %s\r\n" "${HTTP_CODE}" "${HTTP_MSG}"
+  printf "Content-Type: text/plain\r\n"
+  printf "Content-Length: %s\r\n" "${HTTP_LENGTH}"
+  printf "Connection: close\r\n"
+  printf "\r\n"
+  printf "%s" "${PAYLOAD}"
 }
 
 psql_qry() {
@@ -57,6 +58,11 @@ psql_qry() {
 
   psql -h localhost -p 5432 -d postgres -U "${PG_USER}" -qAt -c "${QRY}" 2> /dev/null
 }
+
+# We are only allowed to send a response after the '\r'
+while read -r line; do
+  test "$line" = $'\r' && break
+done
 
 # Register response on script error
 trap 'http_response UNAVAILABLE' ERR
