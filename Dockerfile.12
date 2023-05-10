@@ -60,6 +60,7 @@ ENV LANG='C' \
 HEALTHCHECK --interval=10s --timeout=5s --start-period=60s --retries=3 CMD [ "pg_isready",  "-U",  "postgres" ]
 
 EXPOSE 5432/tcp
+EXPOSE 9001/tcp
 
 WORKDIR ${HOME}
 VOLUME [ "${HOME}" ]
