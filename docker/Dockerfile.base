@@ -1,4 +1,4 @@
-FROM registry.timmertech.nl/docker/alpine-base:latest as psql-base
+FROM registry.timmertech.nl/docker/alpine-base:latest
 
 # Packages for PostgreSQL image
 RUN apk upgrade --update --force-overwrite --no-cache && \
@@ -15,6 +15,11 @@ RUN apk upgrade --update --force-overwrite --no-cache && \
     rsync \
     logrotate
 
-# sudoers access for user 'abc'
+# Sudo access for user 'abc'
 RUN echo "abc ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/abc && \
     chmod 600 /etc/sudoers.d/abc
+
+FROM scratch as base
+
+# Compress Image
+COPY --from=0 / /
