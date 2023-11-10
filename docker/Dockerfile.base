@@ -1,0 +1,20 @@
+FROM registry.timmertech.nl/docker/alpine-base:latest as psql-base
+
+# Packages for PostgreSQL image
+RUN apk upgrade --update --force-overwrite --no-cache && \
+    apk add --update --force-overwrite --no-cache \
+    acl \
+    bash \
+    busybox-extras \
+    ca-certificates \
+    coreutils \
+    findutils \
+    util-linux-login \
+    sudo \
+    tzdata \
+    rsync \
+    logrotate
+
+# sudoers access for user 'abc'
+RUN echo "abc ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/abc && \
+    chmod 600 /etc/sudoers.d/abc

@@ -2,6 +2,7 @@
 data/
 data.bak/
 examples/
+refactor/
 tmp/
 .git
 .gitaliases
