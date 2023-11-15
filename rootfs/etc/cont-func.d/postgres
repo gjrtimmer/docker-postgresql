@@ -280,7 +280,9 @@ psql_configure_data_dir() {
 
   # Set permissions on PG_HOME
   log-init "setting permissions::home"
-  chown -R abc:abc "${PG_HOME}"
+  # Fix: ignore /data/*/.rootfs which is needed for database migration
+  find "${PG_HOME}" -ipath "${PG_HOME}/*/.rootfs" -prune -o -exec chown abc:abc {} +
+  chown abc:abc "${PG_HOME}"
 }
 
 # NAME
