@@ -15,8 +15,8 @@ RUN apk add --update --force-overwrite --no-cache --repository=http://dl-cdn.alp
     tcl=8.6.7-r0 \
     postgresql-pltcl=10.12-r0 \
     postgresql-contrib=10.12-r0 \
-    pgtcl
-RUN apk add --update --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/v3.13/community \
+    pgtcl && \
+    apk add --update --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/v3.13/community \
     repmgr \
     repmgr-daemon && \
     rm -rf /etc/repmgr.conf
