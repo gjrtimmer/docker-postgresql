@@ -1,0 +1,27 @@
+FROM registry.timmertech.nl/docker/postgresql:base
+
+# Install PostgreSQL 9
+# This will downgrade some other OS packages
+# Install highest compatible repmgr
+RUN apk add --update --force-overwrite --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/v3.8/main \
+    postgresql=10.12-r0 \
+    postgresql-client=10.12-r0 \
+    perl=5.26.3-r0 \
+    postgresql-plperl=10.12-r0 \
+    postgresql-plperl-contrib=10.12-r0 \
+    python3=3.6.9-r1 \
+    postgresql-plpython3=10.12-r0 \
+    postgresql-plpython3-contrib=10.12-r0 \
+    tcl=8.6.7-r0 \
+    postgresql-pltcl=10.12-r0 \
+    postgresql-contrib=10.12-r0 \
+    pgtcl
+RUN apk add --update --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/v3.13/community \
+    repmgr \
+    repmgr-daemon && \
+    rm -rf /etc/repmgr.conf
+
+COPY rootfs/ /
+
+ARG PG_COMMAND=/usr/bin/postgres
+ENV PG_COMMAND=${PG_COMMAND}

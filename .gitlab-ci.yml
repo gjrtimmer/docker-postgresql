@@ -38,3 +38,19 @@ psql:9:
     DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:9
     DOCKER_TAGS: >-
       --tag=${DOCKER_IMAGE_HUB_PATH}:9
+
+psql:10:
+  extends: .docker-build-multi
+  stage: build
+  needs:
+    - base
+  only:
+    - main
+    - schedules
+  variables:
+    PLATFORM: "linux/arm64,linux/amd64"
+    DOCKER_HUB: "ENABLED"
+    DOCKER_FILE: docker/Dockerfile.psql.10
+    DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:10
+    DOCKER_TAGS: >-
+      --tag=${DOCKER_IMAGE_HUB_PATH}:10
