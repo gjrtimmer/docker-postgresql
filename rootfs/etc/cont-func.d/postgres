@@ -528,7 +528,7 @@ psql_store_version() {
 #		Determine if a migration is required
 #
 psql_determine_migration_required() {
-  PG_OLD_VERSION=$(find "${PG_HOME}" -maxdepth 3 -name PG_VERSION_FULL -exec cat {} + 2>/dev/null | grep -o -E '[0-9]{1,2}\.[0-9]{1,2}' | grep -v "${PG_VERSION_SLUG}" | sort -n | head -n1)
+  PG_OLD_VERSION=$(find "${PG_HOME}" -maxdepth 3 -name PG_VERSION_FULL -exec cat {} + 2>/dev/null | grep -o -E '[0-9]{1,2}\.[0-9]{1,2}' | grep -v "${PG_VERSION_SLUG}" | sort -r -n | head -n1)
   if [[ -n ${PG_OLD_VERSION} ]]; then
 
     # Before we mark this for migration, we need to check if this data has
