@@ -86,7 +86,7 @@ psql:12:
     DOCKER_TAGS: >-
       --tag=${DOCKER_IMAGE_HUB_PATH}:12
     BUILD_ARGS: >-
-      -build-arg=PG_COMMAND=/usr/bin/postgres12
+      --build-arg=PG_COMMAND=/usr/bin/postgres12
 
 psql:13:
   extends: .docker-build-multi
@@ -104,7 +104,7 @@ psql:13:
     DOCKER_TAGS: >-
       --tag=${DOCKER_IMAGE_HUB_PATH}:13
     BUILD_ARGS: >-
-      -build-arg=PG_COMMAND=/usr/bin/postgres13
+      --build-arg=PG_COMMAND=/usr/bin/postgres13
 
 psql:14:
   extends: .docker-build-multi
@@ -122,7 +122,7 @@ psql:14:
     DOCKER_TAGS: >-
       --tag=${DOCKER_IMAGE_HUB_PATH}:14
     BUILD_ARGS: >-
-      -build-arg=PG_COMMAND=/usr/bin/postgres14
+      --build-arg=PG_COMMAND=/usr/bin/postgres14
 
 psql:15:
   extends: .docker-build-multi
@@ -142,7 +142,7 @@ psql:15:
       --tag=${DOCKER_IMAGE_HUB_PATH}:15
       --tag=${DOCKER_IMAGE_HUB_PATH}:latest
     BUILD_ARGS: >-
-      -build-arg=PG_COMMAND=/usr/bin/postgres15
+      --build-arg=PG_COMMAND=/usr/bin/postgres15
 
 dockerhub:description:
   stage: deploy
