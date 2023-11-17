@@ -1,0 +1,25 @@
+FROM registry.timmertech.nl/docker/postgresql:base
+
+# Install PostgreSQL 14
+# This will downgrade some other OS packages
+# Install highest compatible repmgr
+RUN apk add --update --force-overwrite --no-cache \
+    postgresql14 \
+    postgresql14-plperl \
+    postgresql14-plperl-contrib \
+    postgresql14-plpython3 \
+    postgresql14-plpython3-contrib \
+    postgresql14-pltcl \
+    postgresql14-contrib \
+    postgresql14-jit \
+    postgresql-pg_cron \
+    pgtcl \
+    repmgr \
+    repmgr-daemon && \
+    rm -rf /etc/repmgr.conf
+
+COPY rootfs/ /
+
+ARG PG_COMMAND=/usr/bin/postgres
+ENV PG_COMMAND=${PG_COMMAND} \
+    PATH=/lsiopy/bin:/usr/libexec/postgresql14:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
