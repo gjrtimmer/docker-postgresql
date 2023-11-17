@@ -1,0 +1,24 @@
+FROM registry.timmertech.nl/docker/postgresql:base
+
+# Install PostgreSQL 13
+# This will downgrade some other OS packages
+# Install highest compatible repmgr
+RUN apk add --update --force-overwrite --no-cache \
+    postgresql13 \
+    postgresql13-plperl \
+    postgresql13-plperl-contrib \
+    postgresql13-plpython3 \
+    postgresql13-plpython3-contrib \
+    postgresql13-pltcl \
+    postgresql13-contrib \
+    postgresql13-jit \
+    pgtcl \
+    repmgr \
+    repmgr-daemon && \
+    rm -rf /etc/repmgr.conf
+
+COPY rootfs/ /
+
+ARG PG_COMMAND=/usr/bin/postgres
+ENV PG_COMMAND=${PG_COMMAND} \
+    PATH=/lsiopy/bin:/usr/libexec/postgresql12:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
