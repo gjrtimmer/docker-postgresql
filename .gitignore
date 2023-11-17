@@ -1,4 +1,5 @@
 # Exclude PSQL data
+config/*
 data/*
 !data/.keep
 data.bak/*
