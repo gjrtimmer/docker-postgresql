@@ -139,6 +139,8 @@ psql:15:
     DOCKER_FILE: docker/Dockerfile.psql.15
     DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:15
     DOCKER_TAGS: >-
+      --tag=${DOCKER_IMAGE_PATH}:latest
       --tag=${DOCKER_IMAGE_HUB_PATH}:15
+      --tag=${DOCKER_IMAGE_HUB_PATH}:latest
     BUILD_ARGS: >-
       -build-arg=PG_COMMAND=/usr/bin/postgres15
