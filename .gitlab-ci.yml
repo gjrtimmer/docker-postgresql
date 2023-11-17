@@ -147,6 +147,8 @@ psql:15:
 dockerhub:description:
   stage: deploy
   image: peterevans/dockerhub-description:3
+  tags:
+    - datacore
   variables:
     DOCKERHUB_USERNAME: $DOCKER_HUB_USER
     DOCKERHUB_PASSWORD: $DOCKER_HUB_PASS
