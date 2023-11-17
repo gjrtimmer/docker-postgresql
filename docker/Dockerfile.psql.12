@@ -1,6 +1,6 @@
 FROM registry.timmertech.nl/docker/postgresql:base
 
-# Install PostgreSQL 11
+# Install PostgreSQL 12
 # This will downgrade some other OS packages
 # Install highest compatible repmgr
 RUN apk add --update --force-overwrite --no-cache \
