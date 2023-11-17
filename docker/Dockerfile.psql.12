@@ -1,0 +1,24 @@
+FROM registry.timmertech.nl/docker/postgresql:base
+
+# Install PostgreSQL 11
+# This will downgrade some other OS packages
+# Install highest compatible repmgr
+RUN apk add --update --force-overwrite --no-cache \
+    postgresql12 \
+    postgresql12-plperl \
+    postgresql12-plperl-contrib \
+    postgresql12-plpython3 \
+    postgresql12-plpython3-contrib \
+    postgresql12-pltcl \
+    postgresql12-contrib \
+    postgresql12-jit \
+    pgtcl \
+    repmgr \
+    repmgr-daemon && \
+    rm -rf /etc/repmgr.conf
+
+COPY rootfs/ /
+
+ARG PG_COMMAND=/usr/bin/postgres
+ENV PG_COMMAND=${PG_COMMAND} \
+    PATH=/lsiopy/bin:/usr/libexec/postgresql12:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
