@@ -21,4 +21,4 @@ COPY rootfs/ /
 
 ARG PG_COMMAND=/usr/bin/postgres
 ENV PG_COMMAND=${PG_COMMAND} \
-    PATH=/lsiopy/bin:/usr/libexec/postgresql12:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    PATH=/lsiopy/bin:/usr/libexec/postgresql13:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
