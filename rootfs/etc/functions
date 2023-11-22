@@ -2,22 +2,6 @@
 # shellcheck shell=bash disable=SC1008
 set -e
 
-# Load global environment
-# shellcheck source=../cont-env.d/global
-source /etc/cont-env.d/global
-
-# Load postgres environment
-# shellcheck source=../cont-env.d/postgres
-source /etc/cont-env.d/postgres
-
-# Load repmgr environment
-# shellcheck source=../cont-env.d/repmgr
-source /etc/cont-env.d/repmgr
-
-# Load cron environment
-# shellcheck source=../cont-env.d/cron
-source /etc/cont-env.d/cron
-
 # NAME
 #   log-init
 #
@@ -28,8 +12,7 @@ source /etc/cont-env.d/cron
 #   $1  	string		Log message
 #
 log-init() {
-  local LEVEL="${2:-info}"
-  s6-echo -- "cont-init: ${LEVEL}: $1"
+  s6-echo -- "$(basename "$(dirname "$(caller | awk '{print $2}')")"): $1"
 }
 
 # NAME
@@ -154,23 +137,6 @@ join_array() {
 }
 
 # NAME
-#   container_set_timezone
-#
-# DESCRIPTION
-#   Set the timezone within the container
-#
-# OPTIONS
-#   $1  	string		TimeZone
-#
-# EXAMPLES
-#		container_set_timezone "Europe/Amsterdam"
-#
-container_set_timezone() {
-  cp "/usr/share/zoneinfo/${TZ}" /etc/localtime
-  log-init "Timezone set to ${TZ}"
-}
-
-# NAME
 #   env_set
 #
 # DESCRIPTION
@@ -213,17 +179,3 @@ env_del() {
 
   rm /var/run/s6/container_environment/"${KEY}"
 }
-
-# Load postgres functions
-# shellcheck source=../cont-func.d/postgres
-source /etc/cont-func.d/postgres
-
-# Load repmgr functions
-# shellcheck source=../cont-func.d/repmgr
-source /etc/cont-func.d/repmgr
-
-# Load cron functions
-# shellcheck source=../cont-func.d/cron
-source /etc/cont-func.d/cron
-
-# EOF

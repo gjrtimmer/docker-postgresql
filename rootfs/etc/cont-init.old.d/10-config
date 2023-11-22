@@ -5,9 +5,6 @@ set -e
 # shellcheck source=../cont-func.d/global
 source /etc/cont-func.d/global
 
-# Set container timezone
-container_set_timezone
-
 # Configure directories postgres
 psql_configure_data_dir
 psql_configure_log_dir
@@ -52,13 +49,13 @@ repmgr_configure_dir
 repmgr_configure_Log_dir
 
 # configure cron
-cron_configure_data_dir
-cron_configure_task_dir
-cron_configure_crontab_dir
-cron_configure_log_dir
-cron_configure_logrotate_dir
-cron_install_logrotate
-cron_install_crontab
-cron_install_tasks
+# cron_configure_data_dir
+# cron_configure_task_dir
+# cron_configure_crontab_dir
+# cron_configure_log_dir
+# cron_configure_logrotate_dir
+# cron_install_logrotate
+# cron_install_crontab
+# cron_install_tasks
 
 # EOF

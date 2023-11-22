@@ -12,8 +12,8 @@ if repmgr_enabled; then
 
   # Copy default repmgr.conf, only if we are not configured as a witness server
   if [ ! -f "${REPMGR_CONF}" ]; then
-    cp /etc/default/repmgr.conf "${REPMGR_CONF}"
-    chown -R abc:abc "${REPMGR_CONF}"
+    cp /defaults/repmgr.conf "${REPMGR_CONF}"
+    chown -R "${PUID}:${PGID}" "${REPMGR_CONF}"
   fi
 
   # Export repmgr config to runtime environment

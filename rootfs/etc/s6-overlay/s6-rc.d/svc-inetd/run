@@ -2,15 +2,5 @@
 # shellcheck shell=bash
 set -e
 
-
-################################################################################
-# shellcheck source=../../../cont-func.d/global
-source /etc/cont-func.d/global
-
-
-################################################################################
-# Configure inetd
-psql_configure_inetd_service
-
 # Start inetd
 exec /usr/sbin/inetd -f

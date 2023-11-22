@@ -38,7 +38,7 @@ if repmgr_enabled && ! repmgr_is_initialized; then
 
     repmgr_set_param "node_id" "${REPMGR_NODE_ID}" true
     s6-setuidgid abc echo "${REPMGR_NODE_ID}" > "${REPMGR_DATA_DIR}/.node_id"
-    chown abc:abc "${REPMGR_DATA_DIR}/.node_id"
+    chown "${PUID}:${PGID}" "${REPMGR_DATA_DIR}/.node_id"
   fi
 
   case ${REPLICATION_MODE,,} in
@@ -64,7 +64,7 @@ if repmgr_enabled && ! repmgr_is_initialized; then
       if ! repmgr_is_initialized && (( REPMGR_IS_INSTALLED != 1 )); then
         repmgr_set_param "node_id" 1 true
         s6-setuidgid abc echo 1 > "${REPMGR_DATA_DIR}/.node_id"
-        chown abc:abc "${REPMGR_DATA_DIR}/.node_id"
+        chown "${PUID}:${PGID}" "${REPMGR_DATA_DIR}/.node_id"
 
         log-init "registering as primary node"
         s6-setuidgid abc repmgr -f "${REPMGR_CONF}" primary register

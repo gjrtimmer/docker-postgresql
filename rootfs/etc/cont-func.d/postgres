@@ -281,8 +281,8 @@ psql_configure_data_dir() {
   # Set permissions on PG_HOME
   log-init "setting permissions::home"
   # Fix: ignore /data/*/.rootfs which is needed for database migration
-  find "${PG_HOME}" -ipath "${PG_HOME}/*/.rootfs" -prune -o -exec chown abc:abc {} +
-  chown abc:abc "${PG_HOME}"
+  find "${PG_HOME}" -ipath "${PG_HOME}/*/.rootfs" -prune -o -exec chown "${PUID}:${PGID}" {} +
+  chown "${PUID}:${PGID}" "${PG_HOME}"
 }
 
 # NAME
@@ -302,7 +302,7 @@ psql_configure_log_dir() {
   # Set permissions on PG_LOGDIR
   log-init "setting permissions::log"
   chmod -R 1775 "${PG_LOG_DIR}"
-  chown -R abc:abc "${PG_LOG_DIR}"
+  chown -R "${PUID}:${PGID}" "${PG_LOG_DIR}"
 }
 
 # NAME
@@ -327,7 +327,7 @@ psql_configure_run_dir() {
   log-init "setting permissions::run"
   chmod -R 0777 "${PG_RUN_DIR}"
   chmod g+s "${PG_RUN_DIR}"
-  chown -R abc:abc "${PG_RUN_DIR}"
+  chown -R "${PUID}:${PGID}" "${PG_RUN_DIR}"
 }
 
 # NAME
@@ -345,7 +345,7 @@ psql_configure_certs_dir() {
   fi
 
   # set permissions on PG_CERTS_DIR
-  chown abc:abc "${PG_CERTS_DIR}"
+  chown "${PUID}:${PGID}" "${PG_CERTS_DIR}"
 }
 
 # NAME
@@ -362,7 +362,7 @@ psql_configure_initdb_dir() {
 
   # Set permissions on PG_INIT_DB_DIR
   log-init "setting permissions::init.db.d"
-  chown -R abc:abc "${PG_INIT_DB_DIR}"
+  chown -R "${PUID}:${PGID}" "${PG_INIT_DB_DIR}"
 }
 
 # NAME
@@ -384,7 +384,7 @@ psql_configure_archive_dir() {
 
   # Set permissions on PG_INIT_DB_DIR
   log-init "setting permissions::archive"
-  chown -R abc:abc "${PG_ARCHIVE_ROOT}"
+  chown -R "${PUID}:${PGID}" "${PG_ARCHIVE_ROOT}"
 }
 
 # NAME

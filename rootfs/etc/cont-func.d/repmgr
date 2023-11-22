@@ -120,7 +120,7 @@ repmgr_configure_dir() {
     fi
 
     # Fix permissions
-    chown -R abc:abc "${REPMGR_DATA_DIR}"
+    chown -R "${PUID}:${PGID}" "${REPMGR_DATA_DIR}"
   fi
 }
 
@@ -141,7 +141,7 @@ repmgr_configure_Log_dir() {
     fi
 
     # Fix permissions
-    chown -R abc:abc "${REPMGR_LOG_DIR}"
+    chown -R "${PUID}:${PGID}" "${REPMGR_LOG_DIR}"
   fi
 }
 
