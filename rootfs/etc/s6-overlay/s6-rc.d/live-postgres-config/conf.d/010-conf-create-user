@@ -2,8 +2,10 @@
 # shellcheck shell=bash
 set -e
 
-# shellcheck source=../cont-func.d/global
-source /etc/cont-func.d/global
+# shellcheck source=../../../../conf.d/include/postgres
+source /etc/conf.d/include/postgres
+# shellcheck source=../../../../conf.d/include/repmgr
+source /etc/conf.d/include/repmgr
 
 # Configure DB_USER
 if [[ -n ${DB_USER} ]]; then

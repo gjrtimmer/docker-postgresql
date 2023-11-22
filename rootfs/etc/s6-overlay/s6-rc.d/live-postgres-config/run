@@ -6,3 +6,56 @@ set -e
 source /etc/conf.d/include/postgres
 # shellcheck source=../../../conf.d/include/repmgr
 source /etc/conf.d/include/repmgr
+
+# Start database server for live configuration
+rm -rf "${PG_DATA_DIR}/postmaster.pid"
+chmod 0700 -R "${PG_DATA_DIR}"
+set_postgresql_param "listen_addresses" "127.0.0.1" quiet
+
+case ${REPLICATION_MODE,,} in
+  standby|backup|repmgr-standby)
+    log-init "skipping due to replication mode = ${REPLICATION_MODE,,}"
+  ;;
+
+  *)
+    log-init "starting postgres server for configuration"
+    # shellcheck disable=SC2086
+    s6-setuidgid abc pg_ctl start -D "${PG_DATA_DIR}" -w -t ${PG_TIMEOUT_STARTUP} > /dev/null &
+    env_set PG_IN_CONFIG_MODE 1
+  ;;
+esac
+
+# Run scripts
+# Current Working Directory
+CWD=$(cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
+
+# Initialize conf.d
+# shellcheck disable=SC2086
+for SCRIPT in $(find ${CWD}/conf.d/* | sort -n) ; do
+  chmod +x "${SCRIPT}"
+  # Execute in subshell
+  ("${SCRIPT}")
+done
+
+# Stop database server
+case ${REPLICATION_MODE,,} in
+  standby|backup|repmgr-standby)
+    log-init "skipping due to replication mode = ${REPLICATION_MODE,,}"
+  ;;
+
+  *)
+    # Stopping postgres
+    log-init "stopping postgres server; configuration completed"
+    # shellcheck disable=SC2086
+    s6-setuidgid abc pg_ctl stop -D "${PG_DATA_DIR}" -w -m fast -t ${PG_TIMEOUT_SHUTDOWN}
+
+    # Remove postmaster PID file
+    rm -rf "${PG_DATA_DIR}/postmaster.pid"
+
+    # Remove PG_IN_CONFIG_MODE
+    env_del PG_IN_CONFIG_MODE
+  ;;
+esac
+
+# Sync disks
+s6-sync

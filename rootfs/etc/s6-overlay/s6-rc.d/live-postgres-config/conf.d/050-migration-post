@@ -2,8 +2,8 @@
 # shellcheck shell=bash
 set -e
 
-# shellcheck source=../cont-func.d/global
-source /etc/cont-func.d/global
+# shellcheck source=../../../../conf.d/include/postgres
+source /etc/conf.d/include/postgres
 
 if psql_is_migration; then
   # Check if migration was succesful
