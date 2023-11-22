@@ -53,5 +53,3 @@ if [[ -n ${DB_NAME} ]]; then
     ;;
   esac
 fi
-
-# EOF

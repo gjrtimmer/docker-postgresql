@@ -78,5 +78,3 @@ else
   # shellcheck disable=SC2086
   set_postgresql_param "wal_buffers" ${PG_JOURNAL_WAL_BUFFERS}
 fi
-
-# EOF

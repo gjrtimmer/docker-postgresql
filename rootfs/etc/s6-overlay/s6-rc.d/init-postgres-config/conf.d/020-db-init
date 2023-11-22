@@ -157,5 +157,3 @@ fi
 
 # configure path to data_directory
 set_postgresql_param "data_directory" "${PG_DATA_DIR}"
-
-# EOF

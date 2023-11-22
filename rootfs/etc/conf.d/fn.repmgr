@@ -221,4 +221,3 @@ repmgr_is_initialized() {
   fi
 }
 
-# EOF

@@ -55,4 +55,3 @@ if is_enabled "${REPMGR}"; then
   esac
 fi
 
-# EOF

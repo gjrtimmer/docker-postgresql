@@ -75,5 +75,3 @@ if repmgr_enabled && ! repmgr_is_initialized; then
   esac
 
 fi
-
-# EOF

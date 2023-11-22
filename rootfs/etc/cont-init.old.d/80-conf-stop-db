@@ -26,5 +26,3 @@ esac
 
 # Sync disks
 s6-sync
-
-# EOF

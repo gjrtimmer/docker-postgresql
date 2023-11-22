@@ -30,5 +30,3 @@ PARAMS+=(-d)
 PARAMS+=("${CONNINFO}")
 
 s6-setuidgid abc repmgr -f "${REPMGR_CONF}" "${PARAMS[@]}"
-
-# EOF

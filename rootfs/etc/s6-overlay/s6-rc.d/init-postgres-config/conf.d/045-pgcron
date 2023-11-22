@@ -27,5 +27,3 @@ case ${REPLICATION_MODE,,} in
     fi
   ;;
 esac
-
-# EOF

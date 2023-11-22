@@ -14,5 +14,3 @@ if is_enabled "${PG_LOG_COLLECTOR}"; then
 fi
 set_postgresql_param "log_file_mode" "${PG_LOG_FILE_MODE}"
 set_postgresql_param "log_rotation_age" "${PG_LOG_FILE_ROTATION}"
-
-# EOF

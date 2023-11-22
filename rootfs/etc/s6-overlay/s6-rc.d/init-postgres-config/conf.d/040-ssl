@@ -32,5 +32,3 @@ else
   # Disable SSl/TLS
   set_postgresql_param "ssl" "off"
 fi
-
-# EOF

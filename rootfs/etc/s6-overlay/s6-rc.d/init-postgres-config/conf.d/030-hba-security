@@ -16,5 +16,3 @@ case ${REPLICATION_MODE,,} in
     psql_configure_hba_security
   ;;
 esac
-
-# EOF

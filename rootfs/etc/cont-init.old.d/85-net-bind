@@ -7,5 +7,3 @@ source /etc/cont-func.d/global
 
 # listen on all interfaces
 set_postgresql_param "listen_addresses" "*" quiet
-
-# EOF

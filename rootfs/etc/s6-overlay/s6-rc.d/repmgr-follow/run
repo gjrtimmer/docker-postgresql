@@ -27,4 +27,3 @@ if repmgr_enabled; then
 
 fi
 
-# EOF

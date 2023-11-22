@@ -18,5 +18,3 @@ is_db_ready 1
 # Start repmgr
 # shellcheck disable=SC2086
 exec s6-setuidgid abc repmgrd --verbose --daemonize=false --no-pid-file -f "${REPMGR_CONF}"
-
-# EOF
