@@ -2,16 +2,16 @@
 # shellcheck shell=bash
 set -e
 
-# shellcheck source=../cont-func.d/global
-source /etc/cont-func.d/global
+# Include dependencies
+# shellcheck source=../../../functions
+source /etc/functions
 
 # Load Environment Variables
 set -o allexport
-# shellcheck source=../cont-env.d/postgres
-. /etc/cont-env.d/postgres
-
-# shellcheck source=../cont-env.d/repmgr
-. /etc/cont-env.d/repmgr
+for ENV in /etc/s6-overlay/s6-rc.d/*/env; do
+# shellcheck disable=SC1090
+. "${ENV}"
+done
 set +o allexport
 
 # Print Environment
@@ -32,11 +32,6 @@ env -0 | sort -z | while IFS='=' read -r -d '' k v; do
   if [ -z "$v" ]; then
     log-init "  $k=<not-set>"
   else
-    # if [ "$k" == "PG_PASS" ] || [ "$k" == "DB_PASS" ] || [ "$k" == "REPLICATION_PASS" ]; then
-    #   log-init "  $k=********"
-    # else
-    #   log-init "  $k=$v"
-    # fi
     if [[ " ${MASKED[*]} " =~ $k ]]; then
       log-init "  $k=********"
     else
@@ -44,5 +39,3 @@ env -0 | sort -z | while IFS='=' read -r -d '' k v; do
     fi
   fi
 done
-
-# EOF
