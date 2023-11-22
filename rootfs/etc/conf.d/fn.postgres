@@ -145,6 +145,10 @@ set_hba_param() {
 is_db_ready() {
   local SILENT=${1:-0}
 
+  if ! is_enabled "${PG_DEBUG_CONFIG_CONN}" && [ -z "${1}" ]; then
+    SILENT=1
+  fi
+
   cmd="pg_isready -h localhost -p 5432 -U ${PG_USER} -d postgres -t 1"
   timeout=${PG_READY_CONNECT_TIMEOUT}
   if [ "${SILENT}" -eq 0 ]; then
@@ -189,6 +193,10 @@ is_db_ready() {
 is_db_ready_socket() {
   local SILENT=${1:-0}
 
+  if ! is_enabled "${PG_DEBUG_CONFIG_CONN}" && [ -z "${1}" ]; then
+    SILENT=1
+  fi
+
   cmd="pg_isready -h /run/postgresql -p 5432 -U ${PG_USER} -d postgres -t 1"
   timeout=${PG_READY_CONNECT_TIMEOUT}
   if [ "${SILENT}" -eq 0 ]; then
@@ -232,6 +240,10 @@ is_db_ready_socket() {
 #
 is_master_ready() {
   local SILENT=${1:-0}
+
+  if ! is_enabled "${PG_DEBUG_CONFIG_CONN}" && [ -z "${1}" ]; then
+    SILENT=1
+  fi
 
   # shellcheck disable=SC2153
   cmd="pg_isready -h ${REPLICATION_HOST} -p ${REPLICATION_PORT} -U ${REPLICATION_USER} -d postgres -t 1"

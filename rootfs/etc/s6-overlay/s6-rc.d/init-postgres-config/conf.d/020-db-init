@@ -9,7 +9,7 @@ if ! psql_is_initialized; then
   case ${REPLICATION_MODE,,} in
     standby|snapshot|backup|repmgr-standby)
       # Wait for master to be ready
-      is_master_ready 0
+      is_master_ready
 
       case ${REPLICATION_MODE,,} in
         standby|repmgr-standby)

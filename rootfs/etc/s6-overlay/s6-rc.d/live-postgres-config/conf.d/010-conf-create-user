@@ -17,7 +17,7 @@ if [[ -n ${DB_USER} ]]; then
     *)
       if ! repmgr_enabled_standby; then
         # Check is database is ready to accept operations
-        is_db_ready_socket 1
+        is_db_ready_socket
 
         # Create default database user
         log-init "creating database user: ${DB_USER}"
