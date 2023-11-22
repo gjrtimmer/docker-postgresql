@@ -70,12 +70,12 @@ fi
 
 # Install logrotate task
 if [ ! -f "${CRON_TASK_DIR}/daily/logrotate" ]; then
-  cp /defaults/cron/tasks/logrotate-psql "${CRON_TASK_DIR}/daily"
+  cp /defaults/cron/tasks/logrotate "${CRON_TASK_DIR}/daily"
 fi
 
 # Install logrotate-psql task
 if [ ! -f "${CRON_TASK_DIR}/daily/logrotate-psql" ]; then
-  cp /defaults/cron/tasks/logrotate "${CRON_TASK_DIR}/daily"
+  cp /defaults/cron/tasks/logrotate-psql "${CRON_TASK_DIR}/daily"
 fi
 
 # Install logrotate config
