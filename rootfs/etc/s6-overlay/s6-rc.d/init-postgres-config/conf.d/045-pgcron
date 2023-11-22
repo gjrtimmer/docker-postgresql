@@ -2,8 +2,12 @@
 # shellcheck shell=bash disable=SC1008
 set -e
 
-# shellcheck source=../cont-func.d/global
-source /etc/cont-func.d/global
+# shellcheck source=../../../../functions
+source /etc/functions
+# shellcheck source=../env
+source /etc/s6-overlay/s6-rc.d/init-postgres-config/env
+# shellcheck source=../func
+source /etc/s6-overlay/s6-rc.d/init-postgres-config/func
 
 # Configure pg_cron
 case ${REPLICATION_MODE,,} in

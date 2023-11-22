@@ -1,0 +1,109 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash disable=SC1008
+set -e
+
+# shellcheck source=../../../../functions
+source /etc/functions
+# shellcheck source=../env
+source /etc/s6-overlay/s6-rc.d/init-postgres-config/env
+# shellcheck source=../func
+source /etc/s6-overlay/s6-rc.d/init-postgres-config/func
+
+# Configure data directory
+if [ ! -d "${PG_DATA_DIR}" ]; then
+  log-init "creating directory::data [${PG_DATA_DIR}]"
+  mkdir -p "${PG_DATA_DIR}"
+else
+  log-init "directory::data exists [${PG_DATA_DIR}]"
+fi
+
+if [ -d "${PG_DATA_DIR}" ]; then
+  find "${PG_DATA_DIR}" -type f -exec chmod 0600 {} \;
+  find "${PG_DATA_DIR}" -type d -exec chmod 0700 {} \;
+fi
+
+# Set permissions on PG_HOME
+log-init "setting permissions::home"
+# Fix: ignore /data/*/.rootfs which is needed for database migration
+find "${PG_HOME}" -ipath "${PG_HOME}/*/.rootfs" -prune -o -exec lsiown abc:abc {} +
+lsiown abc:abc "${PG_HOME}"
+
+# Configure log directory
+if [ ! -d "${PG_LOG_DIR}" ]; then
+  log-init "creating directory::log [${PG_LOG_DIR}]"
+  mkdir -p "${PG_LOG_DIR}"
+else
+  log-init "directory::log exists [${PG_LOG_DIR}]"
+fi
+
+# Set permissions on PG_LOGDIR
+log-init "setting permissions::log"
+chmod -R 1775 "${PG_LOG_DIR}"
+lsiown -R abc:abc "${PG_LOG_DIR}"
+
+# Configure run directory
+if [ ! -d "${PG_RUN_DIR}" ]; then
+  log-init "creating directory::run [${PG_RUN_DIR}]"
+  mkdir -p "${PG_RUN_DIR}" "${PG_RUN_DIR}/${PG_VERSION}-main.pg_stat_tmp"
+else
+  log-init "directory::run exists [${PG_RUN_DIR}]"
+fi
+
+if [ ! -L /run/postgresql/postgresql ]; then
+  ln -s "${PG_RUN_DIR}" /run/postgresql
+fi
+
+# Set Permissions on PG_RUN_DIR
+log-init "setting permissions::run"
+chmod -R 0777 "${PG_RUN_DIR}"
+chmod g+s "${PG_RUN_DIR}"
+lsiown -R abc:abc "${PG_RUN_DIR}"
+
+# Configure certificate directory
+if [ ! -d "${PG_CERTS_DIR}" ]; then
+  log-init "creating directory::certs [${PG_CERTS_DIR}]"
+  mkdir -p "${PG_CERTS_DIR}"
+else
+  log-init "directory::certs exists [${PG_CERTS_DIR}]"
+fi
+
+# set permissions on PG_CERTS_DIR
+lsiown abc:abc "${PG_CERTS_DIR}"
+
+# Configure archive directory
+if [ ! -d "${PG_ARCHIVE_ROOT}" ]; then
+  log-init "creating directory::archive [${PG_ARCHIVE_ROOT}]"
+  mkdir -p "${PG_ARCHIVE_ROOT}"
+fi
+
+if [ ! -d "${PG_ARCHIVE_DIR}" ]; then
+  log-init "creating directory::archive [${PG_ARCHIVE_DIR}]"
+  mkdir -p "${PG_ARCHIVE_DIR}"
+fi
+
+# Set permissions on PG_INIT_DB_DIR
+log-init "setting permissions::archive"
+lsiown -R abc:abc "${PG_ARCHIVE_ROOT}"
+
+# Set initdb
+if ! psql_is_initialized; then
+  case ${REPLICATION_MODE,,} in
+    standby|repmgr-standby|snapshot|backup|repmgr-witness)
+      : # NOOP
+    ;;
+
+    *)
+      # Configure initdb directory
+      # We are creating this here, because this should only be created on
+      # the primary node
+      if [ ! -d "${PG_INIT_DB_DIR}" ]; then
+        log-init "creating directory::init.db.d [${PG_INIT_DB_DIR}]"
+        mkdir -p "${PG_INIT_DB_DIR}"
+      fi
+
+      # Set permissions on PG_INIT_DB_DIR
+      log-init "setting permissions::init.db.d"
+      lsiown -R abc:abc "${PG_INIT_DB_DIR}"
+    ;;
+  esac
+fi
