@@ -2,8 +2,11 @@
 # shellcheck shell=bash
 set -e
 
-# shellcheck source=../../../cont-func.d/global
-source /etc/cont-func.d/global
+# Include dependencies
+# shellcheck source=../../../etc/functions
+source /etc/functions
+# shellcheck source=../../../etc/s6-overlay/s6-rc.d/init-postgres-config/env
+source /etc/s6-overlay/s6-rc.d/init-postgres-config/env
 
 # Check if retention is set to a number
 VALID_NUMBER='^[0-9]+$'
