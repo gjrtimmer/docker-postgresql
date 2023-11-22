@@ -13,9 +13,6 @@ set -e
 #
 log-init() {
   CALLER="$(basename "$(dirname "$(caller | awk '{print $2}')")")"
-  if [ "${CALLER}" = "conf.d" ]; then
-    CALLER="$(basename "$(dirname "$(dirname "$(caller | awk '{print $2}')")")")"
-  fi
   s6-echo -- "${CALLER}: $1"
 }
 
