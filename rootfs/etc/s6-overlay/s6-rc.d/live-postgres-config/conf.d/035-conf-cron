@@ -18,7 +18,7 @@ case ${REPLICATION_MODE,,} in
       # Check if supported version
       if (( "${PG_VERSION_MAJOR}" >= 13 )); then
         # Check is database is ready to accept operations
-        is_db_ready_socket 0
+        is_db_ready_socket 1
 
         if is_enabled "${PG_CRON}"; then
           log-init "loading cron scheduler extension"

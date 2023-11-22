@@ -42,3 +42,41 @@ lsiown abc:abc "${HOME}/.bashrc" "${HOME}/.bash_aliases"
 # Set container timezone
 cp "/usr/share/zoneinfo/${TZ}" /etc/localtime
 log-init "Timezone set to ${TZ}"
+
+# Load Environment Variables
+set -o allexport
+# shellcheck source=../../../conf.d/env.generic
+source /etc/conf.d/env.generic
+# shellcheck source=../../../conf.d/env.cron
+source /etc/conf.d/env.cron
+# shellcheck source=../../../conf.d/env.postgres
+source /etc/conf.d/env.postgres
+# shellcheck source=../../../conf.d/env.repmgr
+source /etc/conf.d/env.repmgr
+set +o allexport
+
+# Print Environment
+log-init "Environment Variables:"
+MASKED=("PG_PASS" "DB_PASS" "REPLICATION_PASS REPMGR_PASS")
+FILTER_SNAPSHOT=("DB_NAME" "DB_USER" "DB_PASS" "PG_PASS" "REPMGR_PASS")
+env -0 | sort -z | while IFS='=' read -r -d '' k v; do
+  case ${REPLICATION_MODE,,} in
+    standby) ;;
+    snapshot)
+      if [[ " ${FILTER_SNAPSHOT[*]} " =~ $k ]]; then
+        continue
+      fi
+    ;;
+    backup) ;;
+  esac
+
+  if [ -z "$v" ]; then
+    log-init "  $k=<not-set>"
+  else
+    if [[ " ${MASKED[*]} " =~ $k ]]; then
+      log-init "  $k=********"
+    else
+      log-init "  $k=$v"
+    fi
+  fi
+done
