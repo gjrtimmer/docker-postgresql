@@ -59,3 +59,8 @@ esac
 
 # Sync disks
 s6-sync
+
+# Post Live Configuration
+# Configure to listen on all interfaces
+# listen on all interfaces
+set_postgresql_param "listen_addresses" "*" quiet
