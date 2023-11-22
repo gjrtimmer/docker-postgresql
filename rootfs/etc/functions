@@ -12,7 +12,11 @@ set -e
 #   $1  	string		Log message
 #
 log-init() {
-  s6-echo -- "$(basename "$(dirname "$(caller | awk '{print $2}')")"): $1"
+  CALLER="$(basename "$(dirname "$(caller | awk '{print $2}')")")"
+  if [ "${CALLER}" = "conf.d" ]; then
+    CALLER="$(basename "$(dirname "$(dirname "$(caller | awk '{print $2}')")")")"
+  fi
+  s6-echo -- "${CALLER}: $1"
 }
 
 # NAME
