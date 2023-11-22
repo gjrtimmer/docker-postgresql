@@ -2,11 +2,8 @@
 # shellcheck shell=bash
 set -e
 
-# Include dependencies
-# shellcheck source=../../../functions
-source /etc/functions
-# shellcheck source=../init-cron-config/env
-source /etc/s6-overlay/s6-rc.d/init-cron-config/env
+# shellcheck source=../../../conf.d/include/cron
+source /etc/conf.d/include/cron
 
 # Start cron
 exec /usr/sbin/crond -f -l 4 -L "${CRON_LOG_FILE}" -c "${CRON_CRONTAB_DIR}"

@@ -2,16 +2,19 @@
 # shellcheck shell=bash
 set -e
 
-# Include dependencies
-# shellcheck source=../../../functions
-source /etc/functions
+# shellcheck source=../../../conf.d/include/generic
+source /etc/conf.d/include/generic
 
 # Load Environment Variables
 set -o allexport
-for ENV in /etc/s6-overlay/s6-rc.d/*/env; do
-# shellcheck disable=SC1090
-. "${ENV}"
-done
+# shellcheck source=../../../conf.d/env.generic
+source /etc/conf.d/env.generic
+# shellcheck source=../../../conf.d/env.cron
+source /etc/conf.d/env.cron
+# shellcheck source=../../../conf.d/env.postgres
+source /etc/conf.d/env.postgres
+# shellcheck source=../../../conf.d/env.repmgr
+source /etc/conf.d/env.repmgr
 set +o allexport
 
 # Print Environment

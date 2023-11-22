@@ -2,12 +2,8 @@
 # shellcheck shell=bash disable=SC1008
 set -e
 
-# shellcheck source=../../../../functions
-source /etc/functions
-# shellcheck source=../env
-source /etc/s6-overlay/s6-rc.d/init-postgres-config/env
-# shellcheck source=../func
-source /etc/s6-overlay/s6-rc.d/init-postgres-config/func
+# shellcheck source=../../../../conf.d/include/postgres
+source /etc/conf.d/include/postgres
 
 # Configure journal
 case "${PG_JOURNAL_WAL_LEVEL,,}" in

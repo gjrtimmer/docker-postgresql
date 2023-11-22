@@ -2,13 +2,9 @@
 # shellcheck shell=bash disable=SC1008
 set -e
 
+# shellcheck source=../../../conf.d/include/postgres
+source /etc/conf.d/include/postgres
 
-################################################################################
-# shellcheck source=../../../cont-func.d/global
-source /etc/cont-func.d/global
-
-
-################################################################################
 # Start PostgreSQL
 # shellcheck disable=SC2086
 exec s6-setuidgid abc ${PG_COMMAND} -D "${PG_DATA_DIR}"

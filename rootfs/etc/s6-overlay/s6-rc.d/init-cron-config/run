@@ -2,11 +2,8 @@
 # shellcheck shell=bash disable=SC1008
 set -e
 
-# Include dependencies
-# shellcheck source=../../../functions
-source /etc/functions
-# shellcheck source=env
-source /etc/s6-overlay/s6-rc.d/init-cron-config/env
+# shellcheck source=../../../conf.d/include/cron
+source /etc/conf.d/include/cron
 
 # Configure data directory
 if [ ! -d "${CRON_DATA_DIR}" ]; then

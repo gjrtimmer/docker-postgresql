@@ -2,8 +2,8 @@
 # shellcheck shell=bash disable=SC1008
 set -e
 
-# shellcheck source=../../../cont-func.d/global
-source /etc/cont-func.d/global
+# shellcheck source=../../../conf.d/include/repmgr
+source /etc/conf.d/include/repmgr
 
 if ! repmgr_enabled; then
   s6-svc -O .

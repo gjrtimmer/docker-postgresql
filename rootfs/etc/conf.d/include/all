@@ -1,0 +1,15 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash disable=SC1008
+set -e
+
+# shellcheck source=generic
+source /etc/conf.d/include/generic
+
+# shellcheck source=cron
+source /etc/conf.d/include/cron
+
+# shellcheck source=postgres
+source /etc/conf.d/include/postgres
+
+# shellcheck source=repmgr
+source /etc/conf.d/include/repmgr
