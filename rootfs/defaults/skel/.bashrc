@@ -84,7 +84,7 @@ alias l='ls -CF'
 # Load environment
 set -o allexport
 # shellcheck source=../../etc/conf.d/include/all
-. /etc/cont.d/include/all
+. /etc/conf.d/include/all
 set +o allexport
 
 # Alias definitions.
