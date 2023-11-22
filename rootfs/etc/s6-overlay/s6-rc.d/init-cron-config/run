@@ -84,9 +84,9 @@ if [ ! -f "${CRON_LOGROTATE_DIR}/logrotate.conf" ]; then
 fi
 
 # Install logrotate user
-if [ -f "${CRON_LOGROTATE_USER_DIR}/cron" ]; then
+if [ ! -f "${CRON_LOGROTATE_USER_DIR}/cron" ]; then
   cp /defaults/cron/logrotate/logrotate.d/cron "${CRON_LOGROTATE_USER_DIR}"
 fi
-if [ -f "${CRON_LOGROTATE_USER_DIR}/repmgr" ]; then
+if [ ! -f "${CRON_LOGROTATE_USER_DIR}/repmgr" ]; then
   cp /defaults/cron/logrotate/logrotate.d/repmgr "${CRON_LOGROTATE_USER_DIR}"
 fi
