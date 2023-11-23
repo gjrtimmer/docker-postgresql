@@ -134,7 +134,8 @@ if ! psql_is_initialized; then
           PG_LIB_PATH="${PG_OLD_USRLIB}:/lib:/usr/local/lib:/usr/lib"
         fi
         cd "${PG_HOME}"
-        if s6-setuidgid abc stdbuf -o0 exec env LD_LIBRARY_PATH="${PG_LIB_PATH}" pg_upgrade "${PG_UPGRADE_PARAMS[@]}" 2>&1 | stdbuf -i0 -o0 tee "${PG_LOG_DIR}/pg_upgrade-v${PG_OLD_VERSION}-v${PG_VERSION_SLUG}.log"; then
+        s6-setuidgid abc stdbuf -o0 exec env LD_LIBRARY_PATH="${PG_LIB_PATH}" pg_upgrade "${PG_UPGRADE_PARAMS[@]}" 2>&1 | stdbuf -i0 -o0 tee "${PG_LOG_DIR}/pg_upgrade-v${PG_OLD_VERSION}-v${PG_VERSION_SLUG}.log"
+        if grep -q 'Upgrade Complete' "${PG_LOG_DIR}/pg_upgrade-v${PG_OLD_VERSION}-v${PG_VERSION_SLUG}.log"; then
           log-init "migration succesful"
           env_set PG_MIGRATION_SUCCESS 1
         else
