@@ -83,8 +83,14 @@ alias l='ls -CF'
 
 # Load environment
 set -o allexport
-# shellcheck source=../../etc/conf.d/include/all
-. /etc/conf.d/include/all
+# shellcheck source=../../etc/conf.d/env.generic
+. /etc/conf.d/env.generic
+# shellcheck source=../../etc/conf.d/env.cron
+. /etc/conf.d/env.cron
+# shellcheck source=../../etc/conf.d/env.postgres
+. /etc/conf.d/env.postgres
+# shellcheck source=../../etc/conf.d/env.repmngr
+. /etc/conf.d/env.repmgr
 set +o allexport
 
 # Alias definitions.
