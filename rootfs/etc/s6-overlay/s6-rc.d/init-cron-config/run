@@ -1,0 +1,92 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash disable=SC1008
+set -e
+
+# shellcheck source=../../../conf.d/include/cron
+source /etc/conf.d/include/cron
+
+# Configure data directory
+if [ ! -d "${CRON_DATA_DIR}" ]; then
+  log-init "creating directory::crontabs [${CRON_DATA_DIR}]"
+  mkdir -p "${CRON_DATA_DIR}"
+else
+  log-init "directory::crontabs exists [${CRON_DATA_DIR}]"
+fi
+lsiown -R abc:abc "${CRON_DATA_DIR}"
+
+# Configure directory for cron tasks
+if [ ! -d "${CRON_TASK_DIR}" ]; then
+  log-init "creating directory::cron::tasks [${CRON_TASK_DIR}]"
+  mkdir -p "${CRON_TASK_DIR}"/{hourly,daily,weekly,monthly}
+else
+  log-init "directory::cron::tasks exists [${CRON_TASK_DIR}]"
+fi
+lsiown -R abc:abc "${CRON_TASK_DIR}"
+
+# Configure directory for crontabs
+if [ ! -d "${CRON_CRONTAB_DIR}" ]; then
+  log-init "creating directory::crontabs [${CRON_CRONTAB_DIR}]"
+  mkdir -p "${CRON_CRONTAB_DIR}"
+else
+  log-init "directory::crontabs exists [${CRON_CRONTAB_DIR}]"
+fi
+lsiown -R abc:abc "${CRON_CRONTAB_DIR}"
+
+# Configure directory for cron logs
+if [ ! -d "${CRON_LOG_DIR}" ]; then
+  log-init "creating directory::log::cron [${CRON_LOG_DIR}]"
+  mkdir -p "${CRON_LOG_DIR}"
+else
+  log-init "directory::log::cron exists [${CRON_LOG_DIR}]"
+fi
+lsiown -R abc:abc "${CRON_LOG_DIR}"
+
+# Configure directory logrotate directory
+if [ ! -d "${CRON_LOGROTATE_DIR}" ]; then
+  log-init "creating directory::logrotate [${CRON_LOGROTATE_DIR}]"
+  mkdir -p "${CRON_LOGROTATE_DIR}"
+else
+  log-init "directory::logrotate exists [${CRON_LOGROTATE_DIR}]"
+fi
+if [ ! -d "${CRON_LOGROTATE_USER_DIR}" ]; then
+  log-init "creating directory::logrotate.d [${CRON_LOGROTATE_USER_DIR}]"
+  mkdir -p "${CRON_LOGROTATE_USER_DIR}"
+else
+  log-init "directory::logrotate.d exists [${CRON_LOGROTATE_USER_DIR}]"
+fi
+lsiown -R root:abc "${CRON_LOGROTATE_DIR}"
+
+# Install crontabs
+if [ ! -f "${CRON_CRONTAB_DIR}/root" ]; then
+  log-init "installing crontab::root"
+  cp /defaults/cron/crontabs/root "${CRON_CRONTAB_DIR}/root"
+fi
+if [ -f /etc/crontabs/root ]; then
+  if [ ! -L /etc/crontabs/root ]; then
+    rm /etc/crontabs/root
+    ln -s /config/cron/crontabs/root /etc/crontabs/root
+  fi
+fi
+
+# Install logrotate task
+if [ ! -f "${CRON_TASK_DIR}/daily/logrotate" ]; then
+  cp /defaults/cron/tasks/logrotate "${CRON_TASK_DIR}/daily"
+fi
+
+# Install logrotate-psql task
+if [ ! -f "${CRON_TASK_DIR}/daily/logrotate-psql" ]; then
+  cp /defaults/cron/tasks/logrotate-psql "${CRON_TASK_DIR}/daily"
+fi
+
+# Install logrotate config
+if [ ! -f "${CRON_LOGROTATE_DIR}/logrotate.conf" ]; then
+  cp /defaults/cron/logrotate/logrotate.conf "${CRON_LOGROTATE_DIR}"
+fi
+
+# Install logrotate user
+if [ ! -f "${CRON_LOGROTATE_USER_DIR}/cron" ]; then
+  cp /defaults/cron/logrotate/logrotate.d/cron "${CRON_LOGROTATE_USER_DIR}"
+fi
+if [ ! -f "${CRON_LOGROTATE_USER_DIR}/repmgr" ]; then
+  cp /defaults/cron/logrotate/logrotate.d/repmgr "${CRON_LOGROTATE_USER_DIR}"
+fi

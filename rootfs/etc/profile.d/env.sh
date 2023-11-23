@@ -5,4 +5,3 @@ for VAR in /var/run/s6/container_environment/*; do
     export "$(basename "${VAR}")"="$(cat "${VAR}")"
 done
 
-# EOF

@@ -1,0 +1,57 @@
+#!/usr/bin/with-contenv bash
+#shellcheck shell=bash
+set -e
+
+# shellcheck source=../../../../conf.d/include/postgres
+source /etc/conf.d/include/postgres
+# shellcheck source=../../../../conf.d/include/repmgr
+source /etc/conf.d/include/repmgr
+
+if is_enabled "${REPMGR}"; then
+  if [ -z "${REPMGR_PASS}" ]; then
+    exit 70
+  fi
+
+  case ${REPLICATION_MODE,,} in
+    snapshot|standby|backup|repmgr-standby)
+      log-init "skipping due to replication mode = ${REPLICATION_MODE,,}"
+    ;;
+
+    *)
+      if ! repmgr_is_initialized && ! repmgr_enabled_standby; then
+        # Check is database is ready to accept operations
+        is_db_ready_socket
+
+        # Create REPMGR Role
+        log-init "creating repmgr user: ${REPMGR_USER}"
+        QRY_CHECK_USER="$(printf "SELECT 1 FROM pg_catalog.pg_user WHERE usename = '%s';" "${REPMGR_USER}")"
+        if [[ -z $(psql -U "${PG_USER}" -Atc "${QRY_CHECK_USER}") ]]; then
+          QRY_CREATE_REPMGR_ROLE=$(printf "CREATE ROLE %s with LOGIN SUPERUSER REPLICATION PASSWORD '%s';" "${REPMGR_USER}" "${REPMGR_PASS}")
+          psql -U "${PG_USER}" -c "${QRY_CREATE_REPMGR_ROLE}" >/dev/null
+        fi
+
+        # Create REPMGR database
+        log-init "creating database: ${REPMGR_DB_NAME}..."
+        QRY_DB_EXISTS="$(printf "SELECT 1 FROM pg_catalog.pg_database WHERE datname = '%s';" "${REPMGR_DB_NAME}")"
+        if [[ -z $(psql -U "${PG_USER}" -Atc "${QRY_DB_EXISTS}") ]]; then
+          QRY_DB_CREATE="$(printf "CREATE DATABASE \"%s\" WITH TEMPLATE = '%s';" "${REPMGR_DB_NAME}" "${DB_TEMPLATE}")"
+          psql -U "${PG_USER}" -c "${QRY_DB_CREATE}" >/dev/null
+        fi
+
+        # Grant Access to REPMGR database
+        if [[ -n ${DB_USER} ]]; then
+          log-init "granting access to ${REPMGR_USER} user..."
+          QRY_GRANT_ACCESS="$(printf "GRANT ALL PRIVILEGES ON DATABASE \"%s\" to %s;" "${REPMGR_DB_NAME}" "${REPMGR_USER}")"
+          psql -U "${PG_USER}" -c "${QRY_GRANT_ACCESS}" >/dev/null
+        fi
+
+        # Change user search path
+        log-init "modify user ${REPMGR_USER} search path"
+        QRY_SEARCH_PATH="$(printf "ALTER USER %s SET search_path TO %s,public;" "${REPMGR_USER}" "${REPMGR_DB_NAME}")"
+        psql -U "${PG_USER}" -c "${QRY_SEARCH_PATH}" >/dev/null
+
+      fi
+    ;;
+  esac
+fi
+

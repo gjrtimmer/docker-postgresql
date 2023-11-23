@@ -1,0 +1,182 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash disable=SC1008
+set -e
+
+# NAME
+#   log-init
+#
+# DESCRIPTION
+#   Display a log line during the init process
+#
+# OPTIONS
+#   $1  	string		Log message
+#
+log-init() {
+  CALLER="$(basename "$(dirname "$(caller | awk '{print $2}')")")"
+  s6-echo -- "${CALLER}: $1"
+}
+
+# NAME
+#   exec_as_user
+#
+# DESCRIPTION
+#   Execute command as default container user
+#
+# OPTIONS
+#   All arguments will be appended
+#
+exec_as_user() {
+  exec s6-setuidgid abc "$@"
+}
+
+# NAME
+#   is_enabled
+#
+# DESCRIPTION
+#   Check if variable is set to enabled
+#
+# OPTIONS
+#   $1  	string		Variabel name
+#
+# USAGE
+#   if is_enabled "${VAR}"; then
+#     {ENABLED}
+#   else
+#     {DISABLED}
+#   fi
+#
+is_enabled() {
+    local -r BOOL="${1}"
+
+    # shellcheck disable=2086
+    if (( BOOL == 1 )) || [ "${BOOL}" == true ] || [ "${BOOL,,}" = "true" ] || [ "${BOOL,,}" = "enable" ] || [ "${BOOL,,}" = "enabled" ] || [ "${BOOL,,}" = "on" ]; then
+        return 0
+    fi
+
+    return 1
+}
+
+# NAME
+#   is_greatest
+#
+# DESCRIPTION
+#   Select the greatest number from a list starting with a base value
+#   return the greatest value, if no value greater than the base value is
+#   found return the base value
+#
+# OPTIONS
+#   $1  	list			List of values
+#   $2  	string		base value
+#
+# USAGE
+#   RES=$(is_greatest "10 20 30 40 50" 25)
+#
+is_greatest() {
+  #shellcheck disable=SC2124
+  local -r ARGS=$@
+  local ELM="$1"
+
+  for ARG in $ARGS; do
+    if [ "$ARG" -gt "${ELM}" ]; then
+      ELM="${ARG}"
+    fi
+  done
+
+  echo "${ELM}"
+}
+
+# NAME
+#   is_least
+#
+# DESCRIPTION
+#   Select the lowest value from a list with a base value.
+#   Returns the lowest value, if no value in the list is lower then the base
+#   value, it will return the base value.
+#
+# OPTIONS
+#   $1  	list			List of values
+#   $2  	string		base value
+#
+# USAGE
+#   RES=$(is_least "10 20 30 40 50" 25)
+#
+is_least() {
+  #shellcheck disable=SC2124
+  local -r ARGS=$@
+  local ELM="$1"
+
+  for ARG in $ARGS; do
+    if [ "$ARG" -lt "${ELM}" ]; then
+      ELM="${ARG}"
+    fi
+  done
+
+  echo "${ELM}"
+}
+
+# NAME
+#   join_array
+#
+# DESCRIPTION
+#   Join an array with a speficied delimiter
+#
+# OPTIONS
+#   $1  	char			Delimiter
+#   $2  	array			Array
+#
+# USAGE
+#   RES=$(join_array ; "${ARR[@]}")
+#   RES will be a string of the array delimited by ';'
+#
+join_array() {
+  local -r DELIM=${1-}
+  local -r FIELDS=${2-}
+
+  if shift 2; then
+    printf %s "$FIELDS" "${@/#/$DELIM}"
+  fi
+}
+
+# NAME
+#   env_set
+#
+# DESCRIPTION
+#   Set a variable on container level
+#   This will create a container value in /var/run/s6/container_environment
+#   which will automatically be loaded by /usr/bin/with-contenv
+#   set can be used to carry over values or markers between init scripts
+#
+# OPTIONS
+#   $1  	string		Key
+#   $2  	string		Value
+#
+# USAGE
+#   env_set VARNAME "VALUE"
+#
+env_set() {
+  local -r KEY="${1}"
+  local -r VAL="${2}"
+
+  printf "%s" "${VAL}" > /var/run/s6/container_environment/"${KEY}"
+}
+
+# NAME
+#		env_del
+#
+# DESCRIPTION
+#		Remove environment variable/marker on container level
+#
+#	OPTIONS
+#		$1		string		Key
+#
+# USAGE
+#		env_dev VARNAME
+#
+#	EXAMPLES
+#		env_del PG_MIGRATION
+#
+env_del() {
+  local -r KEY="${1}"
+
+  rm /var/run/s6/container_environment/"${KEY}"
+}

@@ -1,0 +1,403 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash disable=SC1008
+set -e
+
+# NAME
+#   psql_is_initialized
+#
+# DESCRIPTION
+#   Check if postgresql has been initialized by previous container
+#
+# USAGE
+#   if psql_is_initialized; then
+#     {INITIALIZED}
+#   else
+#     {NOT INITIALIZED}
+#   fi
+#
+psql_is_initialized() {
+  if [[ -f ${PG_DATA_DIR}/PG_VERSION ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+# NAME
+#		set_postgresql_param
+#
+# DESCRIPTION
+#		Set PostgreSQL parameter
+#
+# OPTIONS
+#		$1		string		Key
+#		$2		string		Value
+#
+# USAGE
+#		set_postgresql_param {KEY} {VALUE}
+#
+# EXAMPLES
+#		set_postgresql_param "wal_compression" on
+#		set_postgresql_param "logging_collector" "on"
+#
+set_postgresql_param() {
+  local key=${1}
+  local value=${2}
+
+  if [ "$(grep -c "${key}" "${PG_CONF}")" -eq 0 ]; then
+    echo "${key} = '${value//[&]/\\&}'" >> "${PG_CONF}"
+  fi
+
+  if [[ -n ${value} ]]; then
+    local current
+    current=$(s6-setuidgid abc sed -n -e "s/^\(${key} = '\)\([^ ']*\)\(.*\)$/\2/p" "${PG_CONF}")
+
+    if [[ "${current}" != "${value}" ]]; then
+      log-init "setting postgresql.conf parameter: ${key} = '${value}'"
+      s6-setuidgid abc sed -i "s|^[#]*[ ]*${key} = .*|${key} = '${value//[&]/\\&}'|" "${PG_CONF}"
+    fi
+  fi
+}
+
+# NAME
+#		set_shared_libraries
+#
+# DESCRIPTION
+#		Add extension to the shared_preload_libraries config parameter
+#
+# OPTIONS
+#		$1		string		Name of extension
+#
+# USAGE
+#		set_shared_libraries {EXTENSION}
+#
+# EXAMPLES
+#		set_shared_libraries pg_cron
+#		set_shared_libraries repmgr
+#
+set_shared_libraries() {
+  local value=${1}
+
+  if [[ -n ${value} ]]; then
+    local current
+    current=$(s6-setuidgid abc sed -n -e "s/^\(shared_preload_libraries = '\)\([^ ']*\)\(.*\)$/\2/p" "${PG_CONF}")
+
+    if [ -z "${current}" ]; then
+      lib_list=()
+    else
+      lib_list=("${current//,/}")
+    fi
+
+    # shellcheck disable=SC2076
+    if [[ ! " ${lib_list[*]} " =~ "${value}" ]]; then
+      log-init "setting postgresql.conf parameter: shared_preload_libraries = '${value}'"
+
+      lib_list+=("${value//[&]/\\&}")
+      value=$(join_array , "${lib_list[@]}")
+
+      s6-setuidgid abc sed -i "s|^[#]*[ ]*shared_preload_libraries = .*|shared_preload_libraries = '${value}'|" "${PG_CONF}"
+    fi
+  fi
+}
+
+# NAME
+#		set_hba_param
+#
+# DESCRIPTION
+#		Set HBA config
+#
+# OPTIONS
+#		$1		string		HBA Config line
+#
+# USAGE
+#		set_hba_param {HBA_CONFIG_LINE}
+#
+# EXAMPLES
+#		set_hba_param "host	all				all				0.0.0.0/0				md5"
+#
+set_hba_param() {
+  local value=${1}
+
+  # shellcheck disable=SC2001
+  if ! grep -q "$(sed "s| | \\\+|g" <<< "${value}")" "${PG_HBA_CONF}"; then
+    echo "${value}" >> "${PG_HBA_CONF}"
+  fi
+}
+
+# NAME
+#		is_db_ready
+#
+# DESCRIPTION
+#		Check if the database is ready for TCP/IP connections on localhost
+#		this function is used to check if the database is ready while in config
+#		mode.
+#
+# OPTIONS
+#		$1		bool		Silent mode, supress output. (default: false)
+#
+# USAGE
+#		is_db_ready
+#
+# EXAMPLES
+#		is_db_ready
+#		is_db_ready 1
+#
+is_db_ready() {
+  local SILENT=${1:-0}
+
+  if ! is_enabled "${PG_DEBUG_CONFIG_CONN}" && [ -z "${1}" ]; then
+    SILENT=1
+  fi
+
+  cmd="pg_isready -h localhost -p 5432 -U ${PG_USER} -d postgres -t 1"
+  timeout=${PG_READY_CONNECT_TIMEOUT}
+  if [ "${SILENT}" -eq 0 ]; then
+    echo -n "  waiting for database to be ready (${PG_READY_CONNECT_TIMEOUT}s timeout)"
+  fi
+  while ! $cmd > /dev/null 2>&1
+  do
+    timeout=$((timeout - 1))
+    if [[ $timeout -eq 0 ]]; then
+      if [ "${SILENT}" -eq 0 ]; then
+        echo "  [TIMEOUT]"
+      fi
+      return 1
+    fi
+
+    if [ "${SILENT}" -eq 0 ]; then
+      echo -n "."
+    fi
+    sleep 1
+  done
+  if [ "${SILENT}" -eq 0 ]; then
+    echo "  [CONNECTED]"
+  fi
+}
+
+# NAME
+#		is_db_ready_socket
+#
+# DESCRIPTION
+#		Check if the database is ready to accept connections on its socket
+#
+# OPTIONS
+#		$1		bool		Silent mode, supress output. (default: false)
+#
+# USAGE
+#		is_db_ready_socket
+#
+# EXAMPLES
+#		is_db_ready_socket
+#		is_db_ready_socket 1
+#
+is_db_ready_socket() {
+  local SILENT=${1:-0}
+
+  if ! is_enabled "${PG_DEBUG_CONFIG_CONN}" && [ -z "${1}" ]; then
+    SILENT=1
+  fi
+
+  cmd="pg_isready -h /run/postgresql -p 5432 -U ${PG_USER} -d postgres -t 1"
+  timeout=${PG_READY_CONNECT_TIMEOUT}
+  if [ "${SILENT}" -eq 0 ]; then
+    echo -n "  waiting for database to be ready (${PG_READY_CONNECT_TIMEOUT}s timeout)"
+  fi
+  while ! $cmd > /dev/null 2>&1
+  do
+    timeout=$((timeout - 1))
+    if [[ $timeout -eq 0 ]]; then
+      if [ "${SILENT}" -eq 0 ]; then
+        echo "  [TIMEOUT]"
+      fi
+      return 1
+    fi
+
+    if [ "${SILENT}" -eq 0 ]; then
+      echo -n "."
+    fi
+    sleep 1
+  done
+  if [ "${SILENT}" -eq 0 ]; then
+    echo "  [CONNECTED]"
+  fi
+}
+
+# NAME
+#		is_master_ready
+#
+# DESCRIPTION
+# 	Check if the master node is ready for connections
+#
+# OPTIONS
+#		$1		bool		Silent mode, supress output. (default: false)
+#
+# USAGE
+#		is_master_ready
+#
+# EXAMPLES
+#		is_master_ready
+#		is_master_ready 1
+#
+is_master_ready() {
+  local SILENT=${1:-0}
+
+  if ! is_enabled "${PG_DEBUG_CONFIG_CONN}" && [ -z "${1}" ]; then
+    SILENT=1
+  fi
+
+  # shellcheck disable=SC2153
+  cmd="pg_isready -h ${REPLICATION_HOST} -p ${REPLICATION_PORT} -U ${REPLICATION_USER} -d postgres -t 1"
+  timeout=${PG_READY_CONNECT_MASTER_TIMEOUT}
+  if [ "${SILENT}" -eq 0 ]; then
+    echo -n "  waiting for ${REPLICATION_HOST} to accept connections (${PG_READY_CONNECT_MASTER_TIMEOUT}s timeout)"
+  fi
+  while ! $cmd > /dev/null 2>&1
+  do
+    timeout=$((timeout - 1))
+    if [[ $timeout -eq 0 ]]; then
+      if [ "${SILENT}" -eq 0 ]; then
+        echo "  [TIMEOUT]"
+      fi
+      exit 30
+    fi
+
+    if [ "${SILENT}" -eq 0 ]; then
+      echo -n "."
+    fi
+    sleep 1
+  done
+  if [ "${SILENT}" -eq 0 ]; then
+    echo "  [CONNECTED]"
+  fi
+}
+
+# NAME
+#		psql_configure_hba_security
+#
+# DESCRIPTION
+#
+psql_configure_hba_security() {
+  if [ ! -f "${PG_DATA_DIR}/net-security" ] && [ ! -f "${PG_DATA_DIR}/PG_HBA_SECURITY" ]; then
+    log-init "trusting connections from the local network..."
+    set_hba_param "host	all				all				samenet					trust"
+
+    # allow remote connections to postgresql database
+    set_hba_param "host	all				all				0.0.0.0/0				md5"
+
+    s6-setuidgid abc touch "${PG_DATA_DIR}/PG_HBA_SECURITY"
+  fi
+}
+
+# NAME
+#		psql_validate_replicate_params
+#
+# DESCRIPTION
+#		Validate the replication configuration
+#
+psql_validate_replicate_params() {
+  if [[ -z $REPLICATION_HOST ]]; then
+    log-init "ERROR: REPLICATION_MODE=${REPLICATION_MODE^^}; required variable REPLICATION_HOST not set"
+    exit 18
+  fi
+
+  if [[ -z $REPLICATION_USER ]]; then
+    log-init "ERROR: REPLICATION_MODE=${REPLICATION_MODE^^}; required variable REPLICATION_USER not set"
+    exit 19
+  fi
+
+  if [[ -z $REPLICATION_PASS ]]; then
+    echo "ERROR: REPLICATION_MODE=${REPLICATION_MODE^^}; required variable REPLICATION_PASS not set"
+    exit 20
+  fi
+}
+
+# NAME
+#		psql_validate_pgpass
+#
+# DESCRIPTION
+#		Validate postgres password
+#
+psql_validate_pgpass() {
+  if [ "$PG_PASS" == "postgres" ]; then
+    log-init "WARNING: postgres user password still set to default; only use this for test/dev environments"
+  fi
+}
+
+# NAME
+#		psql_store_version
+#
+# DESCRIPTION
+#		Store the PostgreSQL version, this is used for future migrations
+#
+psql_store_version() {
+  log-init "storing postgresql version"
+  echo "${PG_VERSION_SLUG}" | s6-setuidgid abc tee "${PG_DATA_DIR}/PG_VERSION_FULL" > /dev/null 2>&1
+}
+
+# NAME
+#		psql_is_migration
+#
+# DESCRIPTION
+#		Determine if we are in migration mode. This mode is set on container level
+#		with env_set.
+#
+psql_is_migration() {
+  if is_enabled "${PG_MIGRATION}"; then
+    return 0
+  fi
+
+  return 1
+}
+
+# NAME
+#   psql_is_migration_success
+#
+# DESCRIPTION
+#   Check if migration went succesful
+#
+psql_is_migration_success() {
+  if is_enabled "${PG_MIGRATION_SUCCESS}"; then
+    return 0
+  fi
+
+  return 1
+}
+
+# NAME
+#		psql_create_old_rootfs
+#
+# DESCRIPTION
+#		In order to perform a succesful migration we are required to have access
+#		to the previous PostgreSQL version. However when we start a new container
+#		over a already existing dataset, we do not have access to this old PostgreSQL
+#		to mitigate this issue we are making sure that when we are creating a new
+#		dataset we store the correct old rootfs including the required binaries
+#		for PostgreSQL into the data directory so we have access to it when
+#		we need to perform a migration
+#
+psql_create_old_rootfs() {
+  if (( "${PG_VERSION_MAJOR}" < 12 )); then
+    PG_ROOTFS="${PG_HOME}/${PG_VERSION_SLUG}/.rootfs"
+    if [ ! -d "${PG_ROOTFS}" ]; then
+      log-init "saving postgres for future upgrade"
+      mkdir -p "${PG_ROOTFS}"/{lib,usr/{bin,lib}}
+
+      cp -raP /lib/* "${PG_ROOTFS}/lib"
+      cp -raP /usr/bin/pg_* "${PG_ROOTFS}/usr/bin"
+      cp -raP "${PG_COMMAND}" "${PG_ROOTFS}/usr/bin"
+      cp -raP /usr/lib/* "${PG_ROOTFS}/usr/lib"
+
+      case "${PG_VERSION_MAJOR}" in
+        9)
+          mkdir -p "${PG_ROOTFS}/usr/share/postgresql"
+          cp -raP /usr/share/postgresql/{timezone,timezonesets} "${PG_ROOTFS}/usr/share/postgresql"
+        ;;
+
+        10|11)
+          mkdir -p "${PG_ROOTFS}/usr/share/postgresql"
+          cp -raP /usr/share/postgresql/timezonesets "${PG_ROOTFS}/usr/share/postgresql"
+        ;;
+      esac
+    fi
+  fi
+}

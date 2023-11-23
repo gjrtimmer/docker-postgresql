@@ -1,0 +1,223 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash disable=SC1008
+set -e
+
+# NAME
+#		repmgr_enabled
+#
+# DESCRIPTION
+#		Check if repmgr is enabled
+#
+# USAGE
+#		if repmgr_enabled; then
+#			{ENABLED}
+#		else
+#			{DISABLED}
+#		fi
+#
+repmgr_enabled() {
+  if is_enabled "${REPMGR}"; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+# NAME
+#   repmgr_enabled_standby
+#
+# DESCRIPTION
+#   This command checks if repmgr is enabled and
+#   if repmgr has turned this node into a standby
+#   We need this check, because we can be a former primary node and we might
+#   have been set to standby
+#
+# USAGE
+#   repmgr_enabled_standby
+#
+repmgr_enabled_standby() {
+  if repmgr_enabled; then
+    if [ -f "${PG_STANDBY_SIGNAL}" ]; then
+      if grep -q 'repmgr' "${PG_STANDBY_SIGNAL}"; then
+        return 0
+      else
+        return 1
+      fi
+    else
+      return 1
+    fi
+  else
+    return 1
+  fi
+}
+
+# NAME
+#		repmgr_set_param
+#
+# DESCRIPTION
+#		Set parameter for repmgr
+#
+# OPTIONS
+#		$1		string		Key
+#		$2		string		Value
+#		$3		bool			Store the value raw without quotes. (default: false)
+#
+#	USAGE
+#		repmgr_set_param {KEY} {VALUE} {RAW}
+#
+# EXAMPLES
+#		repmgr_set_param "location" "${REPMGR_LOCATION}"
+#		repmgr_set_param "use_replication_slots" 1 true
+#
+repmgr_set_param() {
+  local key=${1}
+  local value=${2}
+  local raw=${3:-false}
+
+  if [[ -n ${value} ]]; then
+    local current
+    current=$(sed -n -e "s/^\(${key}='\)\([^ ']*\)\(.*\)$/\2/p" "${REPMGR_CONF}")
+
+    if [[ "${current}" != "${value}" ]]; then
+      log-init "setting repmgr.conf parameter: ${key} = '${value}'"
+
+      # shellcheck disable=SC2001
+      value="$(echo "${value}" | sed 's|[&]|\\&|g')"
+      if ${raw}; then
+        sed -i "s|^[#]*[ ]*${key}=.*|${key}=${value}|" "${REPMGR_CONF}"
+      else
+        sed -i "s|^[#]*[ ]*${key}=.*|${key}='${value}'|" "${REPMGR_CONF}"
+      fi
+    fi
+  fi
+}
+
+# NAME
+#		repmgr_configure_hba_security
+#
+# DESCRIPTION
+#		Configure PostgreSQL HBA Security for repmgr
+#
+repmgr_configure_hba_security() {
+  if [ ! -f "${PG_DATA_DIR}/REPMGR_HBA_SECURITY" ]; then
+    set_hba_param "host	replication	${REPMGR_USER} 0.0.0.0/0 trust"
+    set_hba_param "host	all	${REPMGR_USER} 0.0.0.0/0 trust"
+
+    s6-setuidgid abc touch "${PG_DATA_DIR}/REPMGR_HBA_SECURITY"
+  fi
+}
+
+# NAME
+#		repmgr_create_pgpass
+#
+# DESCRIPTION
+#		Create the ~/.pgpass security file for automatic login of repmgr
+#
+repmgr_create_pgpass() {
+  if [ ! -e ~/.pgpass ]; then
+    echo "*:5432:*:${REPMGR_USER}:${REPMGR_PASS}" > ~/.pgpass
+    chmod go-rwx ~/.pgpass
+  fi
+}
+
+# NAME
+#		repmgr_is_installed
+#
+# DESCRIPTION
+#		Check if repmgr is installed
+#
+#	USAGE
+#		if repmgr_is_installed; then
+#			{INSTALLED}
+#		else
+#			{NOT INSTALLED}
+#		fi
+#
+repmgr_is_installed() {
+  local NODE_PRIMARY=${1}
+
+  QRY_NODE_ID="SELECT 1 FROM pg_tables WHERE tablename='nodes';"
+  RES=$(psql -qAt -h "${NODE_PRIMARY}" -U "${REPMGR_USER}" -d "${REPMGR_DB_NAME}" -c "${QRY_NODE_ID}")
+
+  if [ -z "${RES}" ]; then
+    echo 0
+  else
+    echo "${RES}"
+  fi
+}
+
+# NAME
+# 	repmgr_is_registered
+#
+# DESCRIPTION
+#		Check if current node is registered with repmgr
+#
+# USAGE
+#		if repmgr_is_registered; then
+#			{REGISTERED}
+#		else
+#			{NOT REGISTERED}
+#		fi
+#
+repmgr_is_registered() {
+  local NODE_PRIMARY=${1}
+  local NODE_ID=${2}
+
+  QRY="SELECT 1 FROM repmgr.nodes WHERE node_id=${NODE_ID};"
+  RES=$(psql -qAt -h "${NODE_PRIMARY}" -U "${REPMGR_USER}" -d "${REPMGR_DB_NAME}" -c "${QRY}")
+
+  if [ -z "${RES}" ]; then
+    echo 0
+  else
+    echo "${RES}"
+  fi
+}
+
+# NAME
+#   repmgr_service_enable
+#
+# DESCRIPTION
+#   Enable the repmgr service
+#
+# USAGE
+#   repmgr_service_enable
+#
+repmgr_service_enable() {
+  log-init "enabling repmgrd service"
+  rm -f /etc/s6-overlay/s6-rc.d/repmgr-config/down
+  rm -f /etc/s6-overlay/s6-rc.d/repmgr-follow/down
+  rm -f /etc/s6-overlay/s6-rc.d/svc-repmgrd/down
+}
+
+# NAME
+#   repmgr_service_disable
+#
+# DESCRIPTION
+#   Enable the repmgr service
+#
+# USAGE
+#   repmgr_service_disable
+#
+repmgr_service_disable() {
+  log-init "disabling repmgrd service"
+  if [ ! -f /etc/s6-overlay/s6-rc.d/repmgr-config/down ]; then
+    touch /etc/s6-overlay/s6-rc.d/repmgr-config/down
+  fi
+
+  if [ ! -f /etc/s6-overlay/s6-rc.d/repmgr-follow/down ]; then
+    touch /etc/s6-overlay/s6-rc.d/repmgr-follow/down
+  fi
+
+  if [ ! -f /etc/s6-overlay/s6-rc.d/svc-repmgrd/down ]; then
+    touch /etc/s6-overlay/s6-rc.d/svc-repmgrd/down
+  fi
+}
+
+repmgr_is_initialized() {
+  if [ -f "${REPMGR_DATA_DIR}/.initialized" ]; then
+    return 0
+  else
+    return 1
+  fi
+}
+

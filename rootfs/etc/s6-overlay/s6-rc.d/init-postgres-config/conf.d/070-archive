@@ -1,0 +1,68 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+set -e
+
+# shellcheck source=../../../../conf.d/include/postgres
+source /etc/conf.d/include/postgres
+# shellcheck source=../../../../conf.d/include/repmgr
+source /etc/conf.d/include/repmgr
+
+# Archive Mode
+if is_enabled "${PG_ARCHIVE_MODE}" || repmgr_enabled; then
+  log-init "archiving: enabled"
+  set_postgresql_param "archive_mode" on
+else
+  log-init "archiving: disabled"
+  set_postgresql_param "archive_mode" off
+fi
+
+if [[ -n ${PG_ARCHIVE_COMMAND} ]]; then
+  if is_enabled "${PG_ARCHIVE_COMPRESS}"; then
+    log-init "archive compression: enabled"
+    case ${PG_ARCHIVE_COMPRESS_COMMAND,,} in
+      gzip)
+        PG_ARCHIVE_COMMAND="gzip < %p > ${PG_ARCHIVE_DIR}/%f"
+      ;;
+
+      xz)
+        PG_ARCHIVE_COMMAND="xz -z < %p > ${PG_ARCHIVE_DIR}/%f"
+      ;;
+
+      *)
+        log-init "unsupported compression command; supported: gzip|xz"
+      ;;
+    esac
+  else
+    log-init "archive compression: disabled"
+  fi
+
+  set_postgresql_param "archive_command" "${PG_ARCHIVE_COMMAND}"
+
+fi
+
+if (( "${PG_VERSION_MAJOR}" >= 12 )); then
+  if [[ -n ${PG_ARCHIVE_RESTORE_COMMAND} ]]; then
+    if is_enabled "${PG_ARCHIVE_COMPRESS}"; then
+      log-init "archive decompression: enabled"
+      case ${PG_ARCHIVE_COMPRESS_COMMAND,,} in
+        gzip)
+          PG_ARCHIVE_RESTORE_COMMAND="gunzip < ${PG_ARCHIVE_DIR}/%f > %p"
+        ;;
+
+        xz)
+          PG_ARCHIVE_RESTORE_COMMAND="xz -d < ${PG_ARCHIVE_DIR}/%f > %p"
+        ;;
+
+        *)
+          log-init "unsupported decompression command; supported: gzip|xz"
+        ;;
+      esac
+    else
+      log-init "archive decompression disabled"
+    fi
+
+    set_postgresql_param "restore_command" "${PG_ARCHIVE_RESTORE_COMMAND}"
+  fi
+else
+  log-init "'restore_command' not supported for postgres version (${PG_VERSION_MAJOR})"
+fi

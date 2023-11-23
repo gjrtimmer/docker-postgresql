@@ -1,0 +1,26 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash disable=SC1008
+set -e
+
+# shellcheck source=../../../../conf.d/include/postgres
+source /etc/conf.d/include/postgres
+# shellcheck source=../../../../conf.d/include/repmgr
+source /etc/conf.d/include/repmgr
+
+if repmgr_enabled; then
+  if (( REPLICATION_MAX_SENDERS < 10 )); then
+    log-init "repmgr: enabled, REPLICATION_MAX_SENDERS < 10; overriding with 10"
+    REPLICATION_MAX_SENDERS=10
+  fi
+
+  if (( REPLICATION_MAX_SLOTS < 10 )); then
+    log-init "repmgr: enabled; REPLICATION_MAX_SLOTS < 10; overriding with 10"
+    REPLICATION_MAX_SLOTS=10
+  fi
+fi
+
+# Max WAL Senders
+set_postgresql_param "max_wal_senders" "${REPLICATION_MAX_SENDERS}"
+
+# Max Replication slots
+set_postgresql_param "max_replication_slots" "${REPLICATION_MAX_SLOTS}"

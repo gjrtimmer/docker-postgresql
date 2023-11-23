@@ -1,0 +1,10 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+# shellcheck source=../../../conf.d/include/generic
+source /etc/conf.d/include/generic
+
+log-init "configure::psql-check"
+if ! grep -q psql-check /etc/services > /dev/null; then
+  echo 'psql-check	9001/tcp			# psql-check' >> /etc/services
+fi

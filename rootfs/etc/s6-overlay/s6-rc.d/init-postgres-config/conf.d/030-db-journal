@@ -1,0 +1,80 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash disable=SC1008
+set -e
+
+# shellcheck source=../../../../conf.d/include/postgres
+source /etc/conf.d/include/postgres
+
+# Configure journal
+case "${PG_JOURNAL_WAL_LEVEL,,}" in
+  replica|logical)
+    set_postgresql_param "wal_level" "${PG_JOURNAL_WAL_LEVEL,,}"
+  ;;
+  minimal)
+    if repmgr_enabled; then
+      log-init "repmgr: enabled; wal_level of replica|logical is required; overriding minimal with logical"
+      PG_JOURNAL_WAL_LEVEL="logical"
+    fi
+
+    set_postgresql_param "wal_level" "${PG_JOURNAL_WAL_LEVEL,,}"
+  ;;
+
+
+  *)
+    log-init "unsupported value for wal_level: ${PG_JOURNAL_WAL_LEVEL,,}"
+  ;;
+esac
+
+set_postgresql_param "fsync" "${PG_JOURNAL_WAL_FSYNC,,}"
+
+case "${PG_JOURNAL_WAL_SYNC_METHOD}" in
+  open_datasync|fdatasync|fsync|fsync_writethrough|open_sync)
+    set_postgresql_param "wal_sync_method" "${PG_JOURNAL_WAL_SYNC_METHOD}"
+  ;;
+
+  *)
+    log-init "unsupported value for wal_sync_method: ${PG_JOURNAL_WAL_SYNC_METHOD}"
+  ;;
+esac
+
+case "${PG_JOURNAL_WAL_SYNCHRONOUS_COMMIT,,}" in
+  on|off|true|false|0|1|local|remote_write|remote_apply)
+    set_postgresql_param "synchronous_commit" "${PG_JOURNAL_WAL_SYNCHRONOUS_COMMIT}"
+  ;;
+
+  *)
+    log-init "unsupported value for synchronous_commit: ${PG_JOURNAL_WAL_SYNCHRONOUS_COMMIT,,}"
+  ;;
+esac
+
+set_postgresql_param "full_page_writes" "${PG_JOURNAL_WAL_FULL_PAGE_WRITES}"
+
+if is_enabled "${PG_JOURNAL_WAL_COMPRESSION}"; then
+  set_postgresql_param "wal_compression" on
+else
+  set_postgresql_param "wal_compression" off
+fi
+
+if (( "${PG_VERSION_MAJOR}" >= 13 )); then
+
+  if [ "${PG_JOURNAL_WAL_KEEP_SIZE,,}" == "auto" ]; then
+    PG_JOURNAL_WAL_KEEP_SIZE=$(( PG_JOURNAL_WAL_KEEP_SEGMENTS * PG_JOURNAL_WAL_SEGMENT_SIZE ))
+  fi
+
+  set_postgresql_param "wal_keep_size" "${PG_JOURNAL_WAL_KEEP_SIZE}"
+else
+  set_postgresql_param "wal_keep_segments" "${PG_JOURNAL_WAL_KEEP_SEGMENTS}"
+fi
+
+if is_enabled "${PG_JOURNAL_WAL_LOG_HINTS}"; then
+  set_postgresql_param "wal_log_hints" on
+else
+  set_postgresql_param "wal_log_hints" off
+fi
+
+if [ "${PG_JOURNAL_WAL_BUFFERS,,}" == "auto" ]; then
+  set_postgresql_param "wal_buffers" -1
+else
+  # shellcheck disable=SC2086
+  set_postgresql_param "wal_buffers" ${PG_JOURNAL_WAL_BUFFERS}
+fi

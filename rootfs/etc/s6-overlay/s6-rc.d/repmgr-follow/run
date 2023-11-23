@@ -2,8 +2,8 @@
 # shellcheck shell=bash disable=SC1008
 set -e
 
-# shellcheck source=../../../cont-func.d/global
-source /etc/cont-func.d/global
+# shellcheck source=../../../conf.d/include/repmgr
+source /etc/conf.d/include/repmgr
 
 if ! repmgr_enabled; then
   s6-svc -O .
@@ -15,10 +15,10 @@ if repmgr_enabled; then
     log-init "issuing standby follow"
 
     # First we need to be able to connect to the master
-    is_master_ready 1
+    is_master_ready
 
     # Now we need to check that we have started up ourself
-    is_db_ready_socket 1
+    is_db_ready_socket
 
     s6-setuidgid abc repmgr -f "${REPMGR_CONF}" standby follow
     rm -f "${REPMGR_DATA_DIR}/standby.follow"
@@ -27,4 +27,3 @@ if repmgr_enabled; then
 
 fi
 
-# EOF

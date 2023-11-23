@@ -1,0 +1,97 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash disable=SC1008
+set -e
+
+# shellcheck source=../../../../conf.d/include/postgres
+source /etc/conf.d/include/postgres
+# shellcheck source=../../../../conf.d/include/repmgr
+source /etc/conf.d/include/repmgr
+
+if repmgr_enabled; then
+
+  # Enable repmgr service
+  repmgr_service_enable
+
+  # Copy default repmgr.conf, only if we are not configured as a witness server
+  if [ ! -f "${REPMGR_CONF}" ]; then
+    cp /defaults/repmgr.conf "${REPMGR_CONF}"
+    chown -R "${PUID}:${PGID}" "${REPMGR_CONF}"
+  fi
+
+  # Export repmgr config to runtime environment
+  # we are exporting it because we have set up an shell alias repmgr with this
+  # config parameter which can be used when you enter a shell in the container
+  env_set REPMGR_CONF "${REPMGR_CONF}"
+
+  # Configure repmgr library
+  set_shared_libraries "repmgr"
+
+  # Configure HBA
+  repmgr_configure_hba_security
+
+  # Configure node name
+  repmgr_set_param "node_name" "${REPMGR_NODE_NAME}"
+
+  # Configure location
+  if [ -n "${REPMGR_LOCATION}" ]; then
+    repmgr_set_param "location" "${REPMGR_LOCATION}"
+  fi
+
+  # Configure replication slots
+  if is_enabled "${REPMGR_USE_REPLICATION_SLOTS}"; then
+    repmgr_set_param "use_replication_slots" 1 true
+  else
+    repmgr_set_param "use_replication_slots" 0 true
+  fi
+
+  # Configure witness sync interval
+  repmgr_set_param "witness_sync_interval" "${REPMGR_WITNESS_SYNC_INTERVAL}"
+
+  # Configure logging
+  repmgr_set_param "log_level" "${REPMGR_LOG_LEVEL}"
+  repmgr_set_param "log_file" "${REPMGR_LOG_FILE}"
+  repmgr_set_param "log_status_interval" "${REPMGR_LOG_STATUS_INTERVAL}" true
+
+  # repmgr authentication
+  repmgr_create_pgpass
+  repmgr_set_param "passfile" "${HOME}/.pgpass"
+
+  # Promote
+  repmgr_set_param "promote_command" "repmgr -f ${REPMGR_CONF} standby promote"
+  repmgr_set_param "follow_command" "repmgr -f ${REPMGR_CONF} standby follow"
+
+  # Control
+  repmgr_set_param "service_start_command" "sudo s6-svc -u /run/service/svc-postgres"
+  repmgr_set_param "service_stop_command" "sudo s6-svc -d /run/service/svc-postgres"
+  repmgr_set_param "service_restart_command" "sudo s6-svc -r /run/service/svc-postgres"
+  repmgr_set_param "service_reload_command" "pg_ctl reload -D ${PG_DATA_DIR}"
+
+  # Configure replication user
+  repmgr_set_param "replication_user" "${REPMGR_USER}"
+
+  # Configure Priority
+  repmgr_set_param "priority" "${REPMGR_PRIORITY}" true
+
+  if ! repmgr_enabled_standby; then
+    # Configure connection info
+    repmgr_set_param "conninfo" "host=${REPMGR_NODE_HOST} user=${REPMGR_USER} dbname=${REPMGR_DB_NAME} connect_timeout=5"
+
+    # Configure failover
+    if is_enabled "${REPMGR_FAILOVER_AUTOMATIC}"; then
+      repmgr_set_param "failover" "automatic" true
+    else
+      repmgr_set_param "failover" "manual" true
+    fi
+
+  fi
+
+  # Configure data directory
+  repmgr_set_param "data_directory" "${PG_DATA_DIR}"
+
+else
+
+  # disable the repmgr service
+  repmgr_service_disable
+
+fi
+

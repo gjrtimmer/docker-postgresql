@@ -1,6 +1,6 @@
 FROM registry.timmertech.nl/docker/postgresql:base
 
-# Install PostgreSQL 14
+# Install PostgreSQL 15
 # This will downgrade some other OS packages
 # Install highest compatible repmgr
 RUN apk add --update --force-overwrite --no-cache \

@@ -2,10 +2,8 @@
 # shellcheck shell=bash disable=SC1008
 set -e
 
-
-################################################################################
-# shellcheck source=../../../cont-func.d/global
-source /etc/cont-func.d/global
+# shellcheck source=../../../conf.d/include/repmgr
+source /etc/conf.d/include/repmgr
 
 if ! repmgr_enabled; then
   s6-svc -O .
@@ -15,11 +13,8 @@ fi
 log-init "starting repmgrd"
 
 # Wait till database is ready
-is_db_ready 1
+is_db_ready
 
-################################################################################
-# Start PostgreSQL
+# Start repmgr
 # shellcheck disable=SC2086
 exec s6-setuidgid abc repmgrd --verbose --daemonize=false --no-pid-file -f "${REPMGR_CONF}"
-
-# EOF

@@ -15,6 +15,7 @@ RUN apk upgrade --update --force-overwrite --no-cache && \
     rsync \
     logrotate \
     musl-locales \
+    cpulimit \
     && \
     rm -rf /var/cache/apk/* && \
     echo "abc ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/abc && \

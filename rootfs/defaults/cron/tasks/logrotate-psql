@@ -1,0 +1,14 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+set -e
+
+# shellcheck source=../../../etc/conf.d/include/postgres
+source /etc/conf.d/include/postgres
+
+# Check if retention is set to a number
+VALID_NUMBER='^[0-9]+$'
+if ! [[ ${PG_LOG_RETENTION} =~ ${VALID_NUMBER} ]] ; then
+   echo "error: PG_LOG_RETENTION is not a number" >&2; exit 1
+fi
+
+find "${PG_LOG_DIR}" -name '*.log' -mtime "+${PG_LOG_RETENTION}" -print -delete

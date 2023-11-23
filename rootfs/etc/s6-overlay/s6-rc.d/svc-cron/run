@@ -2,12 +2,8 @@
 # shellcheck shell=bash
 set -e
 
+# shellcheck source=../../../conf.d/include/cron
+source /etc/conf.d/include/cron
 
-################################################################################
-# shellcheck source=../../../cont-func.d/global
-source /etc/cont-func.d/global
-
-
-################################################################################
 # Start cron
-exec /usr/sbin/crond -f -l 5 -L "${CRON_LOG_FILE}" -c "${CRON_CRONTAB_DIR}"
+exec /usr/sbin/crond -f -l 4 -L "${CRON_LOG_FILE}" -c "${CRON_CRONTAB_DIR}"

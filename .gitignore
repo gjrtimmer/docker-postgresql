@@ -1,5 +1,7 @@
+refactor/*
 # Exclude PSQL data
-config/*
+config
+data
 data/*
 !data/.keep
 data.bak/*
