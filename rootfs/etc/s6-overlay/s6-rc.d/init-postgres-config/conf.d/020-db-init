@@ -127,12 +127,19 @@ if ! psql_is_initialized; then
         PG_UPGRADE_PARAMS+=(--old-options="-c config_file=${PG_OLD_CONF} --hba_file=${PG_OLD_HBA_CONF} --ident_file=${PG_OLD_IDENT_CONF}")
         PG_UPGRADE_PARAMS+=(--new-options="-c config_file=${PG_CONF} --hba_file=${PG_HBA_CONF} --ident_file=${PG_IDENT_CONF}")
 
-        log-init "starting migration. Please be patient"
+        # Set socket location for version 12 and greater
+        if (( "${PG_VERSION_MAJOR}" >= 12 )); then
+          PG_UPGRADE_PARAMS+=(--socketdir="${PG_RUN_DIR}")
+        fi
+
+        # Set library version location derived from version
         if (( "${PG_OLD_VERSION_MAJOR}" < 12 )); then
           PG_LIB_PATH="${PG_OLD_LIB}:${PG_OLD_USRLIB}:/lib:/usr/local/lib:/usr/lib"
         else
           PG_LIB_PATH="${PG_OLD_USRLIB}:/lib:/usr/local/lib:/usr/lib"
         fi
+
+        log-init "starting migration. Please be patient"
         cd "${PG_HOME}"
         s6-setuidgid abc stdbuf -o0 exec env LD_LIBRARY_PATH="${PG_LIB_PATH}" pg_upgrade "${PG_UPGRADE_PARAMS[@]}" 2>&1 | stdbuf -i0 -o0 tee "${PG_LOG_DIR}/pg_upgrade-v${PG_OLD_VERSION}-v${PG_VERSION_SLUG}.log"
         if grep -q 'Upgrade Complete' "${PG_LOG_DIR}/pg_upgrade-v${PG_OLD_VERSION}-v${PG_VERSION_SLUG}.log"; then
