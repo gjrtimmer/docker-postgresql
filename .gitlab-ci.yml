@@ -85,7 +85,7 @@ psql:12:
     DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:12
     DOCKER_TAGS: >-
       --tag=${DOCKER_IMAGE_HUB_PATH}:12
-    BUILD_ARGS: >-
+    DOCKER_BUILD_ARGS: >-
       --build-arg=PG_COMMAND=/usr/bin/postgres12
 
 psql:13:
@@ -103,7 +103,7 @@ psql:13:
     DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:13
     DOCKER_TAGS: >-
       --tag=${DOCKER_IMAGE_HUB_PATH}:13
-    BUILD_ARGS: >-
+    DOCKER_BUILD_ARGS: >-
       --build-arg=PG_COMMAND=/usr/bin/postgres13
 
 psql:14:
@@ -121,7 +121,7 @@ psql:14:
     DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:14
     DOCKER_TAGS: >-
       --tag=${DOCKER_IMAGE_HUB_PATH}:14
-    BUILD_ARGS: >-
+    DOCKER_BUILD_ARGS: >-
       --build-arg=PG_COMMAND=/usr/bin/postgres14
 
 psql:15:
@@ -141,7 +141,7 @@ psql:15:
       --tag=${DOCKER_IMAGE_PATH}:latest
       --tag=${DOCKER_IMAGE_HUB_PATH}:15
       --tag=${DOCKER_IMAGE_HUB_PATH}:latest
-    BUILD_ARGS: >-
+    DOCKER_BUILD_ARGS: >-
       --build-arg=PG_COMMAND=/usr/bin/postgres15
 
 dockerhub:description:
