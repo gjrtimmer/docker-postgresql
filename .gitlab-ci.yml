@@ -19,6 +19,9 @@ base:
     DOCKER_FILE: docker/Dockerfile.base
     DOCKER_HUB: "ENABLED"
     DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:base
+    DOCKER_ARGS: >-
+      --cache-from=type=registry,ref=registry.timmertech.nl/docker/alpine-base:latest
+      --cache-from=type=registry,ref=${DOCKER_IMAGE}
     DOCKER_TAGS: >-
       --tag=${DOCKER_IMAGE_HUB_PATH}:base
 
@@ -35,6 +38,9 @@ psql:9:
     DOCKER_HUB: "ENABLED"
     DOCKER_FILE: docker/Dockerfile.psql.9
     DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:9
+    DOCKER_ARGS: >-
+      --cache-from=type=registry,ref=registry.timmertech.nl/docker/alpine-base:latest
+      --cache-from=type=registry,ref=${DOCKER_IMAGE}
     DOCKER_TAGS: >-
       --tag=${DOCKER_IMAGE_HUB_PATH}:9
 
@@ -51,6 +57,9 @@ psql:10:
     DOCKER_HUB: "ENABLED"
     DOCKER_FILE: docker/Dockerfile.psql.10
     DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:10
+    DOCKER_ARGS: >-
+      --cache-from=type=registry,ref=registry.timmertech.nl/docker/alpine-base:latest
+      --cache-from=type=registry,ref=${DOCKER_IMAGE}
     DOCKER_TAGS: >-
       --tag=${DOCKER_IMAGE_HUB_PATH}:10
 
@@ -67,6 +76,9 @@ psql:11:
     DOCKER_HUB: "ENABLED"
     DOCKER_FILE: docker/Dockerfile.psql.11
     DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:11
+    DOCKER_ARGS: >-
+      --cache-from=type=registry,ref=registry.timmertech.nl/docker/alpine-base:latest
+      --cache-from=type=registry,ref=${DOCKER_IMAGE}
     DOCKER_TAGS: >-
       --tag=${DOCKER_IMAGE_HUB_PATH}:11
 
@@ -83,10 +95,12 @@ psql:12:
     DOCKER_HUB: "ENABLED"
     DOCKER_FILE: docker/Dockerfile.psql.12
     DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:12
-    DOCKER_TAGS: >-
-      --tag=${DOCKER_IMAGE_HUB_PATH}:12
     DOCKER_ARGS: >-
       --build-arg=PG_COMMAND=/usr/bin/postgres12
+      --cache-from=type=registry,ref=registry.timmertech.nl/docker/alpine-base:latest
+      --cache-from=type=registry,ref=${DOCKER_IMAGE}
+    DOCKER_TAGS: >-
+      --tag=${DOCKER_IMAGE_HUB_PATH}:12
 
 psql:13:
   extends: .docker-build-multi
@@ -101,10 +115,12 @@ psql:13:
     DOCKER_HUB: "ENABLED"
     DOCKER_FILE: docker/Dockerfile.psql.13
     DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:13
-    DOCKER_TAGS: >-
-      --tag=${DOCKER_IMAGE_HUB_PATH}:13
     DOCKER_ARGS: >-
       --build-arg=PG_COMMAND=/usr/bin/postgres13
+      --cache-from=type=registry,ref=registry.timmertech.nl/docker/alpine-base:latest
+      --cache-from=type=registry,ref=${DOCKER_IMAGE}
+    DOCKER_TAGS: >-
+      --tag=${DOCKER_IMAGE_HUB_PATH}:13
 
 psql:14:
   extends: .docker-build-multi
@@ -119,10 +135,12 @@ psql:14:
     DOCKER_HUB: "ENABLED"
     DOCKER_FILE: docker/Dockerfile.psql.14
     DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:14
-    DOCKER_TAGS: >-
-      --tag=${DOCKER_IMAGE_HUB_PATH}:14
     DOCKER_ARGS: >-
       --build-arg=PG_COMMAND=/usr/bin/postgres14
+      --cache-from=type=registry,ref=registry.timmertech.nl/docker/alpine-base:latest
+      --cache-from=type=registry,ref=${DOCKER_IMAGE}
+    DOCKER_TAGS: >-
+      --tag=${DOCKER_IMAGE_HUB_PATH}:14
 
 psql:15:
   extends: .docker-build-multi
@@ -137,12 +155,14 @@ psql:15:
     DOCKER_HUB: "ENABLED"
     DOCKER_FILE: docker/Dockerfile.psql.15
     DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:15
+    DOCKER_ARGS: >-
+      --build-arg=PG_COMMAND=/usr/bin/postgres15
+      --cache-from=type=registry,ref=registry.timmertech.nl/docker/alpine-base:latest
+      --cache-from=type=registry,ref=${DOCKER_IMAGE}
     DOCKER_TAGS: >-
       --tag=${DOCKER_IMAGE_PATH}:latest
       --tag=${DOCKER_IMAGE_HUB_PATH}:15
       --tag=${DOCKER_IMAGE_HUB_PATH}:latest
-    DOCKER_ARGS: >-
-      --build-arg=PG_COMMAND=/usr/bin/postgres15
 
 dockerhub:description:
   stage: deploy
