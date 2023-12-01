@@ -11,10 +11,6 @@ include:
 
 base:
   extends: .docker-build-multi
-  stage: build
-  only:
-    - main
-    - schedules
   variables:
     PLATFORM: "linux/arm64,linux/amd64"
     DOCKER_FILE: docker/Dockerfile.base
@@ -28,12 +24,8 @@ base:
 
 psql:9:
   extends: .docker-build-multi
-  stage: build
   needs:
     - base
-  only:
-    - main
-    - schedules
   variables:
     PLATFORM: "linux/arm64,linux/amd64"
     DOCKER_HUB: "ENABLED"
@@ -47,12 +39,8 @@ psql:9:
 
 psql:10:
   extends: .docker-build-multi
-  stage: build
   needs:
     - base
-  only:
-    - main
-    - schedules
   variables:
     PLATFORM: "linux/arm64,linux/amd64"
     DOCKER_HUB: "ENABLED"
@@ -66,12 +54,8 @@ psql:10:
 
 psql:11:
   extends: .docker-build-multi
-  stage: build
   needs:
     - base
-  only:
-    - main
-    - schedules
   variables:
     PLATFORM: "linux/arm64,linux/amd64"
     DOCKER_HUB: "ENABLED"
@@ -85,12 +69,8 @@ psql:11:
 
 psql:12:
   extends: .docker-build-multi
-  stage: build
   needs:
     - base
-  only:
-    - main
-    - schedules
   variables:
     PLATFORM: "linux/arm64,linux/amd64"
     DOCKER_HUB: "ENABLED"
@@ -105,12 +85,8 @@ psql:12:
 
 psql:13:
   extends: .docker-build-multi
-  stage: build
   needs:
     - base
-  only:
-    - main
-    - schedules
   variables:
     PLATFORM: "linux/arm64,linux/amd64"
     DOCKER_HUB: "ENABLED"
@@ -125,12 +101,8 @@ psql:13:
 
 psql:14:
   extends: .docker-build-multi
-  stage: build
   needs:
     - base
-  only:
-    - main
-    - schedules
   variables:
     PLATFORM: "linux/arm64,linux/amd64"
     DOCKER_HUB: "ENABLED"
@@ -145,12 +117,8 @@ psql:14:
 
 psql:15:
   extends: .docker-build-multi
-  stage: build
   needs:
     - base
-  only:
-    - main
-    - schedules
   variables:
     PLATFORM: "linux/arm64,linux/amd64"
     DOCKER_HUB: "ENABLED"
