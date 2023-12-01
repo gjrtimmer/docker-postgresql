@@ -1,8 +1,8 @@
 FROM registry.timmertech.nl/docker/alpine-base:latest
 
 # Packages for PostgreSQL image
-RUN apk upgrade --update --force-overwrite --no-cache && \
-    apk add --update --force-overwrite --no-cache \
+RUN apk --update upgrade --force-overwrite --no-cache --wait=15 && \
+    apk --update add --force-overwrite --no-cache --wait=15 \
     acl \
     bash \
     busybox-extras \
@@ -17,9 +17,10 @@ RUN apk upgrade --update --force-overwrite --no-cache && \
     musl-locales \
     cpulimit \
     && \
-    rm -rf /var/cache/apk/* && \
     echo "abc ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/abc && \
     chmod 600 /etc/sudoers.d/abc && \
+    rm -rf /var/cache/apk/* && \
+    rm -rf /tmp/* && \
     sync
 
 ENV LANG='C' \

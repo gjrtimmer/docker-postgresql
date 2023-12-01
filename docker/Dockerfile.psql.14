@@ -3,7 +3,7 @@ FROM registry.timmertech.nl/docker/postgresql:base
 # Install PostgreSQL 14
 # This will downgrade some other OS packages
 # Install highest compatible repmgr
-RUN apk add --update --force-overwrite --no-cache \
+RUN apk --update add --force-overwrite --no-cache --wait=15 \
     postgresql14 \
     postgresql14-plperl \
     postgresql14-plperl-contrib \
@@ -16,7 +16,10 @@ RUN apk add --update --force-overwrite --no-cache \
     pgtcl \
     repmgr \
     repmgr-daemon && \
-    rm -rf /etc/repmgr.conf
+    rm -rf /etc/repmgr.conf && \
+    rm -rf /var/cache/apk/* && \
+    rm -rf /tmp/* && \
+    sync
 
 COPY rootfs/ /
 

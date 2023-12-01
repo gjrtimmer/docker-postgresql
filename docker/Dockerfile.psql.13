@@ -3,7 +3,7 @@ FROM registry.timmertech.nl/docker/postgresql:base
 # Install PostgreSQL 13
 # This will downgrade some other OS packages
 # Install highest compatible repmgr
-RUN apk add --update --force-overwrite --no-cache \
+RUN apk --update add --force-overwrite --no-cache --wait=15 \
     postgresql13 \
     postgresql13-plperl \
     postgresql13-plperl-contrib \
@@ -15,7 +15,10 @@ RUN apk add --update --force-overwrite --no-cache \
     pgtcl \
     repmgr \
     repmgr-daemon && \
-    rm -rf /etc/repmgr.conf
+    rm -rf /etc/repmgr.conf && \
+    rm -rf /var/cache/apk/* && \
+    rm -rf /tmp/* && \
+    sync
 
 COPY rootfs/ /
 

@@ -3,7 +3,7 @@ FROM registry.timmertech.nl/docker/postgresql:base
 # Install PostgreSQL 10
 # This will downgrade some other OS packages
 # Install highest compatible repmgr
-RUN apk add --update --force-overwrite --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/v3.8/main \
+RUN apk --update add --force-overwrite --no-cache --wait=15 --repository=http://dl-cdn.alpinelinux.org/alpine/v3.8/main \
     postgresql=10.12-r0 \
     postgresql-client=10.12-r0 \
     perl=5.26.3-r0 \
@@ -16,10 +16,13 @@ RUN apk add --update --force-overwrite --no-cache --repository=http://dl-cdn.alp
     postgresql-pltcl=10.12-r0 \
     postgresql-contrib=10.12-r0 \
     pgtcl && \
-    apk add --update --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/v3.13/community \
+    apk --update add --no-cache --wait=15 --repository=http://dl-cdn.alpinelinux.org/alpine/v3.13/community \
     repmgr \
     repmgr-daemon && \
-    rm -rf /etc/repmgr.conf
+    rm -rf /etc/repmgr.conf && \
+    rm -rf /var/cache/apk/* && \
+    rm -rf /tmp/* && \
+    sync
 
 COPY rootfs/ /
 
