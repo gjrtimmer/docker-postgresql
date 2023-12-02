@@ -10,6 +10,7 @@ include:
     file: default.yml
 
 variables:
+  DOCKER_BUILDX_PIPELINE: $CI_PIPELINE_ID
   UPSTREAM_IMAGE: registry.timmertech.nl/docker/alpine-base-service
 
 base:
