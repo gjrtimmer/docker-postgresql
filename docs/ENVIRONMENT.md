@@ -13,21 +13,23 @@ Complete overview of all supported environment variables. The environment variab
 
 ## Table of Contents
 
-- [Container Configuration](#container-configuration)
-- [PostgreSQL Global](#postgresql-global)
-- [PostgreSQL Performance Configuration](#postgresql-performance-configuration)
-- [PostgreSQL Archive Configuration](#postgresql-archive-configuration)
-- [PostgreSQL Logging](#postgresql-logging)
-- [PostgreSQL Journal Configuration](#postgresql-journal-configuration)
-- [PostgreSQL Replication Configuration](#postgresql-replication-configuration)
-- [PostgreSQL Replication Mode](#postgresql-replication-mode)
-- [Backup Configuration](#backup-configuration)
-- [Snapshot Configuration](#snapshot-configuration)
-- [Standby Configuration](#standby-configuration)
-- [Database configuration](#database-configuration)
-- [Extension Configuration](#extension-configuration)
-- [Migration Configuration](#migration-configuration)
-- [REPMGR Configuration](#repmgr-configuration)
+- [Environment Variables](#environment-variables)
+  - [Table of Contents](#table-of-contents)
+  - [Container Configuration](#container-configuration)
+  - [PostgreSQL Global](#postgresql-global)
+  - [PostgreSQL Performance Configuration](#postgresql-performance-configuration)
+  - [PostgreSQL Archive Configuration](#postgresql-archive-configuration)
+  - [PostgreSQL Logging](#postgresql-logging)
+  - [PostgreSQL Journal Configuration](#postgresql-journal-configuration)
+  - [PostgreSQL Replication Configuration](#postgresql-replication-configuration)
+  - [PostgreSQL Replication Mode](#postgresql-replication-mode)
+  - [Backup Configuration](#backup-configuration)
+  - [Snapshot Configuration](#snapshot-configuration)
+  - [Standby Configuration](#standby-configuration)
+  - [Database configuration](#database-configuration)
+  - [Extension Configuration](#extension-configuration)
+  - [Migration Configuration](#migration-configuration)
+  - [REPMGR Configuration](#repmgr-configuration)
 
 ## Container Configuration
 
@@ -201,6 +203,7 @@ There are multiple replication possibilities.
 | DB_USER        | `null`           | Database user for all created databases                             |
 | DB_PASS        | `null`           | Database password for all created databases                         |
 | DB_TEMPLATE    | template1        | Default database template                                           |
+| DB_USER_CREATE_PUBLIC | off (BOOL) | Allow user to create objects in schema PUBLIC, changed in PostgreSQL:15 |
 
 ## Extension Configuration
 
