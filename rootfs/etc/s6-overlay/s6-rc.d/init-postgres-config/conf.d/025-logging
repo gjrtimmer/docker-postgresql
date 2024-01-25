@@ -5,12 +5,14 @@ set -e
 # shellcheck source=../../../../conf.d/include/postgres
 source /etc/conf.d/include/postgres
 
-# configure logging
-set_postgresql_param "log_directory" "${PG_LOG_DIR}"
-set_postgresql_param "log_filename" "psql-%Y%m%d.log"
+if ! is_enabled "${LOG_REDIRECT}"; then
+  # configure logging
+  set_postgresql_param "log_directory" "${PG_LOG_DIR}"
+  set_postgresql_param "log_filename" "psql-%Y%m%d.log"
 
-if is_enabled "${PG_LOG_COLLECTOR}"; then
-  set_postgresql_param "logging_collector" "on"
+  if is_enabled "${PG_LOG_COLLECTOR}"; then
+    set_postgresql_param "logging_collector" "on"
+  fi
+  set_postgresql_param "log_file_mode" "${PG_LOG_FILE_MODE}"
+  set_postgresql_param "log_rotation_age" "${PG_LOG_FILE_ROTATION}"
 fi
-set_postgresql_param "log_file_mode" "${PG_LOG_FILE_MODE}"
-set_postgresql_param "log_rotation_age" "${PG_LOG_FILE_ROTATION}"

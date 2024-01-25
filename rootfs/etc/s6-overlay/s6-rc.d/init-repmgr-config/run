@@ -20,7 +20,7 @@ if repmgr_enabled; then
 fi
 
 # Configure log directory
-if repmgr_enabled; then
+if repmgr_enabled && ! is_enabled "${LOG_REDIRECT}"; then
   if [ ! -d "${REPMGR_LOG_DIR}" ]; then
     # Create repmgr data directory
     log-init "creating directory::log::repmgr [${REPMGR_LOG_DIR}]"

@@ -25,17 +25,20 @@ find "${PG_HOME}" -ipath "${PG_HOME}/*/.rootfs" -prune -o -exec lsiown abc:abc {
 lsiown abc:abc "${PG_HOME}"
 
 # Configure log directory
-if [ ! -d "${PG_LOG_DIR}" ]; then
-  log-init "creating directory::log [${PG_LOG_DIR}]"
-  mkdir -p "${PG_LOG_DIR}"
-else
-  log-init "directory::log exists [${PG_LOG_DIR}]"
-fi
+if ! is_enabled "${LOG_REDIRECT}"; then
+  ensure_log_dir
+  if [ ! -d "${PG_LOG_DIR}" ]; then
+    log-init "creating directory::log [${PG_LOG_DIR}]"
+    mkdir -p "${PG_LOG_DIR}"
+  else
+    log-init "directory::log exists [${PG_LOG_DIR}]"
+  fi
 
-# Set permissions on PG_LOGDIR
-log-init "setting permissions::log"
-chmod -R 1775 "${PG_LOG_DIR}"
-lsiown -R abc:abc "${PG_LOG_DIR}"
+  # Set permissions on PG_LOGDIR
+  log-init "setting permissions::log"
+  chmod -R 1775 "${PG_LOG_DIR}"
+  lsiown -R abc:abc "${PG_LOG_DIR}"
+fi
 
 # Configure run directory
 if [ ! -d "${PG_RUN_DIR}" ]; then

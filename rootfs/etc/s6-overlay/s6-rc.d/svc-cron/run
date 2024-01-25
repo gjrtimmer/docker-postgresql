@@ -6,4 +6,9 @@ set -e
 source /etc/conf.d/include/cron
 
 # Start cron
-exec /usr/sbin/crond -f -l 4 -L "${CRON_LOG_FILE}" -c "${CRON_CRONTAB_DIR}"
+if is_enabled "${LOG_REDIRECT}"; then
+  # Redirect to stdout
+  exec /usr/sbin/crond -f -l 4 -c "${CRON_CRONTAB_DIR}"
+else
+  exec /usr/sbin/crond -f -l 4 -L "${CRON_LOG_FILE}" -c "${CRON_CRONTAB_DIR}"
+fi

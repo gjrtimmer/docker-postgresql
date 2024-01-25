@@ -48,10 +48,12 @@ if repmgr_enabled; then
   repmgr_set_param "witness_sync_interval" "${REPMGR_WITNESS_SYNC_INTERVAL}"
 
   # Configure logging
-  repmgr_set_param "log_level" "${REPMGR_LOG_LEVEL}"
-  repmgr_set_param "log_file" "${REPMGR_LOG_FILE}"
-  repmgr_set_param "log_status_interval" "${REPMGR_LOG_STATUS_INTERVAL}" true
-
+  if ! is_enabled "${LOG_REDIRECT}"; then
+    repmgr_set_param "log_level" "${REPMGR_LOG_LEVEL}"
+    repmgr_set_param "log_file" "${REPMGR_LOG_FILE}"
+    repmgr_set_param "log_status_interval" "${REPMGR_LOG_STATUS_INTERVAL}" true
+  fi
+  
   # repmgr authentication
   repmgr_create_pgpass
   repmgr_set_param "passfile" "${HOME}/.pgpass"

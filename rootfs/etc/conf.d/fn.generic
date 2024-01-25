@@ -180,3 +180,14 @@ env_del() {
 
   rm /var/run/s6/container_environment/"${KEY}"
 }
+
+# NAME
+#		ensure_log_dir
+#
+# DESCRIPTION
+#		Ensured the $HOME/logs directory exists
+ensure_log_dir() {
+  if [[ ! -d "${HOME}/logs" ]]; then
+    mkdir "${HOME}/logs"
+  fi
+}

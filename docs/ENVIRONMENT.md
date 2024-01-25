@@ -14,7 +14,6 @@ Complete overview of all supported environment variables. The environment variab
 ## Table of Contents
 
 - [Environment Variables](#environment-variables)
-  - [Table of Contents](#table-of-contents)
   - [Container Configuration](#container-configuration)
   - [PostgreSQL Global](#postgresql-global)
   - [PostgreSQL Performance Configuration](#postgresql-performance-configuration)
@@ -33,12 +32,13 @@ Complete overview of all supported environment variables. The environment variab
 
 ## Container Configuration
 
-| ENVVAR | Default | Description                                                             |
-| ------ | ------- | ----------------------------------------------------------------------- |
-| TZ     | UTC     | Timezone configuration, use format `Europa/Amsterdam` for configuration |
-| PUID   | 1000    | Map user ownership to provided value                                    |
-| PGID   | 1000    | Map group ownership to provided value                                   |
-| HOME   | /config | Default volume                                                          |
+| ENVVAR       | Default | Description                                                                                                       |
+| ------------ | ------- | ----------------------------------------------------------------------------------------------------------------- |
+| TZ           | UTC     | Timezone configuration, use format `Europa/Amsterdam` for configuration                                           |
+| PUID         | 1000    | Map user ownership to provided value                                                                              |
+| PGID         | 1000    | Map group ownership to provided value                                                                             |
+| HOME         | /config | Default volume                                                                                                    |
+| LOG_REDIRECT | off     | When turned on it will redirect all logging to stdout/stderr, this can be used for NOMAD / Kubernetes deployments |
 
 ## PostgreSQL Global
 
@@ -196,14 +196,14 @@ There are multiple replication possibilities.
 
 ## Database configuration
 
-| ENVVAR         | Default          | Description                                                         |
-| -------------- | ---------------- | ------------------------------------------------------------------- |
-| PG_INIT_DB_DIR | /config/initdb.d | Database initialization scripts                                     |
-| DB_NAME        | `null`           | Databases to be created, `,` comma seperated for multiple databases |
-| DB_USER        | `null`           | Database user for all created databases                             |
-| DB_PASS        | `null`           | Database password for all created databases                         |
-| DB_TEMPLATE    | template1        | Default database template                                           |
-| DB_USER_CREATE_PUBLIC | off (BOOL) | Allow user to create objects in schema PUBLIC, changed in PostgreSQL:15 |
+| ENVVAR                | Default          | Description                                                             |
+| --------------------- | ---------------- | ----------------------------------------------------------------------- |
+| PG_INIT_DB_DIR        | /config/initdb.d | Database initialization scripts                                         |
+| DB_NAME               | `null`           | Databases to be created, `,` comma seperated for multiple databases     |
+| DB_USER               | `null`           | Database user for all created databases                                 |
+| DB_PASS               | `null`           | Database password for all created databases                             |
+| DB_TEMPLATE           | template1        | Default database template                                               |
+| DB_USER_CREATE_PUBLIC | off (BOOL)       | Allow user to create objects in schema PUBLIC, changed in PostgreSQL:15 |
 
 ## Extension Configuration
 
