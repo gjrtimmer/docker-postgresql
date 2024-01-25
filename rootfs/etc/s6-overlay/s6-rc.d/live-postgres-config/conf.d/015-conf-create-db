@@ -32,8 +32,8 @@ if [[ -n ${DB_NAME} ]]; then
 
           if is_enabled "${DB_USER_CREATE_PUBLIC}" && (( "${PG_VERSION_MAJOR}" >= 15 )); then
             log-init "granting public schema access to ${DB_USER} user..."
-            QRY_GRANT_ACCESS="$(printf "GRANT USAGE, CREATE ON SCHEMA public ON DATABASE \"%s\" TO %s;" "${DATABASE}" "${DB_USER}")"
-            psql -U "${PG_USER}" -c "${QRY_GRANT_ACCESS}" >/dev/null
+            QRY_GRANT_ACCESS="$(printf "GRANT USAGE, CREATE ON SCHEMA public TO %s;" "${DB_USER}")"
+            psql -U "${PG_USER}" -d "${DATABASE}" -c "${QRY_GRANT_ACCESS}" >/dev/null
           fi
         fi
       done
