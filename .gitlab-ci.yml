@@ -2,7 +2,7 @@
 default:
   interruptible: false
   image:
-    name: registry.timmertech.nl/docker/docker:latest
+    name: ${CI_REGISTRY}/docker/docker:latest
     pull_policy: always
 
 include:
@@ -10,7 +10,7 @@ include:
     file: default.yml
 
 variables:
-  UPSTREAM_IMAGE: registry.timmertech.nl/docker/alpine-base-service
+  UPSTREAM_IMAGE: ${CI_REGISTRY}/docker/alpine-base-service
 
 base:
   extends: .docker-build-multi

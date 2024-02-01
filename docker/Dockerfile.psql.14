@@ -1,4 +1,4 @@
-FROM registry.timmertech.nl/docker/postgresql:base
+FROM registry.gitlab.timmertech.nl/docker/postgresql:base
 
 # Install PostgreSQL 14
 # This will downgrade some other OS packages
