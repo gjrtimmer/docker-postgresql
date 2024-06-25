@@ -4,14 +4,14 @@ FROM registry.gitlab.timmertech.nl/docker/postgresql:base
 # This will downgrade some other OS packages
 # Install highest compatible repmgr
 RUN apk --update add --force-overwrite --no-cache --wait=15 \
-    postgresql15 \
-    postgresql15-plperl \
-    postgresql15-plperl-contrib \
-    postgresql15-plpython3 \
-    postgresql15-plpython3-contrib \
-    postgresql15-pltcl \
-    postgresql15-contrib \
-    postgresql15-jit \
+    postgresql15=15.7-r0 \
+    postgresql15-plperl=15.7-r0 \
+    postgresql15-plperl-contrib=15.7-r0 \
+    postgresql15-plpython3=15.7-r0 \
+    postgresql15-plpython3-contrib=15.7-r0 \
+    postgresql15-pltcl=15.7-r0 \
+    postgresql15-contrib=15.7-r0 \
+    postgresql15-jit=15.7-r0 \
     postgresql-pg_cron \
     pgtcl \
     repmgr \
