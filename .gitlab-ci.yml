@@ -193,7 +193,6 @@ psql:15:
     DOCKER_TAGS: >-
       --tag=${DOCKER_IMAGE_PATH}:latest
       --tag=${DOCKER_IMAGE_HUB_PATH}:15
-      --tag=${DOCKER_IMAGE_HUB_PATH}:latest
     HEALTH_CHECK_UUID: b88be602-0b87-404a-adea-66c6aa33fa64
 
 psql:16:
