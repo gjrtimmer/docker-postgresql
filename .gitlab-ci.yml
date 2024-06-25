@@ -179,7 +179,6 @@ psql:15:
   needs:
     - base
   variables:
-    UPSTREAM_IMAGE: ${CI_REGISTRY}/docker/alpine-base-service:3.18
     PLATFORM: "linux/arm64,linux/amd64"
     DOCKER_HUB: "ENABLED"
     DOCKER_FILE: docker/Dockerfile.psql.15
@@ -192,7 +191,9 @@ psql:15:
       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:arm64
       --cache-from=type=registry,ref=${DOCKER_IMAGE_CACHE_PATH}:base
     DOCKER_TAGS: >-
+      --tag=${DOCKER_IMAGE_PATH}:latest
       --tag=${DOCKER_IMAGE_HUB_PATH}:15
+      --tag=${DOCKER_IMAGE_HUB_PATH}:latest
     HEALTH_CHECK_UUID: b88be602-0b87-404a-adea-66c6aa33fa64
 
 psql:16:
