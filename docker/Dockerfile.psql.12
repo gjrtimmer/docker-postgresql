@@ -3,7 +3,13 @@ FROM registry.gitlab.timmertech.nl/docker/postgresql:base
 # Install PostgreSQL 12
 # This will downgrade some other OS packages
 # Install highest compatible repmgr
-RUN apk --update add --force-overwrite --no-cache --wait=15 --repository=http://dl-cdn.alpinelinux.org/alpine/v3.15/community \
+RUN apk --update add --force-overwrite --force-broken-world --no-cache --wait=15 --repository=http://dl-cdn.alpinelinux.org/alpine/v3.15/main \
+    icu-libs=69.1-r1 \
+    libssl1.1=1.1.1w-r1 \
+    libcrypto1.1=1.1.1w-r1 \
+    llvm12-libs=12.0.1-r0 \
+    python3=3.9.18-r0
+RUN apk --update add --force-overwrite --force-broken-world --no-cache --wait=15 --repository=http://dl-cdn.alpinelinux.org/alpine/v3.15/community \
     postgresql12=12.17-r0 \
     postgresql12-plperl=12.17-r0 \
     postgresql12-plperl-contrib=12.17-r0 \
