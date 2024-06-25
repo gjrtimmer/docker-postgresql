@@ -12,7 +12,6 @@ RUN apk --update add --force-overwrite --no-cache --wait=15 --force-broken-world
     postgresql15-pltcl=15.7-r0 \
     postgresql15-contrib=15.7-r0 \
     postgresql15-jit=15.7-r0 \
-    postgresql-pg_cron \
     pgtcl \
     repmgr \
     repmgr-daemon && \
