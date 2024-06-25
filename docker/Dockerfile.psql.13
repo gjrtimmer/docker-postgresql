@@ -3,7 +3,7 @@ FROM registry.gitlab.timmertech.nl/docker/postgresql:base
 # Install PostgreSQL 13
 # This will downgrade some other OS packages
 # Install highest compatible repmgr
-RUN apk --update add --force-overwrite --no-cache --wait=15 \
+RUN apk --update add --force-overwrite --no-cache --wait=15 --repository=http://dl-cdn.alpinelinux.org/alpine/v3.16/main \
     postgresql13=13.15-r0 \
     postgresql13-plperl=13.15-r0 \
     postgresql13-plperl-contrib=13.15-r0 \
@@ -12,6 +12,7 @@ RUN apk --update add --force-overwrite --no-cache --wait=15 \
     postgresql13-pltcl=13.15-r0 \
     postgresql13-contrib=13.15-r0 \
     postgresql13-jit=13.15-r0 \
+    icu-libs=71.1-r2 \
     pgtcl \
     repmgr \
     repmgr-daemon && \
