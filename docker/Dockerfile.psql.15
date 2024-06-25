@@ -3,7 +3,7 @@ FROM registry.gitlab.timmertech.nl/docker/postgresql:base
 # Install PostgreSQL 15
 # This will downgrade some other OS packages
 # Install highest compatible repmgr
-RUN apk --update add --force-overwrite --no-cache --wait=15 \
+RUN apk --update add --force-overwrite --no-cache --wait=15 --repository=http://dl-cdn.alpinelinux.org/alpine/v3.18/main \
     postgresql15=15.7-r0 \
     postgresql15-plperl=15.7-r0 \
     postgresql15-plperl-contrib=15.7-r0 \
