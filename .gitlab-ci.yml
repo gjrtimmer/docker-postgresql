@@ -179,6 +179,7 @@ psql:15:
   needs:
     - base
   variables:
+    UPSTREAM_IMAGE: ${CI_REGISTRY}/docker/alpine-base-service:3.18
     PLATFORM: "linux/arm64,linux/amd64"
     DOCKER_HUB: "ENABLED"
     DOCKER_FILE: docker/Dockerfile.psql.15
