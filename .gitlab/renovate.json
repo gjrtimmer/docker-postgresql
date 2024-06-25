@@ -1,9 +1,12 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
-  ],
-  "assignees": [
-    "gjrtimmer"
+    "config:recommended",
+    "group:monorepos",
+    "group:recommended",
+    "replacements:all",
+    "workarounds:all",
+    "local>templates/renovate-config",
+    "local>templates/renovate-config:security"
   ]
 }
