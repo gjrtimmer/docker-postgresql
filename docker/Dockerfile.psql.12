@@ -4,14 +4,14 @@ FROM registry.gitlab.timmertech.nl/docker/postgresql:base
 # This will downgrade some other OS packages
 # Install highest compatible repmgr
 RUN apk --update add --force-overwrite --no-cache --wait=15 \
-    postgresql12 \
-    postgresql12-plperl \
-    postgresql12-plperl-contrib \
-    postgresql12-plpython3 \
-    postgresql12-plpython3-contrib \
-    postgresql12-pltcl \
-    postgresql12-contrib \
-    postgresql12-jit \
+    postgresql12=12.17-r0 \
+    postgresql12-plperl=12.17-r0 \
+    postgresql12-plperl-contrib=12.17-r0 \
+    postgresql12-plpython3=12.17-r0 \
+    postgresql12-plpython3-contrib=12.17-r0 \
+    postgresql12-pltcl=12.17-r0 \
+    postgresql12-contrib=12.17-r0 \
+    postgresql12-jit=12.17-r0 \
     pgtcl \
     repmgr \
     repmgr-daemon && \
