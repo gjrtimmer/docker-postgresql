@@ -195,31 +195,6 @@ psql:15:
       --tag=${DOCKER_IMAGE_HUB_PATH}:15
       --tag=${DOCKER_IMAGE_HUB_PATH}:latest
     HEALTH_CHECK_UUID: b88be602-0b87-404a-adea-66c6aa33fa64
-
-psql:16:
-  extends: .docker-build-multi
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - if: $CI_PIPELINE_SOURCE == "schedule"
-  needs:
-    - base
-  variables:
-    PLATFORM: "linux/arm64,linux/amd64"
-    DOCKER_HUB: "ENABLED"
-    DOCKER_FILE: docker/Dockerfile.psql.16
-    DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:16
-    DOCKER_IMAGE_CACHE_FROM: ${DOCKER_IMAGE_CACHE_PATH}:16
-    DOCKER_IMAGE_CACHE_TO: ${DOCKER_IMAGE_CACHE_PATH}:16
-    DOCKER_ARGS: >-
-      --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:latest
-      --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:amd64
-      --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:arm64
-      --cache-from=type=registry,ref=${DOCKER_IMAGE_CACHE_PATH}:base
-    DOCKER_TAGS: >-
-      --tag=${DOCKER_IMAGE_PATH}:latest
-      --tag=${DOCKER_IMAGE_HUB_PATH}:16
-      --tag=${DOCKER_IMAGE_HUB_PATH}:latest
-    HEALTH_CHECK_UUID: bed61e67-9033-4581-91a0-33ba8172d37c
 # dockerhub:description:
 #   stage: deploy
 #   image: peterevans/dockerhub-description:3
