@@ -24,7 +24,7 @@ RUN apk --update add --no-cache --wait=15 \
     rm -rf /tmp/* && \
     sync && \
     pg_versions set-default 13 && \
-    echo "Default PostgreSQL Version: $(pg_versions get-default)"
+    echo "Setting default PostgreSQL Version: $(pg_versions get-default)"
 
 COPY rootfs/ /
 
