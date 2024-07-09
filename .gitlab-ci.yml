@@ -236,7 +236,7 @@ include:
         --cache-from=type=registry,ref=$DOCKER_IMAGE_CACHE_PATH:base-multi
       tag: $DOCKER_IMAGE_PATH:14
       tags: >-
-        --tag=$DOCKER_IMAGE_PATH:14.10
+        --tag=$DOCKER_IMAGE_PATH:14.12
       healthcheck-uuid: 35eeab7b-4fec-49e8-898a-b535444d0784
 #
 #
