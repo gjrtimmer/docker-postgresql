@@ -96,8 +96,6 @@ include:
       - if: $SKIP_PIPELINE == "true"
         when: never
       - if: $BUILD_PSQL_9 == "true"
-      - changes:
-          - "docker/Dockerfile.psql.9"
     inputs:
       name: psql:9
       stage: docker
@@ -122,8 +120,6 @@ include:
       - if: $SKIP_PIPELINE == "true"
         when: never
       - if: $BUILD_PSQL_10 == "true"
-      - changes:
-          - "docker/Dockerfile.psql.10"
     inputs:
       name: psql:10
       stage: docker
@@ -147,8 +143,6 @@ include:
       - if: $SKIP_PIPELINE == "true"
         when: never
       - if: $BUILD_PSQL_11 == "true"
-      - changes:
-          - "docker/Dockerfile.psql.11"
     inputs:
       name: psql:11
       stage: docker
@@ -172,8 +166,6 @@ include:
       - if: $SKIP_PIPELINE == "true"
         when: never
       - if: $BUILD_PSQL_12 == "true"
-      - changes:
-          - "docker/Dockerfile.psql.12"
     inputs:
       name: psql:12
       stage: docker
@@ -197,8 +189,6 @@ include:
       - if: $SKIP_PIPELINE == "true"
         when: never
       - if: $BUILD_PSQL_13 == "true"
-      - changes:
-          - "docker/Dockerfile.psql.13"
     inputs:
       name: psql:13
       stage: docker
