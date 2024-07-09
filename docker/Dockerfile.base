@@ -1,4 +1,4 @@
-FROM harbor.local/gitlab/docker/alpine-base-service:latest
+FROM harbor.local/gitlab/docker/alpine-base-service:3.20
 
 # Packages for PostgreSQL image
 RUN apk --update upgrade --force-overwrite --no-cache --wait=15 && \
