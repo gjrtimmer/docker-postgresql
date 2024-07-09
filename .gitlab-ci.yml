@@ -146,7 +146,7 @@ include:
       tag: $DOCKER_IMAGE_PATH:11
       tags: >-
         --tag=$DOCKER_IMAGE_PATH:11.12
-      healthcheck-uuid: b802ab8c-40bd-44c7-9cbe-3818df7f561b
+
 # psql:12:
 #   extends: .docker-build-multi
 #   rules:
