@@ -100,7 +100,6 @@ include:
       tags: >-
         --tag=$DOCKER_IMAGE_PATH:9.6
         --tag=$DOCKER_IMAGE_PATH:9.6.13
-      healthcheck-uuid: 5b596d68-801c-4bd1-90bc-d96e2c25bc93
 
   # multi/psql:10
   - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.3.0
