@@ -188,7 +188,7 @@ include:
     rules:
       - if: $SKIP_PIPELINE == "true"
         when: never
-      - if: $BUILD_PSQL_13 == "true"
+      - if: '$BUILD_PSQL_13 == "true"'
     inputs:
       name: psql:13
       stage: docker
