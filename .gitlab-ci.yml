@@ -31,7 +31,7 @@ variables:
       - "true"
   BUILD_PSQL_13:
     description: "Rebuild Postgresql 13"
-    value: "false"
+    value: "true"
     options:
       - "false"
       - "true"
