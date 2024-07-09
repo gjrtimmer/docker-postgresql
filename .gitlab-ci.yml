@@ -78,8 +78,9 @@ include:
         --cache-from=type=registry,ref=$DOCKER_IMAGE_CACHE_PATH:base-amd64
         --cache-from=type=registry,ref=$DOCKER_IMAGE_CACHE_PATH:base-arm64
         --cache-from=type=registry,ref=$DOCKER_IMAGE_CACHE_PATH:base-multi
-      tag: $DOCKER_IMAGE_PATH:9.6
+      tag: $DOCKER_IMAGE_PATH:9
       tags: >-
+        --tag=$DOCKER_IMAGE_PATH:9.6
         --tag=$DOCKER_IMAGE_PATH:9.6.13
       healthcheck-uuid: 5b596d68-801c-4bd1-90bc-d96e2c25bc93
 # psql:10:
