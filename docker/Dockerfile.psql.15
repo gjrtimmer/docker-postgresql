@@ -1,12 +1,7 @@
-FROM registry.gitlab.timmertech.nl/docker/postgresql:base
+FROM harbor.local/gitlab/docker/postgresql:base
 
 # Install PostgreSQL 15
 # This will downgrade some other OS packages
-# Install highest compatible repmgr
-RUN rm /etc/apk/repositories && \
-    touch /etc/apk/repositories && \
-    echo 'http://dl-cdn.alpinelinux.org/alpine/v3.18/main' >> /etc/apk/repositories && \
-    echo 'http://dl-cdn.alpinelinux.org/alpine/v3.18/community' >> /etc/apk/repositories
 RUN apk --update add --force-overwrite --no-cache --wait=15 \
     postgresql15=15.7-r0 \
     postgresql15-plperl=15.7-r0 \
@@ -23,7 +18,9 @@ RUN apk --update add --force-overwrite --no-cache --wait=15 \
     rm -rf /etc/repmgr.conf && \
     rm -rf /var/cache/apk/* && \
     rm -rf /tmp/* && \
-    sync
+    sync && \
+    pg_versions set-default 15 && \
+    echo "Setting default PostgreSQL Version: $(pg_versions get-default)"
 
 COPY rootfs/ /
 
