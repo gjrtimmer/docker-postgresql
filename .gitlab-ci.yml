@@ -18,6 +18,10 @@ include:
 
   # amd64/base
   - component: $CI_SERVER_FQDN/templates/components/docker/amd64@1.3.0
+    rules:
+      - if: $SKIP_PIPELINE == "true"
+        when: never
+      - when: always
     inputs:
       name: base:amd64
       dockerfile: docker/Dockerfile.base
@@ -26,6 +30,10 @@ include:
 
   # arm64/base
   - component: $CI_SERVER_FQDN/templates/components/docker/arm64@1.3.0
+    rules:
+      - if: $SKIP_PIPELINE == "true"
+        when: never
+      - when: always
     inputs:
       name: base:arm64
       dockerfile: docker/Dockerfile.base
@@ -34,6 +42,10 @@ include:
 
   # multi/base
   - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.3.0
+    rules:
+      - if: $SKIP_PIPELINE == "true"
+        when: never
+      - when: always
     inputs:
       name: base:multi
       dockerfile: docker/Dockerfile.base
@@ -50,6 +62,8 @@ include:
   # multi/psql:9
   - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.3.0
     rules:
+      - if: $SKIP_PIPELINE == "true"
+        when: never
       - if: $BUILD_PSQL_9 == "true"
     inputs:
       name: psql:9
