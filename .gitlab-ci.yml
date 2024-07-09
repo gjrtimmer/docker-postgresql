@@ -101,8 +101,7 @@ include:
     rules:
       - if: $SKIP_PIPELINE == "true"
         when: never
-      # - if: $BUILD_PSQL_10 == "true"
-      - when: always
+      - if: $BUILD_PSQL_10 == "true"
     inputs:
       name: psql:10
       stage: docker
