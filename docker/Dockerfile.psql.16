@@ -1,0 +1,29 @@
+FROM harbor.local/gitlab/docker/postgresql:base
+
+# Install PostgreSQL 16
+# This will downgrade some other OS packages
+RUN apk --update add --force-overwrite --no-cache --wait=15 \
+    postgresql16=16.3-r0 \
+    postgresql16-plperl=16.3-r0 \
+    postgresql16-plperl-contrib=16.3-r0 \
+    postgresql16-plpython3=16.3-r0 \
+    postgresql16-plpython3-contrib=16.3-r0 \
+    postgresql16-pltcl=16.3-r0 \
+    postgresql16-contrib=16.3-r0 \
+    postgresql16-jit=16.3-r0 \
+    postgresql-pg_cron \
+    pgtcl \
+    repmgr \
+    repmgr-daemon && \
+    rm -rf /etc/repmgr.conf && \
+    rm -rf /var/cache/apk/* && \
+    rm -rf /tmp/* && \
+    sync && \
+    pg_versions set-default 16 && \
+    echo "Setting default PostgreSQL Version: $(pg_versions get-default)"
+
+COPY rootfs/ /
+
+ARG PG_COMMAND=/usr/bin/postgres
+ENV PG_COMMAND=${PG_COMMAND} \
+    PATH=/lsiopy/bin:/usr/libexec/postgresql15:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
