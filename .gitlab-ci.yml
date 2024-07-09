@@ -176,7 +176,7 @@ include:
         --cache-from=type=registry,ref=$DOCKER_IMAGE_CACHE_PATH:base-multi
       tag: $DOCKER_IMAGE_PATH:12
       tags: >-
-        --tag=$DOCKER_IMAGE_PATH:12.19
+        --tag=$DOCKER_IMAGE_PATH:12.17
 
 # psql:13:
 #   extends: .docker-build-multi

@@ -2,23 +2,21 @@ FROM harbor.local/gitlab/docker/postgresql:base
 
 # Install PostgreSQL 12
 # This will downgrade some other OS packages
-# Install highest compatible repmgr
-RUN apk --update add --force-overwrite --force-broken-world --no-cache --wait=15 --repository=http://dl-cdn.alpinelinux.org/alpine/v3.15/main \
-    icu-libs=69.1-r1 \
-    libssl1.1=1.1.1w-r1 \
-    libcrypto1.1=1.1.1w-r1 \
-    llvm12-libs=12.0.1-r0 \
-    python3=3.9.18-r0
 
-RUN apk --update add --force-overwrite --force-broken-world --no-cache --wait=15 --repository=http://dl-cdn.alpinelinux.org/alpine/v3.18/community \
-    postgresql12=12.19-r0 \
-    postgresql12-plperl=12.19-r0 \
-    postgresql12-plperl-contrib=12.19-r0 \
-    postgresql12-plpython3=12.19-r0 \
-    postgresql12-plpython3-contrib=12.19-r0 \
-    postgresql12-pltcl=12.19-r0 \
-    postgresql12-contrib=12.19-r0 \
-    postgresql12-jit=12.19-r0 \
+# Update Repositories, revert to alpine 3.15
+RUN rm /etc/apk/Repositories && \
+    echo "http://dl-cdn.alpinelinux.org/alpine/v3.15/main" > /etc/apk/repositories && \
+    echo "http://dl-cdn.alpinelinux.org/alpine/v3.18/community" > /etc/apk/repositories
+
+RUN apk --update add --no-cache --wait=15 \
+    postgresql12=12.17-r0 \
+    postgresql12-plperl=12.17-r0 \
+    postgresql12-plperl-contrib=12.17-r0 \
+    postgresql12-plpython3=12.17-r0 \
+    postgresql12-plpython3-contrib=12.17-r0 \
+    postgresql12-pltcl=12.17-r0 \
+    postgresql12-contrib=12.17-r0 \
+    postgresql12-jit=12.17-r0 \
     pgtcl \
     repmgr \
     repmgr-daemon && \
