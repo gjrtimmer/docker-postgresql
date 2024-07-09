@@ -45,3 +45,4 @@ examples/repmgr/psql-4/*
 examples/.env
 tmp/
 test.conf
+.DS_Store
