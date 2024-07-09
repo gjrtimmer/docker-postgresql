@@ -4,20 +4,21 @@ include:
   - component: $CI_SERVER_FQDN/templates/components/publish/live@0.3.0
 
   # amd64/latest
-  - component: $CI_SERVER_FQDN/templates/components/docker/amd64@1.1.2
+  - component: $CI_SERVER_FQDN/templates/components/docker/amd64@1.2.0
     inputs:
       name: base:amd64
+      dockerfile: docker/Dockerfile.base
       tag: $DOCKER_IMAGE_PATH:base-amd64
 
   # arm64/latest
-  - component: $CI_SERVER_FQDN/templates/components/docker/arm64@1.1.2
+  - component: $CI_SERVER_FQDN/templates/components/docker/arm64@1.2.0
     inputs:
       name: base:arm64
       dockerfile: docker/Dockerfile.base
       tag: $DOCKER_IMAGE_PATH:base-arm64
 
   # multi/latest
-  - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.1.2
+  - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.2.0
     inputs:
       name: base:multi
       dockerfile: docker/Dockerfile.base
