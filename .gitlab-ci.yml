@@ -119,29 +119,6 @@ include:
       tags: >-
         --tag=$DOCKER_IMAGE_PATH:10.12
       healthcheck-uuid: 7a6ce1bd-0b71-4a99-9c69-8cfeecd4d606
-# psql:10:
-#   extends: .docker-build-multi
-#   rules:
-#     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-#     - if: $CI_PIPELINE_SOURCE == "schedule"
-#   needs:
-#     - base
-#   variables:
-#     PLATFORM: "linux/arm64,linux/amd64"
-#     DOCKER_HUB: "ENABLED"
-#     DOCKER_FILE: docker/Dockerfile.psql.10
-#     DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:10
-#     DOCKER_IMAGE_CACHE_FROM: ${DOCKER_IMAGE_CACHE_PATH}:10
-#     DOCKER_IMAGE_CACHE_TO: ${DOCKER_IMAGE_CACHE_PATH}:10
-#     DOCKER_ARGS: >-
-#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:latest
-#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:amd64
-#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:arm64
-#       --cache-from=type=registry,ref=${DOCKER_IMAGE_CACHE_PATH}:base
-#     DOCKER_TAGS: >-
-#       --tag=${DOCKER_IMAGE_HUB_PATH}:10
-#     HEALTH_CHECK_UUID: 7a6ce1bd-0b71-4a99-9c69-8cfeecd4d606
-
 # psql:11:
 #   extends: .docker-build-multi
 #   rules:
