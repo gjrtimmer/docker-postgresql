@@ -2,6 +2,7 @@
 stages:
   - build
   - docker
+  - deploy
 
 include:
   - component: $CI_SERVER_FQDN/templates/components/workflow/default@0.1.1
