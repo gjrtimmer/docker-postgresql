@@ -31,7 +31,7 @@ variables:
       - "true"
   BUILD_PSQL_13:
     description: "Rebuild Postgresql 13"
-    value: "true"
+    value: "false"
     options:
       - "false"
       - "true"
@@ -188,7 +188,8 @@ include:
     rules:
       - if: $SKIP_PIPELINE == "true"
         when: never
-      - if: $BUILD_PSQL_13 == "true" || $BUILD_PSQL_13 == null
+      - if: $BUILD_PSQL_13 == "true"
+      - if: $BUILD_PSQL_13 == null
     inputs:
       name: psql:13
       stage: docker
