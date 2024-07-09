@@ -2,7 +2,6 @@ FROM harbor.local/gitlab/docker/postgresql:base
 
 # Install PostgreSQL 14
 # This will downgrade some other OS packages
-# Install highest compatible repmgr
 RUN apk --update add --force-overwrite --no-cache --wait=15 \
     postgresql14=14.12-r0 \
     postgresql14-plperl=14.12-r0 \

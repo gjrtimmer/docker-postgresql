@@ -2,7 +2,6 @@ FROM harbor.local/gitlab/docker/postgresql:base
 
 # Install PostgreSQL 11
 # This will downgrade some other OS packages
-# Install highest compatible repmgr
 RUN apk --update add --force-overwrite --no-cache --wait=15 --repository=http://dl-cdn.alpinelinux.org/alpine/v3.10/main \
     postgresql=11.12-r0 \
     postgresql-client=11.12-r0 \
