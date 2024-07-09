@@ -114,6 +114,8 @@ include:
       - if: $SKIP_PIPELINE == "true"
         when: never
       - if: $BUILD_PSQL_10 == "true"
+      - changes:
+          - "docker/Dockerfile.psql.10"
     inputs:
       name: psql:10
       stage: docker
