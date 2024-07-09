@@ -23,7 +23,8 @@ RUN apk --update add --no-cache --wait=15 \
     rm -rf /etc/repmgr.conf && \
     rm -rf /var/cache/apk/* && \
     rm -rf /tmp/* && \
-    sync
+    sync && \
+    pg_versions set-default 12
 
 COPY rootfs/ /
 
