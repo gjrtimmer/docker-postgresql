@@ -1,27 +1,34 @@
 # yaml-language-server: $schema=https://gitlab.com/gitlab-org/gitlab/-/raw/master/app/assets/javascripts/editor/schema/ci.json
+stages:
+  - build
+  - docker
+
 include:
   - component: $CI_SERVER_FQDN/templates/components/workflow/default@0.1.1
   - component: $CI_SERVER_FQDN/templates/components/publish/live@0.3.0
 
-  # amd64/latest
-  - component: $CI_SERVER_FQDN/templates/components/docker/amd64@1.2.0
+  # amd64/base
+  - component: $CI_SERVER_FQDN/templates/components/docker/amd64@1.3.0
     inputs:
       name: base:amd64
       dockerfile: docker/Dockerfile.base
+      cache_tag: base-amd64
       tag: $DOCKER_IMAGE_PATH:base-amd64
 
-  # arm64/latest
-  - component: $CI_SERVER_FQDN/templates/components/docker/arm64@1.2.0
+  # arm64/base
+  - component: $CI_SERVER_FQDN/templates/components/docker/arm64@1.3.0
     inputs:
       name: base:arm64
       dockerfile: docker/Dockerfile.base
+      cache_tag: base-arm64
       tag: $DOCKER_IMAGE_PATH:base-arm64
 
-  # multi/latest
-  - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.2.0
+  # multi/base
+  - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.3.0
     inputs:
       name: base:multi
       dockerfile: docker/Dockerfile.base
+      cache_tag: base-multi
       needs:
         - docker:base:amd64
         - docker:base:arm64
@@ -30,30 +37,25 @@ include:
         --cache-from=type=registry,ref=$DOCKER_IMAGE_CACHE_PATH:base-arm64
       tag: $DOCKER_IMAGE_PATH:base
       healthcheck-uuid: cdf80660-72fe-41c9-aff5-2dabae6331f5
-# variables:
-#   UPSTREAM_IMAGE: ${CI_REGISTRY}/docker/alpine-base-service
 
-# base:
-#   extends: .docker-build-multi
-#   rules:
-#     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-#     - if: $CI_PIPELINE_SOURCE == "schedule"
-#   variables:
-#     PLATFORM: "linux/arm64,linux/amd64"
-#     DOCKER_FILE: docker/Dockerfile.base
-#     DOCKER_HUB: "ENABLED"
-#     DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:base
-#     DOCKER_IMAGE_CACHE_FROM: ${DOCKER_IMAGE_CACHE_PATH}:base
-#     DOCKER_IMAGE_CACHE_TO: ${DOCKER_IMAGE_CACHE_PATH}:base
-#     DOCKER_ARGS: >-
-#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:latest
-#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:amd64
-#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:arm64
-#       --build-arg=DOCKER_IMAGE_BASE=${UPSTREAM_IMAGE}:latest
-#     DOCKER_TAGS: >-
-#       --tag=${DOCKER_IMAGE_HUB_PATH}:base
-#     HEALTH_CHECK_UUID: cdf80660-72fe-41c9-aff5-2dabae6331f5
-
+  # multi/psql:9
+  - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.3.0
+    inputs:
+      name: psql:9
+      stage: docker
+      dockerfile: docker/Dockerfile.psql.9
+      needs:
+        - docker:base:amd64
+        - docker:base:arm64
+        - docker:base:multi
+      args: >-
+        --cache-from=type=registry,ref=$DOCKER_IMAGE_CACHE_PATH:base-amd64
+        --cache-from=type=registry,ref=$DOCKER_IMAGE_CACHE_PATH:base-arm64
+        --cache-from=type=registry,ref=$DOCKER_IMAGE_CACHE_PATH:base-multi
+      tag: $DOCKER_IMAGE_PATH:9.6
+      tags: >-
+        --tag=$DOCKER_IMAGE_PATH:9.6.13
+      healthcheck-uuid: 5b596d68-801c-4bd1-90bc-d96e2c25bc93
 # psql:9:
 #   extends: .docker-build-multi
 #   rules:
