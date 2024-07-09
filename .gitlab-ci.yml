@@ -27,6 +27,8 @@ include:
       dockerfile: docker/Dockerfile.base
       cache_tag: base-amd64
       tag: $DOCKER_IMAGE_PATH:base-amd64
+      args: >-
+        --cache-from=type=registry,ref=$HARBOR_REGISTRY_CACHE/docker/alpine-base-service:amd64
 
   # arm64/base
   - component: $CI_SERVER_FQDN/templates/components/docker/arm64@1.3.0
@@ -39,6 +41,8 @@ include:
       dockerfile: docker/Dockerfile.base
       cache_tag: base-arm64
       tag: $DOCKER_IMAGE_PATH:base-arm64
+      args: >-
+        --cache-from=type=registry,ref=$HARBOR_REGISTRY_CACHE/docker/alpine-base-service:arm64
 
   # multi/base
   - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.3.0
@@ -54,6 +58,8 @@ include:
         - docker:base:amd64
         - docker:base:arm64
       args: >-
+        --cache-from=type=registry,ref=$HARBOR_REGISTRY_CACHE/docker/alpine-base-service:amd64
+        --cache-from=type=registry,ref=$HARBOR_REGISTRY_CACHE/docker/alpine-base-service:arm64
         --cache-from=type=registry,ref=$DOCKER_IMAGE_CACHE_PATH:base-amd64
         --cache-from=type=registry,ref=$DOCKER_IMAGE_CACHE_PATH:base-arm64
       tag: $DOCKER_IMAGE_PATH:base
