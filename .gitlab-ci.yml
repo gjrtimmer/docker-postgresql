@@ -69,7 +69,7 @@ include:
       name: psql:9
       stage: docker
       dockerfile: docker/Dockerfile.psql.9
-      cache: true
+      cache: false
       needs:
         - docker:base:amd64
         - docker:base:arm64
