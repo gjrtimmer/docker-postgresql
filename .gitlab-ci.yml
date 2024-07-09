@@ -1,200 +1,220 @@
 # yaml-language-server: $schema=https://gitlab.com/gitlab-org/gitlab/-/raw/master/app/assets/javascripts/editor/schema/ci.json
-default:
-  interruptible: false
-  image:
-    name: ${CI_REGISTRY}/docker/docker:latest
-    pull_policy: always
-
 include:
-  - project: templates/ci
-    file: default.yml
+  - component: $CI_SERVER_FQDN/templates/components/workflow/default@0.1.1
+  - component: $CI_SERVER_FQDN/templates/components/publish/live@0.3.0
 
-variables:
-  UPSTREAM_IMAGE: ${CI_REGISTRY}/docker/alpine-base-service
+  # amd64/latest
+  - component: $CI_SERVER_FQDN/templates/components/docker/amd64@1.1.2
+    inputs:
+      name: base:amd64
+      tag: $DOCKER_IMAGE_PATH:base-amd64
 
-base:
-  extends: .docker-build-multi
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - if: $CI_PIPELINE_SOURCE == "schedule"
-  variables:
-    PLATFORM: "linux/arm64,linux/amd64"
-    DOCKER_FILE: docker/Dockerfile.base
-    DOCKER_HUB: "ENABLED"
-    DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:base
-    DOCKER_IMAGE_CACHE_FROM: ${DOCKER_IMAGE_CACHE_PATH}:base
-    DOCKER_IMAGE_CACHE_TO: ${DOCKER_IMAGE_CACHE_PATH}:base
-    DOCKER_ARGS: >-
-      --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:latest
-      --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:amd64
-      --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:arm64
-      --build-arg=DOCKER_IMAGE_BASE=${UPSTREAM_IMAGE}:latest
-    DOCKER_TAGS: >-
-      --tag=${DOCKER_IMAGE_HUB_PATH}:base
-    HEALTH_CHECK_UUID: cdf80660-72fe-41c9-aff5-2dabae6331f5
+  # arm64/latest
+  - component: $CI_SERVER_FQDN/templates/components/docker/arm64@1.1.2
+    inputs:
+      name: base:arm64
+      dockerfile: docker/Dockerfile.base
+      tag: $DOCKER_IMAGE_PATH:base-arm64
 
-psql:9:
-  extends: .docker-build-multi
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - if: $CI_PIPELINE_SOURCE == "schedule"
-  needs:
-    - base
-  variables:
-    PLATFORM: "linux/arm64,linux/amd64"
-    DOCKER_HUB: "ENABLED"
-    DOCKER_FILE: docker/Dockerfile.psql.9
-    DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:9
-    DOCKER_IMAGE_CACHE_FROM: ${DOCKER_IMAGE_CACHE_PATH}:9
-    DOCKER_IMAGE_CACHE_TO: ${DOCKER_IMAGE_CACHE_PATH}:9
-    DOCKER_ARGS: >-
-      --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:latest
-      --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:amd64
-      --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:arm64
-      --cache-from=type=registry,ref=${DOCKER_IMAGE_CACHE_PATH}:base
-    DOCKER_TAGS: >-
-      --tag=${DOCKER_IMAGE_HUB_PATH}:9
-    HEALTH_CHECK_UUID: 5b596d68-801c-4bd1-90bc-d96e2c25bc93
+  # multi/latest
+  - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.1.2
+    inputs:
+      name: base:multi
+      dockerfile: docker/Dockerfile.base
+      needs:
+        - docker:base:amd64
+        - docker:base:arm64
+      args: >-
+        --cache-from=type=registry,ref=$DOCKER_IMAGE_CACHE_PATH:base-amd64
+        --cache-from=type=registry,ref=$DOCKER_IMAGE_CACHE_PATH:base-arm64
+      tag: $DOCKER_IMAGE_PATH:base
+      healthcheck-uuid: cdf80660-72fe-41c9-aff5-2dabae6331f5
+# variables:
+#   UPSTREAM_IMAGE: ${CI_REGISTRY}/docker/alpine-base-service
 
-psql:10:
-  extends: .docker-build-multi
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - if: $CI_PIPELINE_SOURCE == "schedule"
-  needs:
-    - base
-  variables:
-    PLATFORM: "linux/arm64,linux/amd64"
-    DOCKER_HUB: "ENABLED"
-    DOCKER_FILE: docker/Dockerfile.psql.10
-    DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:10
-    DOCKER_IMAGE_CACHE_FROM: ${DOCKER_IMAGE_CACHE_PATH}:10
-    DOCKER_IMAGE_CACHE_TO: ${DOCKER_IMAGE_CACHE_PATH}:10
-    DOCKER_ARGS: >-
-      --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:latest
-      --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:amd64
-      --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:arm64
-      --cache-from=type=registry,ref=${DOCKER_IMAGE_CACHE_PATH}:base
-    DOCKER_TAGS: >-
-      --tag=${DOCKER_IMAGE_HUB_PATH}:10
-    HEALTH_CHECK_UUID: 7a6ce1bd-0b71-4a99-9c69-8cfeecd4d606
+# base:
+#   extends: .docker-build-multi
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+#     - if: $CI_PIPELINE_SOURCE == "schedule"
+#   variables:
+#     PLATFORM: "linux/arm64,linux/amd64"
+#     DOCKER_FILE: docker/Dockerfile.base
+#     DOCKER_HUB: "ENABLED"
+#     DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:base
+#     DOCKER_IMAGE_CACHE_FROM: ${DOCKER_IMAGE_CACHE_PATH}:base
+#     DOCKER_IMAGE_CACHE_TO: ${DOCKER_IMAGE_CACHE_PATH}:base
+#     DOCKER_ARGS: >-
+#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:latest
+#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:amd64
+#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:arm64
+#       --build-arg=DOCKER_IMAGE_BASE=${UPSTREAM_IMAGE}:latest
+#     DOCKER_TAGS: >-
+#       --tag=${DOCKER_IMAGE_HUB_PATH}:base
+#     HEALTH_CHECK_UUID: cdf80660-72fe-41c9-aff5-2dabae6331f5
 
-psql:11:
-  extends: .docker-build-multi
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - if: $CI_PIPELINE_SOURCE == "schedule"
-  needs:
-    - base
-  variables:
-    PLATFORM: "linux/arm64,linux/amd64"
-    DOCKER_HUB: "ENABLED"
-    DOCKER_FILE: docker/Dockerfile.psql.11
-    DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:11
-    DOCKER_IMAGE_CACHE_FROM: ${DOCKER_IMAGE_CACHE_PATH}:11
-    DOCKER_IMAGE_CACHE_TO: ${DOCKER_IMAGE_CACHE_PATH}:11
-    DOCKER_ARGS: >-
-      --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:latest
-      --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:amd64
-      --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:arm64
-      --cache-from=type=registry,ref=${DOCKER_IMAGE_CACHE_PATH}:base
-    DOCKER_TAGS: >-
-      --tag=${DOCKER_IMAGE_HUB_PATH}:11
-    HEALTH_CHECK_UUID: b802ab8c-40bd-44c7-9cbe-3818df7f561b
+# psql:9:
+#   extends: .docker-build-multi
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+#     - if: $CI_PIPELINE_SOURCE == "schedule"
+#   needs:
+#     - base
+#   variables:
+#     PLATFORM: "linux/arm64,linux/amd64"
+#     DOCKER_HUB: "ENABLED"
+#     DOCKER_FILE: docker/Dockerfile.psql.9
+#     DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:9
+#     DOCKER_IMAGE_CACHE_FROM: ${DOCKER_IMAGE_CACHE_PATH}:9
+#     DOCKER_IMAGE_CACHE_TO: ${DOCKER_IMAGE_CACHE_PATH}:9
+#     DOCKER_ARGS: >-
+#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:latest
+#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:amd64
+#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:arm64
+#       --cache-from=type=registry,ref=${DOCKER_IMAGE_CACHE_PATH}:base
+#     DOCKER_TAGS: >-
+#       --tag=${DOCKER_IMAGE_HUB_PATH}:9
+#     HEALTH_CHECK_UUID: 5b596d68-801c-4bd1-90bc-d96e2c25bc93
 
-psql:12:
-  extends: .docker-build-multi
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - if: $CI_PIPELINE_SOURCE == "schedule"
-  needs:
-    - base
-  variables:
-    PLATFORM: "linux/arm64,linux/amd64"
-    DOCKER_HUB: "ENABLED"
-    DOCKER_FILE: docker/Dockerfile.psql.12
-    DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:12
-    DOCKER_IMAGE_CACHE_FROM: ${DOCKER_IMAGE_CACHE_PATH}:12
-    DOCKER_IMAGE_CACHE_TO: ${DOCKER_IMAGE_CACHE_PATH}:12
-    DOCKER_ARGS: >-
-      --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:latest
-      --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:amd64
-      --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:arm64
-      --cache-from=type=registry,ref=${DOCKER_IMAGE_CACHE_PATH}:base
-    DOCKER_TAGS: >-
-      --tag=${DOCKER_IMAGE_HUB_PATH}:12
-    HEALTH_CHECK_UUID: 422dafa1-1bd6-4c8a-bd4a-e8fae3dbab2f
+# psql:10:
+#   extends: .docker-build-multi
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+#     - if: $CI_PIPELINE_SOURCE == "schedule"
+#   needs:
+#     - base
+#   variables:
+#     PLATFORM: "linux/arm64,linux/amd64"
+#     DOCKER_HUB: "ENABLED"
+#     DOCKER_FILE: docker/Dockerfile.psql.10
+#     DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:10
+#     DOCKER_IMAGE_CACHE_FROM: ${DOCKER_IMAGE_CACHE_PATH}:10
+#     DOCKER_IMAGE_CACHE_TO: ${DOCKER_IMAGE_CACHE_PATH}:10
+#     DOCKER_ARGS: >-
+#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:latest
+#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:amd64
+#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:arm64
+#       --cache-from=type=registry,ref=${DOCKER_IMAGE_CACHE_PATH}:base
+#     DOCKER_TAGS: >-
+#       --tag=${DOCKER_IMAGE_HUB_PATH}:10
+#     HEALTH_CHECK_UUID: 7a6ce1bd-0b71-4a99-9c69-8cfeecd4d606
 
-psql:13:
-  extends: .docker-build-multi
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - if: $CI_PIPELINE_SOURCE == "schedule"
-  needs:
-    - base
-  variables:
-    PLATFORM: "linux/arm64,linux/amd64"
-    DOCKER_HUB: "ENABLED"
-    DOCKER_FILE: docker/Dockerfile.psql.13
-    DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:13
-    DOCKER_IMAGE_CACHE_FROM: ${DOCKER_IMAGE_CACHE_PATH}:13
-    DOCKER_IMAGE_CACHE_TO: ${DOCKER_IMAGE_CACHE_PATH}:13
-    DOCKER_ARGS: >-
-      --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:latest
-      --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:amd64
-      --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:arm64
-      --cache-from=type=registry,ref=${DOCKER_IMAGE_CACHE_PATH}:base
-    DOCKER_TAGS: >-
-      --tag=${DOCKER_IMAGE_HUB_PATH}:13
-    HEALTH_CHECK_UUID: 0de1dbcd-d6f6-4a33-b01a-3f17da2daba0
+# psql:11:
+#   extends: .docker-build-multi
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+#     - if: $CI_PIPELINE_SOURCE == "schedule"
+#   needs:
+#     - base
+#   variables:
+#     PLATFORM: "linux/arm64,linux/amd64"
+#     DOCKER_HUB: "ENABLED"
+#     DOCKER_FILE: docker/Dockerfile.psql.11
+#     DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:11
+#     DOCKER_IMAGE_CACHE_FROM: ${DOCKER_IMAGE_CACHE_PATH}:11
+#     DOCKER_IMAGE_CACHE_TO: ${DOCKER_IMAGE_CACHE_PATH}:11
+#     DOCKER_ARGS: >-
+#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:latest
+#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:amd64
+#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:arm64
+#       --cache-from=type=registry,ref=${DOCKER_IMAGE_CACHE_PATH}:base
+#     DOCKER_TAGS: >-
+#       --tag=${DOCKER_IMAGE_HUB_PATH}:11
+#     HEALTH_CHECK_UUID: b802ab8c-40bd-44c7-9cbe-3818df7f561b
 
-psql:14:
-  extends: .docker-build-multi
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - if: $CI_PIPELINE_SOURCE == "schedule"
-  needs:
-    - base
-  variables:
-    PLATFORM: "linux/arm64,linux/amd64"
-    DOCKER_HUB: "ENABLED"
-    DOCKER_FILE: docker/Dockerfile.psql.14
-    DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:14
-    DOCKER_IMAGE_CACHE_FROM: ${DOCKER_IMAGE_CACHE_PATH}:14
-    DOCKER_IMAGE_CACHE_TO: ${DOCKER_IMAGE_CACHE_PATH}:14
-    DOCKER_ARGS: >-
-      --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:latest
-      --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:amd64
-      --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:arm64
-      --cache-from=type=registry,ref=${DOCKER_IMAGE_CACHE_PATH}:base
-    DOCKER_TAGS: >-
-      --tag=${DOCKER_IMAGE_HUB_PATH}:14
-    HEALTH_CHECK_UUID: 35eeab7b-4fec-49e8-898a-b535444d0784
+# psql:12:
+#   extends: .docker-build-multi
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+#     - if: $CI_PIPELINE_SOURCE == "schedule"
+#   needs:
+#     - base
+#   variables:
+#     PLATFORM: "linux/arm64,linux/amd64"
+#     DOCKER_HUB: "ENABLED"
+#     DOCKER_FILE: docker/Dockerfile.psql.12
+#     DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:12
+#     DOCKER_IMAGE_CACHE_FROM: ${DOCKER_IMAGE_CACHE_PATH}:12
+#     DOCKER_IMAGE_CACHE_TO: ${DOCKER_IMAGE_CACHE_PATH}:12
+#     DOCKER_ARGS: >-
+#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:latest
+#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:amd64
+#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:arm64
+#       --cache-from=type=registry,ref=${DOCKER_IMAGE_CACHE_PATH}:base
+#     DOCKER_TAGS: >-
+#       --tag=${DOCKER_IMAGE_HUB_PATH}:12
+#     HEALTH_CHECK_UUID: 422dafa1-1bd6-4c8a-bd4a-e8fae3dbab2f
 
-psql:15:
-  extends: .docker-build-multi
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - if: $CI_PIPELINE_SOURCE == "schedule"
-  needs:
-    - base
-  variables:
-    PLATFORM: "linux/arm64,linux/amd64"
-    DOCKER_HUB: "ENABLED"
-    DOCKER_FILE: docker/Dockerfile.psql.15
-    DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:15
-    DOCKER_IMAGE_CACHE_FROM: ${DOCKER_IMAGE_CACHE_PATH}:15
-    DOCKER_IMAGE_CACHE_TO: ${DOCKER_IMAGE_CACHE_PATH}:15
-    DOCKER_ARGS: >-
-      --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:latest
-      --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:amd64
-      --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:arm64
-      --cache-from=type=registry,ref=${DOCKER_IMAGE_CACHE_PATH}:base
-    DOCKER_TAGS: >-
-      --tag=${DOCKER_IMAGE_PATH}:latest
-      --tag=${DOCKER_IMAGE_HUB_PATH}:15
-      --tag=${DOCKER_IMAGE_HUB_PATH}:latest
-    HEALTH_CHECK_UUID: b88be602-0b87-404a-adea-66c6aa33fa64
+# psql:13:
+#   extends: .docker-build-multi
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+#     - if: $CI_PIPELINE_SOURCE == "schedule"
+#   needs:
+#     - base
+#   variables:
+#     PLATFORM: "linux/arm64,linux/amd64"
+#     DOCKER_HUB: "ENABLED"
+#     DOCKER_FILE: docker/Dockerfile.psql.13
+#     DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:13
+#     DOCKER_IMAGE_CACHE_FROM: ${DOCKER_IMAGE_CACHE_PATH}:13
+#     DOCKER_IMAGE_CACHE_TO: ${DOCKER_IMAGE_CACHE_PATH}:13
+#     DOCKER_ARGS: >-
+#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:latest
+#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:amd64
+#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:arm64
+#       --cache-from=type=registry,ref=${DOCKER_IMAGE_CACHE_PATH}:base
+#     DOCKER_TAGS: >-
+#       --tag=${DOCKER_IMAGE_HUB_PATH}:13
+#     HEALTH_CHECK_UUID: 0de1dbcd-d6f6-4a33-b01a-3f17da2daba0
+
+# psql:14:
+#   extends: .docker-build-multi
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+#     - if: $CI_PIPELINE_SOURCE == "schedule"
+#   needs:
+#     - base
+#   variables:
+#     PLATFORM: "linux/arm64,linux/amd64"
+#     DOCKER_HUB: "ENABLED"
+#     DOCKER_FILE: docker/Dockerfile.psql.14
+#     DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:14
+#     DOCKER_IMAGE_CACHE_FROM: ${DOCKER_IMAGE_CACHE_PATH}:14
+#     DOCKER_IMAGE_CACHE_TO: ${DOCKER_IMAGE_CACHE_PATH}:14
+#     DOCKER_ARGS: >-
+#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:latest
+#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:amd64
+#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:arm64
+#       --cache-from=type=registry,ref=${DOCKER_IMAGE_CACHE_PATH}:base
+#     DOCKER_TAGS: >-
+#       --tag=${DOCKER_IMAGE_HUB_PATH}:14
+#     HEALTH_CHECK_UUID: 35eeab7b-4fec-49e8-898a-b535444d0784
+
+# psql:15:
+#   extends: .docker-build-multi
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+#     - if: $CI_PIPELINE_SOURCE == "schedule"
+#   needs:
+#     - base
+#   variables:
+#     PLATFORM: "linux/arm64,linux/amd64"
+#     DOCKER_HUB: "ENABLED"
+#     DOCKER_FILE: docker/Dockerfile.psql.15
+#     DOCKER_IMAGE: ${DOCKER_IMAGE_PATH}:15
+#     DOCKER_IMAGE_CACHE_FROM: ${DOCKER_IMAGE_CACHE_PATH}:15
+#     DOCKER_IMAGE_CACHE_TO: ${DOCKER_IMAGE_CACHE_PATH}:15
+#     DOCKER_ARGS: >-
+#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:latest
+#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:amd64
+#       --cache-from=type=registry,ref=${UPSTREAM_IMAGE}/cache:arm64
+#       --cache-from=type=registry,ref=${DOCKER_IMAGE_CACHE_PATH}:base
+#     DOCKER_TAGS: >-
+#       --tag=${DOCKER_IMAGE_PATH}:latest
+#       --tag=${DOCKER_IMAGE_HUB_PATH}:15
+#       --tag=${DOCKER_IMAGE_HUB_PATH}:latest
+#     HEALTH_CHECK_UUID: b88be602-0b87-404a-adea-66c6aa33fa64
 # dockerhub:description:
 #   stage: deploy
 #   image: peterevans/dockerhub-description:3
