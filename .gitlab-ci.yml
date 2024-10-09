@@ -223,7 +223,7 @@ include:
         --cache-from=type=registry,ref=$DOCKER_IMAGE_CACHE_PATH:base-multi
       tag: $DOCKER_IMAGE_PATH:13
       tags: >-
-        --tag=$DOCKER_IMAGE_PATH:13.15
+        --tag=$DOCKER_IMAGE_PATH:13.16
       healthcheck-uuid: 8440483b-42f1-4f4f-aefc-136d5ef4b767
 
   # multi/psql:14

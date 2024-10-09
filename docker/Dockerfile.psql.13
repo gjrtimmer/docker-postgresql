@@ -7,14 +7,14 @@ RUN rm /etc/apk/repositories && \
     echo "http://dl-cdn.alpinelinux.org/alpine/v3.19/community" >> /etc/apk/repositories
 
 RUN apk --update add --no-cache --wait=15 \
-    postgresql13=13.15-r0 \
-    postgresql13-plperl=13.15-r0 \
-    postgresql13-plperl-contrib=13.15-r0 \
-    postgresql13-plpython3=13.15-r0 \
-    postgresql13-plpython3-contrib=13.15-r0 \
-    postgresql13-pltcl=13.15-r0 \
-    postgresql13-contrib=13.15-r0 \
-    postgresql13-jit=13.15-r0 \
+    postgresql13=13.16-r0 \
+    postgresql13-plperl=13.16-r0 \
+    postgresql13-plperl-contrib=13.16-r0 \
+    postgresql13-plpython3=13.16-r0 \
+    postgresql13-plpython3-contrib=13.16-r0 \
+    postgresql13-pltcl=13.16-r0 \
+    postgresql13-contrib=13.16-r0 \
+    postgresql13-jit=13.16-r0 \
     pgtcl \
     repmgr \
     repmgr-daemon && \
