@@ -55,7 +55,7 @@ variables:
       - "true"
 
 include:
-  - component: $CI_SERVER_FQDN/templates/components/workflow/default@0.3.1
+  - component: $CI_SERVER_FQDN/templates/components/workflow/default@0.4.0
   - component: $CI_SERVER_FQDN/templates/components/publish/live@0.5.1
   - component: $CI_SERVER_FQDN/templates/components/publish/hub@0.5.1
 
