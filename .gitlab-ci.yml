@@ -59,7 +59,7 @@ include:
   - component: $CI_SERVER_FQDN/templates/components/workflow/default@0.4.0
   - component: $CI_SERVER_FQDN/templates/components/publish/live@0.6.0
   - component: $CI_SERVER_FQDN/templates/components/publish/hub@0.6.0
-  - component: $CI_SERVER_FQDN/templates/components/renovate/renovate@0.8.0
+  - component: $CI_SERVER_FQDN/templates/components/renovate/renovate@0.9.0
 
   # amd64/base
   - component: $CI_SERVER_FQDN/templates/components/docker/amd64@1.6.0
