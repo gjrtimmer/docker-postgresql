@@ -1,27 +1,34 @@
-FROM harbor.local/gitlab/docker/alpine-base-service:3.20
+FROM harbor.local/gitlab/docker/ubuntu-service:latest AS builder
 
-# Packages for PostgreSQL image
-RUN apk --update upgrade --force-overwrite --no-cache --wait=15 && \
-    apk --update add --force-overwrite --no-cache --wait=15 \
-    acl \
+# Set default environment variable for install
+# use ARG so that it will not end up in the final image
+ARG DEBIAN_FRONTEND=noninteractive
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+# hadolint ignore=DL3008
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends tzdata lsb-release curl gpg && \
+    apt-get install -y --no-install-recommends \
     bash \
-    busybox-extras \
     ca-certificates \
     coreutils \
     findutils \
-    util-linux-login \
     sudo \
     tzdata \
     rsync \
     logrotate \
-    musl-locales \
     cpulimit \
-    && \
+    postgresql-common && \
+    /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y && \
+    apt-get update && \
     echo "abc ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/abc && \
     chmod 600 /etc/sudoers.d/abc && \
-    rm -rf /var/cache/apk/* && \
-    rm -rf /tmp/* && \
-    sync
+    apt-get remove --purge -y --auto-remove lsb-release curl gpg && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/tmp/* && \
+    rm -rf /var/cache/* && \
+    rm -rf /tmp/*
 
 ENV LANG='C' \
     MUSL_LOCPATH='C' \
