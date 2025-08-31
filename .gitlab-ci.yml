@@ -62,7 +62,7 @@ include:
   - component: $CI_SERVER_FQDN/templates/components/renovate/renovate@0.9.0
 
   # amd64/base
-  - component: $CI_SERVER_FQDN/templates/components/docker/amd64@1.9.0
+  - component: $CI_SERVER_FQDN/templates/components/docker/amd64@1.11.0
     rules:
       - if: $SKIP_PIPELINE == "true"
         when: never
@@ -76,7 +76,7 @@ include:
         --cache-from=type=registry,ref=$HARBOR_REGISTRY_CACHE/docker/alpine-base-service:amd64
 
   # arm64/base
-  - component: $CI_SERVER_FQDN/templates/components/docker/arm64@1.9.0
+  - component: $CI_SERVER_FQDN/templates/components/docker/arm64@1.11.0
     rules:
       - if: $SKIP_PIPELINE == "true"
         when: never
@@ -90,7 +90,7 @@ include:
         --cache-from=type=registry,ref=$HARBOR_REGISTRY_CACHE/docker/alpine-base-service:arm64
 
   # multi/base
-  - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.9.0
+  - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.11.0
     rules:
       - if: $SKIP_PIPELINE == "true"
         when: never
@@ -111,7 +111,7 @@ include:
       healthcheck-uuid: cdf80660-72fe-41c9-aff5-2dabae6331f5
 
   # multi/psql:9
-  - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.9.0
+  - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.11.0
     rules:
       - if: $SKIP_PIPELINE == "true"
         when: never
@@ -135,7 +135,7 @@ include:
         --tag=$DOCKER_IMAGE_PATH:9.6.13
 
   # multi/psql:10
-  - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.9.0
+  - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.11.0
     rules:
       - if: $SKIP_PIPELINE == "true"
         when: never
@@ -158,7 +158,7 @@ include:
         --tag=$DOCKER_IMAGE_PATH:10.12
 
   # multi/psql:11
-  - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.9.0
+  - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.11.0
     rules:
       - if: $SKIP_PIPELINE == "true"
         when: never
@@ -181,7 +181,7 @@ include:
         --tag=$DOCKER_IMAGE_PATH:11.12
 
   # multi/psql:12
-  - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.9.0
+  - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.11.0
     rules:
       - if: $SKIP_PIPELINE == "true"
         when: never
@@ -204,7 +204,7 @@ include:
         --tag=$DOCKER_IMAGE_PATH:12.19
 
   # multi/psql:13
-  - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.9.0
+  - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.11.0
     rules:
       - if: $SKIP_PIPELINE == "true"
         when: never
@@ -229,7 +229,7 @@ include:
       healthcheck-uuid: 8440483b-42f1-4f4f-aefc-136d5ef4b767
 
   # multi/psql:14
-  - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.9.0
+  - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.11.0
     rules:
       - if: $SKIP_PIPELINE == "true"
         when: never
@@ -254,7 +254,7 @@ include:
       healthcheck-uuid: 35eeab7b-4fec-49e8-898a-b535444d0784
 
   # multi/psql:15
-  - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.9.0
+  - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.11.0
     rules:
       - if: $SKIP_PIPELINE == "true"
         when: never
@@ -279,7 +279,7 @@ include:
       healthcheck-uuid: b88be602-0b87-404a-adea-66c6aa33fa64
 
   # multi/psql:16
-  - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.9.0
+  - component: $CI_SERVER_FQDN/templates/components/docker/multi@1.11.0
     rules:
       - if: $SKIP_PIPELINE == "true"
         when: never
